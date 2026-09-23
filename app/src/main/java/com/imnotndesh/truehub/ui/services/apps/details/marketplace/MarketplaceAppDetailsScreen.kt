@@ -138,10 +138,11 @@ fun MarketplaceAppDetailsScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             containerColor = MaterialTheme.colorScheme.background
-        ) { _ ->
+        ) { innerPadding ->
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .padding(innerPadding),
                 contentPadding = PaddingValues(0.dp)
             ) {
                 item {

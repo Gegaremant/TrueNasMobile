@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  app-verify:
+    name: Verify & Build Android app
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Cache Gradle + wrapper + build cache
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Run unit tests
+        run: ./gradlew :app:testGithubDebugUnitTest --no-daemon
+
+      - name: Run lint
+        run: ./gradlew :app:lintGithubRelease --no-daemon
+
+      - name: Assemble debug APK
+        run: ./gradlew :app:assembleGithubDebug --no-daemon
+
+      - name: Assemble unsigned release APKs
+        run: ./gradlew :app:assembleGithubRelease --no-daemon
+
+      - name: Upload release APKs as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: truenasmobile-release-apks
+          path: app/build/outputs/apk/github/release/*-release-unsigned.apk
+          retention-days: 14
+
+  relay-verify:
+    name: Test Push Relay
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Make relay gradlew executable
+        run: chmod +x relay/gradlew
+
+      - name: Run relay tests
+        working-directory: relay
+        run: ./gradlew test --no-daemon

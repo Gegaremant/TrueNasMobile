@@ -161,6 +161,7 @@ fun MarketplaceAppInstallScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(innerPadding)
         ) {
             when {
                 isLoadingDetails -> {

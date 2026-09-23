@@ -173,8 +173,8 @@ fun MarketplaceScreen(
     // UI
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background
-    ) { _ ->
-        Column(modifier = Modifier.fillMaxSize()) {
+    ) { innerPadding ->
+        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             // Animated header – hides when search is focused
             AnimatedVisibility(
                 visible = !isSearchFocused,

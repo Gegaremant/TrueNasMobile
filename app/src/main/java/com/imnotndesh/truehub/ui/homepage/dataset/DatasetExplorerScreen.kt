@@ -197,6 +197,7 @@ fun DatasetExplorerScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(innerPadding)
             ) {
                 UnifiedScreenHeader(
                     title = "Datasets",

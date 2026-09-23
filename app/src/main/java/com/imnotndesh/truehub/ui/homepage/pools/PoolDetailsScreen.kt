@@ -125,6 +125,7 @@ fun PoolDetailsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(padding)
         ) {
             UnifiedScreenHeader(
                 title = "Pool Details",
