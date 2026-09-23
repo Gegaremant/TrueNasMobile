@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="AppUpdateWidgetDescription">View pending TrueNAS app updates</string>
+    <string name="PoolWidgetDescription">Monitor TrueNAS storage pool health</string>
+    <string name="quick_launch_widget_description">Launch into apps web UI from home screen</string>
+</resources>

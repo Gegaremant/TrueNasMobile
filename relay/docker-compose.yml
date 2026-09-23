@@ -1,0 +1,24 @@
+services:
+  truenasmobile-relay:
+    build: .
+    container_name: truenasmobile-relay
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # Comma-separated relay tokens. Use one per TrueNAS installation.
+      # Access the API with:  Authorization: Bearer <token>
+      RELAY_TOKENS: "change-me-please"
+      # Where TrueNAS webhooks arrive and devices register.
+      # The path must differ from your NAS web UI prefix or be reverse-proxied
+      # behind TLS (recommended: Caddy / nginx -> localhost:8080).
+      # PORT: "8080"
+      # Default ntfy server for the "ntfy" transport (self-hosted ntfy too):
+      NTFY_URL: "https://ntfy.sh"
+      # Device registry persistence:
+      RELAY_DATA_FILE: "/data/devices.json"
+    volumes:
+      - relay-data:/data
+
+volumes:
+  relay-data:
