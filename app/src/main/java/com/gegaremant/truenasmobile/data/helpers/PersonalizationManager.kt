@@ -7,6 +7,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+enum class ThemeMode(val displayName: String) {
+    LIGHT("Светлая"),
+    DARK("Тёмная"),
+    SYSTEM("Системная")
+}
+
 /**
  * Per-user personalization storage (theme, black mode, compact nav, navbar layout).
  *
@@ -19,6 +25,7 @@ import kotlinx.coroutines.flow.asStateFlow
  */
 data class PersonalizationState(
     val theme: AppTheme = AppTheme.TRUENASMOBILE,
+    val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val blackMode: Boolean = false,
     val compactNav: Boolean = false,
     val navbarDestinations: List<NavbarDestination> = NavbarDestination.defaults,
@@ -51,6 +58,10 @@ object PersonalizationManager {
             AppTheme.valueOf(prefs.getString(key(userKey, "theme"), AppTheme.TRUENASMOBILE.name) ?: AppTheme.TRUENASMOBILE.name)
         }.getOrDefault(AppTheme.TRUENASMOBILE)
 
+        val themeMode = runCatching {
+            ThemeMode.valueOf(prefs.getString(key(userKey, "theme_mode"), ThemeMode.SYSTEM.name) ?: ThemeMode.SYSTEM.name)
+        }.getOrDefault(ThemeMode.SYSTEM)
+
         val blackMode = prefs.getBoolean(key(userKey, "black_mode"), false)
         val compactNav = prefs.getBoolean(key(userKey, "compact_nav"), false)
         val searchBarBottom = prefs.getBoolean(key(userKey, "search_bar_bottom"), false)
@@ -59,6 +70,7 @@ object PersonalizationManager {
 
         _state.value = PersonalizationState(
             theme = theme,
+            themeMode = themeMode,
             blackMode = blackMode,
             compactNav = compactNav,
             navbarDestinations = navbar,
@@ -70,6 +82,12 @@ object PersonalizationManager {
         context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .edit { putString(key(userKey, "theme"), theme.name) }
         _state.value = _state.value.copy(theme = theme)
+    }
+
+    fun saveThemeMode(context: Context, userKey: String, themeMode: ThemeMode) {
+        context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit { putString(key(userKey, "theme_mode"), themeMode.name) }
+        _state.value = _state.value.copy(themeMode = themeMode)
     }
 
     fun saveBlackMode(context: Context, userKey: String, enabled: Boolean) {

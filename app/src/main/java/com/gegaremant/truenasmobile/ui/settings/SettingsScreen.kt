@@ -114,8 +114,8 @@ fun SettingsScreen(
             .padding(WindowInsets.systemBars.asPaddingValues())
     ) {
         UnifiedScreenHeader(
-            title = "Settings",
-            subtitle = "Manage your account and preferences",
+            title = "Настройки",
+            subtitle = "Аккаунт и предпочтения",
             isLoading = uiState.isLoading,
             isRefreshing = false,
             error = null,
@@ -133,18 +133,12 @@ fun SettingsScreen(
                 .padding(bottom = 16.dp)
         ) {
             SettingsSection(
-                title = "Account",
+                title = "Аккаунт",
                 items = listOf(
                     SettingItem(
-                        icon = Icons.Default.AccountCircle,
-                        name = "Profile",
-                        description = "Manage your profile information",
-                        onClick = { onDummyAction("Profile") }
-                    ),
-                    SettingItem(
                         icon = Icons.Default.Security,
-                        name = "Password",
-                        description = "Change your password",
+                        name = "Пароль",
+                        description = "Сменить пароль",
                         onClick = {
                             onNavigateToChangePassword()
                         }
@@ -155,23 +149,23 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             SettingsSection(
-                title = "Application",
+                title = "Приложение",
                 items = listOf(
                     SettingItem(
                         icon = Icons.Default.Apps,
-                        name = "Theme",
-                        description = "Choose light or dark mode",
+                        name = "Тема",
+                        description = "Светлая или тёмная тема",
                         onClick = { onNavigateToTheme() }
                     ),
                     SettingItem(
                         icon = Icons.Default.PrivacyTip,
-                        name = "Privacy",
+                        name = "Конфиденциальность",
                         description = "Control data sharing & permissions",
                         onClick = { onDummyAction("Privacy") }
                     ),
                     SettingItem(
                         icon = Icons.Default.Fingerprint,
-                        name = "Biometric Lock",
+                        name = "Биометрическая блокировка",
                         description = "Lock the app with your fingerprint or device PIN",
                         onClick = {},
                         onToggle = { newValue ->
@@ -181,7 +175,7 @@ fun SettingsScreen(
                     ),
                     SettingItem(
                         icon = Icons.Default.Notifications,
-                        name = "Push Notifications",
+                        name = "Push-уведомления",
                         description = "Relay TrueNAS alerts to this device",
                         onClick = { onNavigateToPushSettings() }
                     )
@@ -191,11 +185,11 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             SettingsSection(
-                title = "Session",
+                title = "Сессия",
                 items = listOf(
                     SettingItem(
                         icon = Icons.Default.Timer,
-                        name = "Auto Login",
+                        name = "Автовход",
                         description = "Automatically log in with saved credentials.",
                         onClick = {},
                         isLoading = uiState.isLoading,
@@ -206,7 +200,7 @@ fun SettingsScreen(
                     ),
                     SettingItem(
                         icon = Icons.Default.AccountCircle,
-                        name = "Switch Account",
+                        name = "Сменить аккаунт",
                         description = "Switch to another saved account",
                         onClick = {
                             onNavigateToLogin()
@@ -214,7 +208,7 @@ fun SettingsScreen(
                     ),
                     SettingItem(
                         icon = Icons.AutoMirrored.Filled.Logout,
-                        name = "Sign Out",
+                        name = "Выйти",
                         description = "Clear credentials and sign out",
                         onClick = { viewModel.handleEvent(SettingsEvent.SignOut) },
                         isLoading = uiState.isLoggingOut
@@ -223,12 +217,12 @@ fun SettingsScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             SettingsSection(
-                title = "About",
+                title = "О приложении",
                 items = buildList {
                     add(
                         SettingItem(
                             icon = Icons.Default.Info,
-                            name = "About TrueNasMobile",
+                            name = "О TrueNasMobile",
                             description = "Version and application details",
                             onClick = { onNavigateToAbout() }
                         )
@@ -236,7 +230,7 @@ fun SettingsScreen(
                     add(
                         SettingItem(
                             icon = Icons.Default.Description,
-                            name = "Licenses",
+                            name = "Лицензии",
                             description = "View open source licenses",
                             onClick = { onNavigateToLicenses() }
                         )

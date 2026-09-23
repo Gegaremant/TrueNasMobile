@@ -4,6 +4,8 @@
 
 **A native Android client for managing TrueNAS. Simple, fast, right from your phone.**
 
+**⬇️ [Download the latest release](https://github.com/Gegaremant/TrueNasMobile/releases/latest)** · Android 14+
+
 TrueNAS is a great system for storage and home servers. But there is one big injustice: it never got a proper native app. Keeping an eye on your server through a browser on a small screen is awkward, and the two existing client versions (NasDesk and TrueHub) simply don't cover all the capabilities.
 
 So we decided to build our own app — in-house, inspired by those two projects. TrueNasMobile is built from scratch as a modern native application with everything we were missing: quick access to containers, honest performance graphs, and full NAS management without a browser.
@@ -44,14 +46,6 @@ This project is inspired by NasDesk and TrueHub.
   - Biometric app lock
 - **Multiple servers**
   - Manage several TrueNAS instances at once
-
-## Download
-
-Get the latest version on the releases page:
-
-**[⬇️ Download TrueNasMobile — latest release](https://github.com/Gegaremant/TrueNasMobile/releases/latest)**
-
-Requires Android 14 or newer.
 
 ## Build from source
 

@@ -2,6 +2,8 @@ package com.gegaremant.truenasmobile.ui
 
 sealed class Screen(val route:String, val title:String) {
     object Home : Screen("home", "Home")
+    object Storage : Screen("storage", "Хранилище")
+    object Tasks : Screen("tasks", "Задачи")
     object Apps : Screen("apps","Apps")
     object ServicesScreen : Screen("services", "TrueNAS Services")
     object ServicesDetailScreen: Screen("service_detail", "Details about TrueNAS services")

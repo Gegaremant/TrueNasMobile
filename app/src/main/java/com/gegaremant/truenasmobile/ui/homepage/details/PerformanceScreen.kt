@@ -102,7 +102,7 @@ fun PerformanceScreen(
     initialMetricType: MetricType = MetricType.ALL,
     isLoading: Boolean,
     manager: TrueNASApiManager,
-    onNavigateBack: () -> Unit,
+    onNavigateBack: (() -> Unit)? = null,
     onRefresh: () -> Unit
 ) {
     LaunchedEffect(Unit) {
@@ -139,32 +139,32 @@ fun PerformanceScreen(
             val value = currentCpu?.data?.lastOrNull()?.let { point ->
                 if (point.size > 1) point.drop(1).average() else 0.0
             } ?: 0.0
-            "${DecimalFormat("#.#").format(value)}% current"
+            "${DecimalFormat("#.#").format(value)}% сейчас"
         }
         MetricType.MEMORY -> {
             val value = currentMemory?.data?.lastOrNull()?.getOrNull(1) ?: 0.0
-            "${DecimalFormat("#.#").format(value / (1024.0 * 1024.0 * 1024.0))} GB current"
+            "${DecimalFormat("#.#").format(value / (1024.0 * 1024.0 * 1024.0))} ГБ сейчас"
         }
         MetricType.TEMPERATURE -> {
             val value = currentTemp?.data?.lastOrNull()?.getOrNull(1) ?: 0.0
-            "${DecimalFormat("#.#").format(value)}°C current"
+            "${DecimalFormat("#.#").format(value)}°C сейчас"
         }
-        MetricType.ALL -> "System metrics"
+        MetricType.ALL -> "Метрики системы"
     }
     val headerTitle = when (initialMetricType) {
         MetricType.CPU -> {
-            "CPU Metrics"
+            "Графики процессора"
         }
 
         MetricType.MEMORY ->{
-            "Memory Metrics"
+            "Графики памяти"
         }
         MetricType.TEMPERATURE -> {
-            "Temperature Metrics"
+            "Графики температуры"
         }
 
         else -> {
-            "Metrics"
+            "Графики"
         }
     }
 

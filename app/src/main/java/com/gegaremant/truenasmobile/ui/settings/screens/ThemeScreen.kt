@@ -21,12 +21,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,8 +44,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
-import com.gegaremant.truenasmobile.data.helpers.NavbarDestination
 import com.gegaremant.truenasmobile.data.helpers.PersonalizationManager
+import com.gegaremant.truenasmobile.data.helpers.ThemeMode
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 import com.gegaremant.truenasmobile.ui.theme.AppTheme
 import com.gegaremant.truenasmobile.ui.theme.ForestDarkColors
@@ -67,18 +64,16 @@ import com.gegaremant.truenasmobile.ui.theme.TrueNasMobileLightColors
 @Composable
 fun ThemeScreen(
     currentTheme: AppTheme,
-    isBlackModeEnabled: Boolean,
+    themeMode: ThemeMode,
     onThemeSelected: (AppTheme) -> Unit,
-    onBlackModeToggled: (Boolean) -> Unit,
+    onThemeModeSelected: (ThemeMode) -> Unit,
     onNavigateBack: () -> Unit = {},
     manager: TrueNASApiManager?,
     userKey: String
 ) {
     val context = LocalContext.current
     var selectedTheme by remember { mutableStateOf(currentTheme) }
-    var blackMode by remember { mutableStateOf(isBlackModeEnabled) }
     val personalization by PersonalizationManager.state.collectAsState()
-    val enabledDestinations = personalization.navbarDestinations
 
     Column(
         modifier = Modifier
@@ -87,8 +82,8 @@ fun ThemeScreen(
             .statusBarsPadding()
     ) {
         UnifiedScreenHeader(
-            title = "Theme",
-            subtitle = "Choose your color scheme",
+            title = "Тема",
+            subtitle = "Выберите цветовую схему и режим",
             onDismissError = {},
             onBackPressed = onNavigateBack,
             isLoading = false,
@@ -126,7 +121,7 @@ fun ThemeScreen(
                 }
                 Column {
                     Text(
-                        text = "Color Scheme",
+                        text = "Цветовая схема",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -161,33 +156,56 @@ fun ThemeScreen(
                 ),
                 shape = RoundedCornerShape(20.dp)
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(20.dp)
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Black",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = "Uses less power on AMOLED screens",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Switch(
-                        checked = blackMode,
-                        onCheckedChange = { isChecked ->
-                            blackMode = isChecked
-                            onBlackModeToggled(isChecked)
-                        }
+                    Text(
+                        text = "Тёмный режим",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
+                    Text(
+                        text = "Светлая, тёмная или по умолчанию из системы",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ThemeMode.entries.forEach { mode ->
+                            val isSelected = themeMode == mode
+                            Surface(
+                                onClick = { onThemeModeSelected(mode) },
+                                shape = RoundedCornerShape(12.dp),
+                                color = if (isSelected) {
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.surfaceContainerHighest
+                                },
+                                modifier = Modifier
+                                    .weight(1f)
+                            ) {
+                                Text(
+                                    text = mode.displayName,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                    color = if (isSelected) {
+                                        MaterialTheme.colorScheme.onSecondaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                    modifier = Modifier.padding(vertical = 12.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
@@ -228,181 +246,7 @@ fun ThemeScreen(
                 }
             }
 
-            // ── Navbar customization ──────────────────────────
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                ),
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Text(
-                        text = "Navbar Customization",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = "Choose which items appear on the bottom navigation bar and their order.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Compact mode toggle
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                "Compact mode",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                "Hide labels, leave slightly larger icons",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        Switch(
-                            checked = personalization.compactNav,
-                            onCheckedChange = { compact ->
-                                PersonalizationManager.saveCompactNav(context, userKey, compact)
-                            }
-                        )
-                    }
-
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 16.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant
-                    )
-
-                    // Destinations
-                    Text(
-                        "Destinations",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Home is always present and locked first.
-                    DestinationRow(
-                        title = NavbarDestination.HOME.title,
-                        enabled = true,
-                        canToggle = false,
-                        canMoveUp = false,
-                        canMoveDown = false,
-                        onToggle = {},
-                        onMoveUp = {},
-                        onMoveDown = {}
-                    )
-
-                    val optional = PersonalizationManager.availableDestinations.filter { !it.isRequired }
-                    optional.forEachIndexed { index, destination ->
-                        val selected = enabledDestinations.contains(destination)
-                        val selectedIndex = enabledDestinations.indexOfFirst { it == destination }
-                        DestinationRow(
-                            title = destination.title,
-                            enabled = selected,
-                            canToggle = true,
-                            canMoveUp = selected && selectedIndex > 1,
-                            canMoveDown = selected && selectedIndex < enabledDestinations.lastIndex,
-                            onToggle = {
-                                val updated = if (selected) {
-                                    enabledDestinations - destination
-                                } else {
-                                    enabledDestinations + destination
-                                }
-                                PersonalizationManager.saveNavbar(context, userKey, updated)
-                            },
-                            onMoveUp = {
-                                val updated = moveDestination(enabledDestinations, destination, -1)
-                                PersonalizationManager.saveNavbar(context, userKey, updated)
-                            },
-                            onMoveDown = {
-                                val updated = moveDestination(enabledDestinations, destination, 1)
-                                PersonalizationManager.saveNavbar(context, userKey, updated)
-                            }
-                        )
-                    }
-                }
-            }
         }
-    }
-}
-
-private fun moveDestination(
-    list: List<NavbarDestination>,
-    destination: NavbarDestination,
-    delta: Int
-): List<NavbarDestination> {
-    val mutable = list.toMutableList()
-    val index = mutable.indexOfFirst { it == destination }
-    if (index < 0) return list
-    val target = index + delta
-    if (target < 1 || target >= mutable.size) return list // never move over required Home (index 0)
-    val item = mutable.removeAt(index)
-    mutable.add(target, item)
-    return mutable
-}
-
-@Composable
-private fun DestinationRow(
-    title: String,
-    enabled: Boolean,
-    canToggle: Boolean,
-    canMoveUp: Boolean,
-    canMoveDown: Boolean,
-    onToggle: () -> Unit,
-    onMoveUp: () -> Unit,
-    onMoveDown: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyMedium,
-            color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.weight(1f)
-        )
-
-        if (canMoveUp || canMoveDown) {
-            IconButton(onClick = onMoveUp, enabled = canMoveUp, modifier = Modifier.size(32.dp)) {
-                Icon(
-                    Icons.Default.KeyboardArrowUp,
-                    contentDescription = "Move up",
-                    tint = if (canMoveUp) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-            IconButton(onClick = onMoveDown, enabled = canMoveDown, modifier = Modifier.size(32.dp)) {
-                Icon(
-                    Icons.Default.KeyboardArrowDown,
-                    contentDescription = "Move down",
-                    tint = if (canMoveDown) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
-
-        Switch(
-            checked = enabled,
-            onCheckedChange = { onToggle() },
-            enabled = canToggle,
-            modifier = Modifier.padding(start = if (canMoveUp || canMoveDown) 0.dp else 8.dp)
-        )
     }
 }
 

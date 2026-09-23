@@ -113,8 +113,8 @@ fun HomeScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         UnifiedScreenHeader(
-            title = "Dashboard",
-            subtitle = "Welcome back",
+            title = "Статистика",
+            subtitle = "С возвращением!",
             isLoading = uiState is HomeUiState.Loading,
             isRefreshing = false,
             error = null,
@@ -130,7 +130,7 @@ fun HomeScreen(
         ) {
             when (val state = uiState) {
                 is HomeUiState.Loading -> {
-                    LoadingScreen("Loading Homescreen")
+                    LoadingScreen("Загрузка статистики")
                 }
                 is HomeUiState.Error -> ErrorScreen(
                     error = state.message,
@@ -206,7 +206,7 @@ private fun ErrorScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Connection Failed",
+                    text = "Не удалось подключиться",
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onErrorContainer,
                     fontWeight = FontWeight.Bold
@@ -221,7 +221,7 @@ private fun ErrorScreen(
                 if (canRetry) {
                     Spacer(modifier = Modifier.height(24.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        TextButton(onClick = onDismiss) { Text("Dismiss") }
+                        TextButton(onClick = onDismiss) { Text("Закрыть") }
                         Button(
                             onClick = onRetry,
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
@@ -229,7 +229,7 @@ private fun ErrorScreen(
                         ) {
                             Icon(Icons.Default.Refresh, null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Retry")
+                            Text("Повторить")
                         }
                     }
                 }
@@ -662,7 +662,7 @@ private fun LoadAveragesGrid(
 */
 
 @Composable
-private fun StorageCard(modifier: Modifier = Modifier, pool: System.Pool, onClick: () -> Unit) {
+fun StorageCard(modifier: Modifier = Modifier, pool: System.Pool, onClick: () -> Unit) {
     fun formatBytes(bytes: Long): String {
         val units = arrayOf("B", "KB", "MB", "GB", "TB")
         var size = bytes.toDouble()
@@ -744,19 +744,19 @@ private fun StorageCard(modifier: Modifier = Modifier, pool: System.Pool, onClic
 }
 
 @Composable
-private fun NoStorageCard(modifier: Modifier = Modifier) {
+fun NoStorageCard(modifier: Modifier = Modifier) {
     Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), modifier = modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
         Column(modifier = Modifier.fillMaxWidth().padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(Icons.Default.Storage, null, modifier = Modifier.size(56.dp), tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
             Spacer(modifier = Modifier.height(16.dp))
-            Text("No Storage Pools", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-            Text("No storage pools are currently configured.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+            Text("Нет пулов", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+            Text("Пока не настроено ни одного пула хранения.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
         }
     }
 }
 
 @Composable
-private fun SharesCard(
+fun SharesCard(
     smbShares: List<Shares.SmbShare>,
     nfsShares: List<Shares.NfsShare>,
     modifier: Modifier = Modifier,
@@ -766,14 +766,14 @@ private fun SharesCard(
     Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), modifier = modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
         Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text("SMB Shares", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Text("Общие папки SMB", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                 Surface(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(100.dp)) {
                     Text("${smbShares.size}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
                 }
             }
             if (smbShares.isEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
-                EmptyShareState("No SMB shares")
+                EmptyShareState("Нет общих папок SMB")
             } else {
                 Spacer(modifier = Modifier.height(16.dp))
                 smbShares.take(5).forEach { share ->
@@ -782,7 +782,7 @@ private fun SharesCard(
                 }
                 if (smbShares.size > 5) {
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("+ ${smbShares.size - 5} more...", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(start = 8.dp))
+                    Text("+ ${smbShares.size - 5} ещё...", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(start = 8.dp))
                 }
             }
             if (smbShares.isNotEmpty() || nfsShares.isNotEmpty()) {
@@ -791,14 +791,14 @@ private fun SharesCard(
                 Spacer(modifier = Modifier.height(24.dp))
             }
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text("NFS Shares", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Text("Общие папки NFS", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                 Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(100.dp)) {
                     Text("${nfsShares.size}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSecondaryContainer, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
                 }
             }
             if (nfsShares.isEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
-                EmptyShareState("No NFS shares")
+                EmptyShareState("Нет общих папок NFS")
             } else {
                 Spacer(modifier = Modifier.height(16.dp))
                 nfsShares.take(5).forEach { share ->
@@ -807,7 +807,7 @@ private fun SharesCard(
                 }
                 if (nfsShares.size > 5) {
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("+ ${nfsShares.size - 5} more...", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(start = 8.dp))
+                    Text("+ ${nfsShares.size - 5} ещё...", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(start = 8.dp))
                 }
             }
         }

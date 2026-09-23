@@ -88,7 +88,7 @@ fun UnifiedScreenHeader(
 
     LaunchedEffect(subtitle) {
         isSubtitleVisible = true
-        if (subtitle.contains("Welcome back", ignoreCase = true)) {
+        if (subtitle.contains("С возвращением", ignoreCase = true)) {
             delay(4000.milliseconds)
             isSubtitleVisible = false
         }

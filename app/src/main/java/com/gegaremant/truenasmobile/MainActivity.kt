@@ -49,6 +49,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.PersonalizationManager
+import com.gegaremant.truenasmobile.data.helpers.ThemeMode
 import com.gegaremant.truenasmobile.data.helpers.dataStore
 import com.gegaremant.truenasmobile.data.security.BiometricLockPrefs
 import com.gegaremant.truenasmobile.data.security.shouldReLock
@@ -101,9 +102,14 @@ class MainActivity : FragmentActivity() {
         setContent {
             val personalization by PersonalizationManager.state.collectAsState()
             val systemDark = androidx.compose.foundation.isSystemInDarkTheme()
+            val darkTheme = when (personalization.themeMode) {
+                com.gegaremant.truenasmobile.data.helpers.ThemeMode.LIGHT -> false
+                com.gegaremant.truenasmobile.data.helpers.ThemeMode.DARK -> true
+                com.gegaremant.truenasmobile.data.helpers.ThemeMode.SYSTEM -> systemDark
+            }
             TrueNasMobileAppTheme(
                 theme = personalization.theme,
-                darkTheme = systemDark || personalization.blackMode,
+                darkTheme = darkTheme,
                 isBlackMode = personalization.blackMode
             ) {
                 when {
@@ -544,10 +550,10 @@ private fun AppNavigation(
                     PersonalizationManager.saveTheme(context, userKey, newTheme)
                 },
                 onNavigateBack = { navController.popBackStack() },
-                isBlackModeEnabled = personalization.blackMode,
-                onBlackModeToggled = { isToggled ->
+                themeMode = personalization.themeMode,
+                onThemeModeSelected = { mode ->
                     val userKey = viewModel.currentUserKey.value ?: PersonalizationManager.DEFAULT_USER_KEY
-                    PersonalizationManager.saveBlackMode(context, userKey, isToggled)
+                    PersonalizationManager.saveThemeMode(context, userKey, mode)
                 }
             )
         }

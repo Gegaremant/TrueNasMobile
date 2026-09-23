@@ -17,16 +17,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Inventory
+import androidx.compose.material.icons.filled.ShowChart
+import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material.icons.filled.SystemUpdateAlt
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.outlined.Apps
+import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material.icons.outlined.Computer
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.icons.outlined.ShowChart
+import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.Storefront
 import androidx.compose.material.icons.outlined.SystemUpdateAlt
 import androidx.compose.material.icons.outlined.Tune
@@ -65,12 +71,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.gegaremant.truenasmobile.MainViewModel
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
-import com.gegaremant.truenasmobile.data.helpers.NavbarDestination
-import com.gegaremant.truenasmobile.data.helpers.PersonalizationManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.data.models.canUpgradeNow
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import com.gegaremant.truenasmobile.ui.homepage.HomeScreen
+import com.gegaremant.truenasmobile.ui.homepage.HomeUiState
+import com.gegaremant.truenasmobile.ui.homepage.HomeViewModel
+import com.gegaremant.truenasmobile.ui.homepage.StorageScreen
+import com.gegaremant.truenasmobile.ui.homepage.TasksScreen
 import com.gegaremant.truenasmobile.ui.homepage.dataset.DatasetExplorerScreen
 import com.gegaremant.truenasmobile.ui.homepage.details.DiskInfoScreen
 import com.gegaremant.truenasmobile.ui.homepage.details.PerformanceScreen
@@ -144,17 +152,22 @@ private data class NavItem(
     val unselectedIcon: ImageVector
 )
 
-private fun destinationToNavItem(destination: NavbarDestination): NavItem? {
+private fun destinationToNavItem(destination: Screen): NavItem? {
     return when (destination) {
-        NavbarDestination.HOME -> NavItem(Screen.Home, "Home", Icons.Filled.Home, Icons.Outlined.Home)
-        NavbarDestination.APPS -> NavItem(Screen.Apps, "Apps", Icons.Filled.Apps, Icons.Outlined.Apps)
-        NavbarDestination.CONTAINERS -> NavItem(Screen.Containers, "Containers", Icons.Filled.Inventory, Icons.Outlined.Inventory2)
-        NavbarDestination.VMS -> NavItem(Screen.Vms, "VMs", Icons.Filled.Computer, Icons.Outlined.Computer)
-        NavbarDestination.INSTANCE_SETTINGS -> NavItem(Screen.InstanceConfigScreen, "Instance", Icons.Filled.Tune, Icons.Outlined.Tune)
-        NavbarDestination.UPDATES -> NavItem(Screen.SystemUpdateScreen, "Updates", Icons.Filled.SystemUpdateAlt, Icons.Outlined.SystemUpdateAlt)
-        NavbarDestination.MARKETPLACE -> NavItem(Screen.Marketplace, "Marketplace", Icons.Filled.Storefront, Icons.Outlined.Storefront)
+        Screen.Home -> NavItem(Screen.Home, "Статистика", Icons.Filled.Home, Icons.Outlined.Home)
+        Screen.Storage -> NavItem(Screen.Storage, "Хранилище", Icons.Filled.Storage, Icons.Outlined.Storage)
+        Screen.Tasks -> NavItem(Screen.Tasks, "Задачи", Icons.Filled.Checklist, Icons.Outlined.Checklist)
+        Screen.Performance -> NavItem(Screen.Performance, "Графики", Icons.Filled.ShowChart, Icons.Outlined.ShowChart)
+        else -> null
     }
 }
+
+private val FIXED_NAV_DESTINATIONS = listOf(
+    Screen.Home,
+    Screen.Storage,
+    Screen.Tasks,
+    Screen.Performance
+)
 
 @Composable
 fun MainScreen(
@@ -164,14 +177,10 @@ fun MainScreen(
 ) {
     val navController = rememberNavController()
     val configuration = LocalConfiguration.current
-    val personalization by PersonalizationManager.state.collectAsState()
-    val isCompactNav = personalization.compactNav
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    val navItems = remember(personalization.navbarDestinations) {
-        personalization.navbarDestinations.mapNotNull { destination ->
-            destinationToNavItem(destination)
-        }
+    val navItems = remember {
+        FIXED_NAV_DESTINATIONS.mapNotNull { destinationToNavItem(it) }
     }
     val navRoutes = remember(navItems) { navItems.map { it.screen.route }.toSet() }
 
@@ -211,15 +220,14 @@ fun MainScreen(
                         NavigationRailItem(
                             selected = selected,
                             onClick = { onNavClick(navController, item.screen.route) },
-                            label = if (isCompactNav) null else {
-                                { Text(item.title, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal) }
+                            label = {
+                                Text(item.title, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
                             },
                             icon = {
                                 Crossfade(targetState = selected, label = "iconFade") { isSelected ->
                                     Icon(
                                         if (isSelected) item.selectedIcon else item.unselectedIcon,
-                                        item.title,
-                                        modifier = if (isCompactNav) Modifier.size(28.dp) else Modifier
+                                        item.title
                                     )
                                 }
                             },
@@ -252,13 +260,11 @@ fun MainScreen(
                                 NavigationBarItem(
                                     selected = selected,
                                     onClick = { onNavClick(navController, item.screen.route) },
-                                    label = if (isCompactNav) null else {
-                                        {
-                                            Text(
-                                                item.title,
-                                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
-                                            )
-                                        }
+                                    label = {
+                                        Text(
+                                            item.title,
+                                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+                                        )
                                     },
                                     icon = {
                                         Crossfade(
@@ -267,8 +273,7 @@ fun MainScreen(
                                         ) { isSelected ->
                                             Icon(
                                                 if (isSelected) item.selectedIcon else item.unselectedIcon,
-                                                item.title,
-                                                modifier = if (isCompactNav) Modifier.size(28.dp) else Modifier
+                                                item.title
                                             )
                                         }
                                     },
@@ -372,6 +377,50 @@ private fun TrueNasMobileNavGraph(
                     navController.navigate(Screen.SystemInformationScreen.route)
                 },
                 onSearchClick = onSearchClick
+            )
+        }
+        composable(Screen.Storage.route) {
+            StorageScreen(
+                manager = manager,
+                onNavigateToSettings = { rootNavController.navigate(Screen.Settings.route) },
+                onPoolClick = { pool: System.Pool ->
+                    PoolDataHolder.currentPool = pool
+                    navController.navigate(Screen.PoolDetails.route)
+                },
+                onNavigateToShareInfo = { shareType ->
+                    AppDataHolder.selectedShareType = shareType
+                    navController.navigate(Screen.ShareInfo.route)
+                },
+                onDisksClick = {
+                    navController.navigate(Screen.DiskInfo.route)
+                },
+                onSearchClick = onSearchClick
+            )
+        }
+        composable(Screen.Tasks.route) {
+            TasksScreen(
+                manager = manager,
+                onSearchClick = onSearchClick,
+                onNavigateToAppInfo = { app ->
+                    AppDataHolder.selectedApp = app
+                    navController.navigate(Screen.AppDetailsScreen.route)
+                },
+                onOpenAdvanced = { appId ->
+                    navController.navigate(Screen.AppAdvancedInfoScreen.createRoute(appId))
+                },
+                onNavigateToUpgrade = { appName ->
+                    navController.navigate(Screen.AppUpgrade.createRoute(appName))
+                },
+                onNavigateToRollback = { navController.navigate(Screen.RollbackVersion.createRoute(it)) },
+                onNavigateToMarketplace = { navController.navigate(Screen.Marketplace.route) },
+                onNavigateToContainerInfo = { container ->
+                    ContainerDataHolder.selectedContainer = container
+                    navController.navigate(Screen.ContainerInfo.route)
+                },
+                onNavigateToVmInfo = { vmInfo ->
+                    VmDataHolder.selectedVm = vmInfo
+                    navController.navigate(Screen.VmDetails.route)
+                }
             )
         }
         composable(Screen.LocalAdminSetupScreen.route) {
@@ -759,15 +808,30 @@ private fun TrueNasMobileNavGraph(
             }
         }
         composable(Screen.Performance.route) {
+            val performanceViewModel: HomeViewModel = viewModel(
+                factory = HomeViewModel.HomeViewModelFactory(
+                    manager,
+                    LocalContext.current.applicationContext
+                )
+            )
+            val performanceState by performanceViewModel.uiState.collectAsState()
+            val performanceSuccess = performanceState as? HomeUiState.Success
+            LaunchedEffect(performanceSuccess) {
+                if (performanceSuccess != null) {
+                    AppDataHolder.cpuData = performanceSuccess.cpuData
+                    AppDataHolder.memoryData = performanceSuccess.memoryData
+                    AppDataHolder.temperatureData = performanceSuccess.temperatureData
+                }
+            }
             PerformanceScreen(
-                cpuData = AppDataHolder.cpuData,
-                memoryData = AppDataHolder.memoryData,
-                temperatureData = AppDataHolder.temperatureData,
+                cpuData = performanceSuccess?.cpuData ?: AppDataHolder.cpuData,
+                memoryData = performanceSuccess?.memoryData ?: AppDataHolder.memoryData,
+                temperatureData = performanceSuccess?.temperatureData ?: AppDataHolder.temperatureData,
                 initialMetricType = AppDataHolder.initialMetricType,
-                isLoading = false,
+                isLoading = performanceState is HomeUiState.Loading,
                 manager = manager,
-                onNavigateBack = { navController.popBackStack() },
-                onRefresh = {}
+                onNavigateBack = null,
+                onRefresh = { performanceViewModel.refresh() }
             )
         }
 
