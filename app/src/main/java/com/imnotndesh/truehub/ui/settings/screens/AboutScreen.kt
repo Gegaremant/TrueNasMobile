@@ -57,7 +57,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.imnotndesh.truehub.R
 import com.imnotndesh.truehub.data.api.TrueNASApiManager
 import com.imnotndesh.truehub.data.helpers.LoggingPrefs
@@ -234,19 +233,8 @@ fun AboutScreen(
                     icon = Icons.Default.Code
                 ) {
                     DeveloperCard(
-                        name = "Brian Njoroge",
+                        name = "Gegaremant Labs",
                         year = "2026"
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    SupportButton(
-                        onClick = {
-                            val intent = android.content.Intent(
-                                android.content.Intent.ACTION_VIEW,
-                                "https://github.com/sponsors/Imnotndesh".toUri()
-                            )
-                            context.startActivity(intent)
-                        }
                     )
                 }
 
@@ -255,7 +243,7 @@ fun AboutScreen(
                     icon = Icons.Default.Gavel
                 ) {
                     Text(
-                        text = "© 2025 Brian. All rights reserved.",
+                        text = "© 2025 Gegaremant Labs. All rights reserved.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -298,37 +286,7 @@ fun AboutScreen(
                     )
                 }
             }
-        }
-
 }
-@Composable
-private fun SupportButton(onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-        ),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "Support Development",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-    }
 }
 
 @Composable
