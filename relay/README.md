@@ -141,7 +141,7 @@ FCM требует реальную запись приложения в Firebas
 уйдёт минут 15:
 
 1. В консоли Firebase добавьте **Android-приложение** с именем пакета
-   `com.imnotndesh.truehub` (applicationId, используемый сборкой), затем
+   `com.gegaremant.truenasmobile` (applicationId, используемый сборкой), затем
    скачайте `google-services.json` в `app/`.
 2. Пропишите Gradle-сторону (только после появления файла, чтобы сборки без
    него продолжали работать):
@@ -166,7 +166,7 @@ FCM требует реальную запись приложения в Firebas
 ```
 relay/
 ├── Dockerfile, docker-compose.yml
-└── src/main/kotlin/com/imnotndesh/truehub/relay/
+└── src/main/kotlin/com/gegaremant/truenasmobile/relay/
     ├── Main.kt                  # точка входа
     ├── Config.kt                # конфигурация из env
     ├── crypto/E2E.kt            # шифрование + envelope

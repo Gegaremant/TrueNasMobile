@@ -4,7 +4,7 @@ plugins {
     application
 }
 
-group = "com.imnotndesh.truehub.relay"
+group = "com.gegaremant.truenasmobile.relay"
 version = "0.1.0"
 
 repositories {
@@ -22,7 +22,7 @@ kotlin {
 }
 
 application {
-    mainClass.set("com.imnotndesh.truehub.relay.MainKt")
+    mainClass.set("com.gegaremant.truenasmobile.relay.MainKt")
     applicationDefaultJvmArgs = listOf("-Xmx256m")
 }
 

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.imnotndesh.truehub"
+    namespace = "com.gegaremant.truenasmobile"
     compileSdk = 37
 
     defaultConfig {
@@ -22,12 +22,12 @@ android {
     productFlavors {
         create("playstore") {
             dimension = "store"
-            applicationId = "com.imnotndesh.truehub.app"
+            applicationId = "com.gegaremant.truenasmobile.app"
             buildConfigField("Boolean", "IS_PLAYSTORE_BUILD", "true")
         }
         create("github") {
             dimension = "store"
-            applicationId = "com.imnotndesh.truehub"
+            applicationId = "com.gegaremant.truenasmobile"
             buildConfigField("Boolean", "IS_PLAYSTORE_BUILD", "false")
         }
     }

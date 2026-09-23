@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <application
-        android:name=".TrueHubApplication"
+        android:name=".TrueNasMobileApplication"
         android:enableOnBackInvokedCallback="true"
         android:allowBackup="true"
         android:usesCleartextTraffic="true"
@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TrueHub">
+        android:theme="@style/Theme.TrueNasMobile">
 
         <activity
             android:name=".MainActivity"
@@ -36,7 +36,7 @@
         </activity>
         <activity
             android:name=".ui.widgets.quicklaunch.QuickLaunchConfigActivity"
-            android:theme="@style/Theme.TrueHub.Transparent"
+            android:theme="@style/Theme.TrueNasMobile.Transparent"
             android:excludeFromRecents="true"
             android:exported="false" />
 
@@ -65,7 +65,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.widgets.UpgradeBottomSheetActivity"
-            android:theme="@style/Theme.TrueHub.Transparent"
+            android:theme="@style/Theme.TrueNasMobile.Transparent"
             android:excludeFromRecents="true"
             android:exported="false" />
 

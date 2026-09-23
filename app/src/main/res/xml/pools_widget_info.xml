@@ -7,5 +7,4 @@
     android:initialLayout="@layout/glance_default_placement"
     android:widgetCategory="home_screen"
     android:description="@string/PoolWidgetDescription"
-    android:previewImage="@drawable/poolspreview"
     />

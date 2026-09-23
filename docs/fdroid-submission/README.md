@@ -16,8 +16,8 @@
 1. Убедитесь, что у вас есть аккаунт GitLab. Затем сделайте форк:
    https://gitlab.com/fdroid/fdroiddata
 2. Создайте новую ветку, например `add-truenasmobile`.
-3. Добавьте файл `metadata/com.imnotndesh.truehub.yml` с содержимым
-   `fdroiddata-com.imnotndesh.truehub.yml` (рядом с этим файлом).
+3. Добавьте файл `metadata/com.gegaremant.truenasmobile.yml` с содержимым
+   `fdroiddata-com.gegaremant.truenasmobile.yml` (рядом с этим файлом).
 4. Запушьте ветку и откройте merge request в `master` fdroiddata.
 5. Мейнтейнеры F-Droid проверяют исходники + рецепт сборки, затем принимают. Сборки и
    публикация происходят автоматически (обычно в течение нескольких дней после принятия;

@@ -1,10 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.TrueHub" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.TrueNasMobile" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
-    <style name="Theme.TrueHub.Transparent" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.TrueNasMobile.Transparent" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -12,5 +12,5 @@
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:backgroundDimAmount">0.5</item> <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
-    <style name="Theme.TrueHub" parent="Base.Theme.TrueHub" />
+    <style name="Theme.TrueNasMobile" parent="Base.Theme.TrueNasMobile" />
 </resources>

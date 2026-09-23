@@ -2,7 +2,7 @@
 
 Новое приложение: **TrueNasMobile** — нативный Android-клиент для управления self-hosted сервером TrueNAS SCALE (приложения, контейнеры, ВМ и предупреждения) с телефона.
 
-- **App ID:** `com.imnotndesh.truehub`
+- **App ID:** `com.gegaremant.truenasmobile`
 - **Лицензия:** GPL-3.0-or-later
 - **Исходники:** https://github.com/Gegaremant/TrueNasMobile
 

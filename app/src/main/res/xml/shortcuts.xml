@@ -9,9 +9,9 @@
         android:shortcutLongLabel="@string/shortcut_install_app_long"
         android:shortcutDisabledMessage="@string/shortcut_disabled">
         <intent
-            android:action="com.imnotndesh.truehub.OPEN_INSTALL_APP"
-            android:targetPackage="com.imnotndesh.truehub"
-            android:targetClass="com.imnotndesh.truehub.MainActivity" />
+            android:action="com.gegaremant.truenasmobile.OPEN_INSTALL_APP"
+            android:targetPackage="com.gegaremant.truenasmobile"
+            android:targetClass="com.gegaremant.truenasmobile.MainActivity" />
     </shortcut>
 
     <shortcut
@@ -22,9 +22,9 @@
         android:shortcutLongLabel="@string/shortcut_update_apps_long"
         android:shortcutDisabledMessage="@string/shortcut_disabled">
         <intent
-            android:action="com.imnotndesh.truehub.OPEN_UPDATE_APPS"
-            android:targetPackage="com.imnotndesh.truehub"
-            android:targetClass="com.imnotndesh.truehub.MainActivity" />
+            android:action="com.gegaremant.truenasmobile.OPEN_UPDATE_APPS"
+            android:targetPackage="com.gegaremant.truenasmobile"
+            android:targetClass="com.gegaremant.truenasmobile.MainActivity" />
     </shortcut>
 
     <shortcut
@@ -35,9 +35,9 @@
         android:shortcutLongLabel="@string/shortcut_configure_instance_long"
         android:shortcutDisabledMessage="@string/shortcut_disabled">
         <intent
-            android:action="com.imnotndesh.truehub.OPEN_CONFIGURE_INSTANCE"
-            android:targetPackage="com.imnotndesh.truehub"
-            android:targetClass="com.imnotndesh.truehub.MainActivity" />
+            android:action="com.gegaremant.truenasmobile.OPEN_CONFIGURE_INSTANCE"
+            android:targetPackage="com.gegaremant.truenasmobile"
+            android:targetClass="com.gegaremant.truenasmobile.MainActivity" />
     </shortcut>
 
     <shortcut
@@ -48,9 +48,9 @@
         android:shortcutLongLabel="@string/shortcut_update_instance_long"
         android:shortcutDisabledMessage="@string/shortcut_disabled">
         <intent
-            android:action="com.imnotndesh.truehub.OPEN_UPDATE_INSTANCE"
-            android:targetPackage="com.imnotndesh.truehub"
-            android:targetClass="com.imnotndesh.truehub.MainActivity" />
+            android:action="com.gegaremant.truenasmobile.OPEN_UPDATE_INSTANCE"
+            android:targetPackage="com.gegaremant.truenasmobile"
+            android:targetClass="com.gegaremant.truenasmobile.MainActivity" />
     </shortcut>
 
 </shortcuts>
