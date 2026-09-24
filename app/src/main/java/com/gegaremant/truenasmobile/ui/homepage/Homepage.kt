@@ -70,12 +70,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Shares
 import com.gegaremant.truenasmobile.data.models.System
@@ -470,7 +472,7 @@ private fun SystemOverviewCard(
                                 overflow = TextOverflow.Ellipsis
                             )
                             Text(
-                                "Uptime: ${systemInfo.uptime.toShortUptime()}",
+                                stringResource(R.string.homepage_uptime, systemInfo.uptime.toShortUptime()),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                                 maxLines = 1,
@@ -504,7 +506,7 @@ private fun SystemOverviewCard(
                             PillChip(
                                 onClick = onUpdateClick,
                                 icon = Icons.Filled.SystemUpdateAlt,
-                                label = "Update (${systemUpdateVersions.size})",
+                                label = stringResource(R.string.homepage_update_pill, systemUpdateVersions.size),
                                 tint = Color(0xFFF57C00)
                             )
                         }
@@ -515,7 +517,7 @@ private fun SystemOverviewCard(
                         PillChip(
                             onClick = onPerformanceClick,
                             icon = Icons.Filled.Memory,
-                            label = "Performance",
+                            label = stringResource(R.string.homepage_performance),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -525,7 +527,7 @@ private fun SystemOverviewCard(
                         PillChip(
                             onClick = onInstanceConfigClick,
                             icon = Icons.Filled.Tune,
-                            label = "Instance Settings"
+                            label = stringResource(R.string.homepage_instance_settings)
                         )
                     }
 
@@ -534,7 +536,7 @@ private fun SystemOverviewCard(
                         PillChip(
                             onClick = onSystemInfoClick,
                             icon = Icons.Filled.Info,
-                            label = "System Information"
+                            label = stringResource(R.string.homepage_system_information)
                         )
                     }
                 }
@@ -675,7 +677,7 @@ fun StorageCard(modifier: Modifier = Modifier, pool: System.Pool, onClick: () ->
         Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
-                    Text("Storage Pool", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.homepage_storage_pool), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
                     Text(pool.name, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 }
                 val isHealthy = pool.healthy
@@ -687,9 +689,9 @@ fun StorageCard(modifier: Modifier = Modifier, pool: System.Pool, onClick: () ->
                 }
                 Surface(color = statusColor.copy(alpha = 0.12f), shape = RoundedCornerShape(100.dp)) {
                     val statusText = when {
-                        !isHealthy -> "Error"
-                        hasWarning -> "Warning"
-                        else -> "Healthy"
+                        !isHealthy -> stringResource(R.string.homepage_status_error)
+                        hasWarning -> stringResource(R.string.homepage_status_warning)
+                        else -> stringResource(R.string.homepage_status_healthy)
                     }
                     Text(statusText, style = MaterialTheme.typography.labelMedium, color = statusColor, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
                 }
@@ -715,21 +717,25 @@ fun StorageCard(modifier: Modifier = Modifier, pool: System.Pool, onClick: () ->
 
                 Column {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Used: ${formatBytes(allocated)}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
-                        Text("Free: ${free?.let { formatBytes(it) } ?: "Unavailable"}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
+                        Text(stringResource(R.string.homepage_used, formatBytes(allocated)), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
+                        Text(stringResource(R.string.homepage_free, free?.let { formatBytes(it) } ?: stringResource(R.string.homepage_unavailable)), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     LinearProgressIndicator(progress = { animatedProgress }, modifier = Modifier.fillMaxWidth().height(12.dp).clip(RoundedCornerShape(6.dp)), color = progressColor, trackColor = MaterialTheme.colorScheme.surfaceVariant, strokeCap = ProgressIndicatorDefaults.LinearStrokeCap)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        "Total: ${formatBytes(size)} • Fragmentation: ${fragmentation?.let { "${it}%" } ?: "N/A"}",
+                        stringResource(
+                            R.string.homepage_total_and_frag,
+                            formatBytes(size),
+                            fragmentation?.let { "${it}%" } ?: "N/A"
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                 }
             } else {
                 Text(
-                    "Storage details missing",
+                    stringResource(R.string.homepage_storage_missing),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -749,8 +755,8 @@ fun NoStorageCard(modifier: Modifier = Modifier) {
         Column(modifier = Modifier.fillMaxWidth().padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(Icons.Default.Storage, null, modifier = Modifier.size(56.dp), tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Нет пулов", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-            Text("Пока не настроено ни одного пула хранения.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+            Text(stringResource(R.string.homepage_no_pools), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+            Text(stringResource(R.string.homepage_no_pools_hint), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
         }
     }
 }
@@ -766,14 +772,14 @@ fun SharesCard(
     Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), modifier = modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
         Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text("Общие папки SMB", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Text(stringResource(R.string.homepage_smb_shares), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                 Surface(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(100.dp)) {
                     Text("${smbShares.size}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
                 }
             }
             if (smbShares.isEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
-                EmptyShareState("Нет общих папок SMB")
+                EmptyShareState(stringResource(R.string.homepage_no_smb_shares))
             } else {
                 Spacer(modifier = Modifier.height(16.dp))
                 smbShares.take(5).forEach { share ->
@@ -782,7 +788,7 @@ fun SharesCard(
                 }
                 if (smbShares.size > 5) {
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("+ ${smbShares.size - 5} ещё...", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(start = 8.dp))
+                    Text(stringResource(R.string.homepage_more, smbShares.size - 5), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(start = 8.dp))
                 }
             }
             if (smbShares.isNotEmpty() || nfsShares.isNotEmpty()) {
@@ -791,14 +797,14 @@ fun SharesCard(
                 Spacer(modifier = Modifier.height(24.dp))
             }
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text("Общие папки NFS", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Text(stringResource(R.string.homepage_nfs_shares), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                 Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(100.dp)) {
                     Text("${nfsShares.size}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSecondaryContainer, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
                 }
             }
             if (nfsShares.isEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
-                EmptyShareState("Нет общих папок NFS")
+                EmptyShareState(stringResource(R.string.homepage_no_nfs_shares))
             } else {
                 Spacer(modifier = Modifier.height(16.dp))
                 nfsShares.take(5).forEach { share ->
@@ -807,7 +813,7 @@ fun SharesCard(
                 }
                 if (nfsShares.size > 5) {
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("+ ${nfsShares.size - 5} ещё...", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(start = 8.dp))
+                    Text(stringResource(R.string.homepage_more, nfsShares.size - 5), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(start = 8.dp))
                 }
             }
         }
@@ -842,7 +848,7 @@ private fun SmbShareItem(share: Shares.SmbShare, onShareClick: (Shares.SmbShare)
             val statusColor = if (share.enabled) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer
             val contentColor = if (share.enabled) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onErrorContainer
             Surface(color = statusColor, shape = RoundedCornerShape(8.dp)) {
-                Text(if (share.enabled) "Active" else "Off", style = MaterialTheme.typography.labelSmall, color = contentColor, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), fontWeight = FontWeight.Bold)
+                Text(if (share.enabled) stringResource(R.string.homepage_active) else stringResource(R.string.homepage_off), style = MaterialTheme.typography.labelSmall, color = contentColor, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -867,7 +873,7 @@ private fun NfsShareItem(share: Shares.NfsShare, onShareClick: (Shares.NfsShare)
             val statusColor = if (share.enabled) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
             val contentColor = if (share.enabled) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer
             Surface(color = statusColor, shape = RoundedCornerShape(8.dp)) {
-                Text(if (share.enabled) "Active" else "Off", style = MaterialTheme.typography.labelSmall, color = contentColor, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), fontWeight = FontWeight.Bold)
+                Text(if (share.enabled) stringResource(R.string.homepage_active) else stringResource(R.string.homepage_off), style = MaterialTheme.typography.labelSmall, color = contentColor, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -875,7 +881,8 @@ private fun NfsShareItem(share: Shares.NfsShare, onShareClick: (Shares.NfsShare)
 
 @Composable
 fun ShutdownDialog(onShutdown: (String) -> Unit, onRestart: (String) -> Unit, onDismiss: () -> Unit) {
-    var shutdownReason by remember { mutableStateOf("User requested shutdown") }
+    val defaultShutdownReason = stringResource(R.string.homepage_shutdown_reason_default)
+    var shutdownReason by remember { mutableStateOf(defaultShutdownReason) }
     var selectedAction by remember { mutableStateOf(PowerAction.RESTART) }
 
     val configuration = androidx.compose.ui.platform.LocalConfiguration.current
@@ -953,7 +960,7 @@ fun ShutdownDialog(onShutdown: (String) -> Unit, onRestart: (String) -> Unit, on
                     }
                     Spacer(Modifier.height(14.dp))
                     Text(
-                        "Power Control",
+                        stringResource(R.string.homepage_power_control),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -961,7 +968,7 @@ fun ShutdownDialog(onShutdown: (String) -> Unit, onRestart: (String) -> Unit, on
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "Choose how you'd like to power this system",
+                        stringResource(R.string.homepage_power_subtitle),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -981,7 +988,7 @@ fun ShutdownDialog(onShutdown: (String) -> Unit, onRestart: (String) -> Unit, on
                 ) {
                     PowerActionSegment(
                         modifier = Modifier.weight(1f),
-                        label = "Restart",
+                        label = stringResource(R.string.homepage_restart),
                         icon = Icons.Default.RestartAlt,
                         selected = selectedAction == PowerAction.RESTART,
                         accent = MaterialTheme.colorScheme.primary,
@@ -989,7 +996,7 @@ fun ShutdownDialog(onShutdown: (String) -> Unit, onRestart: (String) -> Unit, on
                     )
                     PowerActionSegment(
                         modifier = Modifier.weight(1f),
-                        label = "Shutdown",
+                        label = stringResource(R.string.homepage_shutdown),
                         icon = Icons.Default.PowerSettingsNew,
                         selected = selectedAction == PowerAction.SHUTDOWN,
                         accent = MaterialTheme.colorScheme.error,
@@ -1004,7 +1011,7 @@ fun ShutdownDialog(onShutdown: (String) -> Unit, onRestart: (String) -> Unit, on
                     OutlinedTextField(
                         value = shutdownReason,
                         onValueChange = { shutdownReason = it },
-                        label = { Text("Shutdown reason") },
+                        label = { Text(stringResource(R.string.homepage_shutdown_reason)) },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(14.dp),
                         maxLines = 2,
@@ -1033,7 +1040,7 @@ fun ShutdownDialog(onShutdown: (String) -> Unit, onRestart: (String) -> Unit, on
                             )
                             Spacer(Modifier.width(10.dp))
                             Text(
-                                "Services will briefly go offline while the system restarts.",
+                                stringResource(R.string.homepage_restart_hint),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -1064,7 +1071,7 @@ fun ShutdownDialog(onShutdown: (String) -> Unit, onRestart: (String) -> Unit, on
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        if (selectedAction == PowerAction.RESTART) "Restart System" else "Shutdown System",
+                        if (selectedAction == PowerAction.RESTART) stringResource(R.string.homepage_restart_system) else stringResource(R.string.homepage_shutdown_system),
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -1079,7 +1086,7 @@ fun ShutdownDialog(onShutdown: (String) -> Unit, onRestart: (String) -> Unit, on
                         .height(if (isCompactHeight) 40.dp else 44.dp)
                 ) {
                     Text(
-                        "Cancel",
+                        stringResource(R.string.common_cancel),
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

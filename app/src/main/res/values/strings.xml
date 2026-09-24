@@ -181,4 +181,68 @@
         <item quantity="one">%1$d saved account</item>
         <item quantity="other">%1$d saved accounts</item>
     </plurals>
+
+    <!-- Homepage -->
+    <string name="homepage_uptime">Uptime: %1$s</string>
+    <string name="homepage_update_pill">Update (%1$d)</string>
+    <string name="homepage_performance">Performance</string>
+    <string name="homepage_instance_settings">Instance Settings</string>
+    <string name="homepage_system_information">System Information</string>
+    <string name="homepage_metrics_loading">System Metrics</string>
+    <string name="homepage_metrics_failed">Failed to load metrics</string>
+    <string name="homepage_storage_pool">Storage Pool</string>
+    <string name="homepage_status_error">Error</string>
+    <string name="homepage_status_warning">Warning</string>
+    <string name="homepage_status_healthy">Healthy</string>
+    <string name="homepage_used">Used: %1$s</string>
+    <string name="homepage_free">Free: %1$s</string>
+    <string name="homepage_unavailable">Unavailable</string>
+    <string name="homepage_total_and_frag">Total: %1$s • Fragmentation: %2$s</string>
+    <string name="homepage_storage_missing">Storage details missing</string>
+    <string name="homepage_no_pools">No storage pools</string>
+    <string name="homepage_no_pools_hint">No storage pools configured yet.</string>
+    <string name="homepage_smb_shares">SMB Shares</string>
+    <string name="homepage_no_smb_shares">No SMB shares</string>
+    <string name="homepage_more">+%1$d more…</string>
+    <string name="homepage_nfs_shares">NFS Shares</string>
+    <string name="homepage_no_nfs_shares">No NFS shares</string>
+    <string name="homepage_active">Active</string>
+    <string name="homepage_off">Off</string>
+    <string name="homepage_power_control">Power Control</string>
+    <string name="homepage_power_subtitle">Choose how you\'d like to power this system</string>
+    <string name="homepage_restart">Restart</string>
+    <string name="homepage_shutdown">Shutdown</string>
+    <string name="homepage_shutdown_reason">Shutdown reason</string>
+    <string name="homepage_restart_hint">Services will briefly go offline while the system restarts.</string>
+    <string name="homepage_restart_system">Restart System</string>
+    <string name="homepage_shutdown_system">Shutdown System</string>
+    <string name="homepage_shutdown_reason_default">User requested shutdown</string>
+    <string name="toast_shutdown_init">Initiating system shutdown…</string>
+    <string name="toast_shutdown_success">System shutdown initiated successfully</string>
+    <string name="toast_restart_init">Initiating system restart…</string>
+    <string name="toast_restart_success">System restart initiated successfully</string>
+
+    <!-- Storage screen -->
+    <string name="storage_title">Storage</string>
+    <string name="storage_no_pools">No pools</string>
+    <string name="storage_subtitle">%1$s · %2$s</string>
+    <string name="storage_loading_data">Loading data…</string>
+    <string name="storage_connection_error">Connection error</string>
+    <string name="storage_loading">Loading storage</string>
+    <string name="storage_load_failed">Failed to load storage data.\n%1$s</string>
+    <string name="storage_shares_suffix">shared folders</string>
+
+    <!-- Tasks tabs -->
+    <string name="tasks_tab_apps">Apps</string>
+    <string name="tasks_tab_containers">Containers</string>
+    <string name="tasks_tab_vms">Virtual Machines</string>
+
+    <plurals name="storage_pool_count">
+        <item quantity="one">%1$d pool</item>
+        <item quantity="other">%1$d pools</item>
+    </plurals>
+    <plurals name="storage_share_count">
+        <item quantity="one">%1$d shared folder</item>
+        <item quantity="other">%1$d shared folders</item>
+    </plurals>
 </resources>

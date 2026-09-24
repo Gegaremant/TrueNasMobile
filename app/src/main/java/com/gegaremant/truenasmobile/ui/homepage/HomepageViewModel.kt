@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.EncryptedPrefs
@@ -290,10 +291,10 @@ class HomeViewModel(
     fun shutdownSystem(reason: String) {
         viewModelScope.launch {
             try {
-                ToastManager.showInfo("Initiating system shutdown...")
+                ToastManager.showInfoRes(R.string.toast_shutdown_init)
                 val result = apiManager.system.shutdownSystemWithResult(reason)
                 when (result) {
-                    is ApiResult.Success -> ToastManager.showSuccess("System shutdown initiated successfully")
+                    is ApiResult.Success -> ToastManager.showSuccessRes(R.string.toast_shutdown_success)
                     is ApiResult.Error -> ToastManager.showError(result.message)
                     is ApiResult.Loading -> { /* no-op */ }
                 }
@@ -304,10 +305,10 @@ class HomeViewModel(
     fun rebootSystem(reason: String = "") {
         viewModelScope.launch {
             try {
-                ToastManager.showInfo("Initiating system restart...")
+                ToastManager.showInfoRes(R.string.toast_restart_init)
                 val result = apiManager.system.rebootSystem(reason)
                 when (result) {
-                    is ApiResult.Success -> ToastManager.showSuccess("System restart initiated successfully")
+                    is ApiResult.Success -> ToastManager.showSuccessRes(R.string.toast_restart_success)
                     is ApiResult.Error -> ToastManager.showError(result.message)
                     is ApiResult.Loading -> { /* no-op */ }
                 }

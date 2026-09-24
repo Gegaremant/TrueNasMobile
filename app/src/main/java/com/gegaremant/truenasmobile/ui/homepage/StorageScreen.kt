@@ -12,8 +12,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -41,21 +44,24 @@ fun StorageScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         UnifiedScreenHeader(
-            title = "Хранилище",
+            title = stringResource(R.string.storage_title),
             subtitle = when (val state = uiState) {
                 is HomeUiState.Success -> {
                     val pools = state.poolDetails.size
-                    val poolsText = when {
-                        pools == 0 -> "Нет пулов"
-                        pools % 10 == 1 && pools % 100 != 11 -> "$pools пул"
-                        pools % 10 in 2..4 && pools % 100 !in 12..14 -> "$pools пула"
-                        else -> "$pools пулов"
+                    val poolsText = if (pools == 0) {
+                        stringResource(R.string.storage_no_pools)
+                    } else {
+                        pluralStringResource(R.plurals.storage_pool_count, pools, pools)
                     }
                     val shares = state.smbShares.size + state.nfsShares.size
-                    "$poolsText · $shares общих папок"
+                    stringResource(
+                        R.string.storage_subtitle,
+                        poolsText,
+                        pluralStringResource(R.plurals.storage_share_count, shares, shares)
+                    )
                 }
-                is HomeUiState.Loading -> "Загрузка данных..."
-                is HomeUiState.Error -> "Ошибка подключения"
+                is HomeUiState.Loading -> stringResource(R.string.storage_loading_data)
+                is HomeUiState.Error -> stringResource(R.string.storage_connection_error)
             },
             isLoading = uiState is HomeUiState.Loading,
             isRefreshing = false,
@@ -71,7 +77,7 @@ fun StorageScreen(
         ) {
             when (val state = uiState) {
                 is HomeUiState.Loading -> {
-                    LoadingScreen("Загрузка хранилища")
+                    LoadingScreen(stringResource(R.string.storage_loading))
                 }
                 is HomeUiState.Error -> {
                     Column(
@@ -81,7 +87,7 @@ fun StorageScreen(
                         verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
                     ) {
                         androidx.compose.material3.Text(
-                            text = "Не удалось загрузить данные хранилища.\n${state.message}",
+                            text = stringResource(R.string.storage_load_failed, state.message),
                             modifier = Modifier.padding(16.dp),
                             color = androidx.compose.material3.MaterialTheme.colorScheme.error
                         )

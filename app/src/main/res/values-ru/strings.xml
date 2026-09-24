@@ -183,4 +183,72 @@
         <item quantity="many">%1$d сохранённых аккаунтов</item>
         <item quantity="other">%1$d сохранённых аккаунтов</item>
     </plurals>
+
+    <!-- Homepage -->
+    <string name="homepage_uptime">Аптайм: %1$s</string>
+    <string name="homepage_update_pill">Обновление (%1$d)</string>
+    <string name="homepage_performance">Производительность</string>
+    <string name="homepage_instance_settings">Настройки инстанса</string>
+    <string name="homepage_system_information">Сведения о системе</string>
+    <string name="homepage_metrics_loading">Метрики системы</string>
+    <string name="homepage_metrics_failed">Не удалось загрузить метрики</string>
+    <string name="homepage_storage_pool">Пул хранения</string>
+    <string name="homepage_status_error">Ошибка</string>
+    <string name="homepage_status_warning">Предупреждение</string>
+    <string name="homepage_status_healthy">Исправен</string>
+    <string name="homepage_used">Использовано: %1$s</string>
+    <string name="homepage_free">Свободно: %1$s</string>
+    <string name="homepage_unavailable">Недоступно</string>
+    <string name="homepage_total_and_frag">Всего: %1$s • Фрагментация: %2$s</string>
+    <string name="homepage_storage_missing">Данные о хранилище отсутствуют</string>
+    <string name="homepage_no_pools">Нет пулов</string>
+    <string name="homepage_no_pools_hint">Пока не настроено ни одного пула хранения.</string>
+    <string name="homepage_smb_shares">Общие папки SMB</string>
+    <string name="homepage_no_smb_shares">Нет общих папок SMB</string>
+    <string name="homepage_more">+%1$d ещё…</string>
+    <string name="homepage_nfs_shares">Общие папки NFS</string>
+    <string name="homepage_no_nfs_shares">Нет общих папок NFS</string>
+    <string name="homepage_active">Активна</string>
+    <string name="homepage_off">Выкл.</string>
+    <string name="homepage_power_control">Управление питанием</string>
+    <string name="homepage_power_subtitle">Выберите, как вы хотите завершить работу системы</string>
+    <string name="homepage_restart">Перезагрузка</string>
+    <string name="homepage_shutdown">Завершение работы</string>
+    <string name="homepage_shutdown_reason">Причина завершения работы</string>
+    <string name="homepage_restart_hint">Сервисы ненадолго станут недоступны, пока система перезагружается.</string>
+    <string name="homepage_restart_system">Перезагрузить систему</string>
+    <string name="homepage_shutdown_system">Завершить работу системы</string>
+    <string name="homepage_shutdown_reason_default">Завершение работы запрошено пользователем</string>
+    <string name="toast_shutdown_init">Запускается завершение работы системы…</string>
+    <string name="toast_shutdown_success">Завершение работы системы успешно запущено</string>
+    <string name="toast_restart_init">Запускается перезагрузка системы…</string>
+    <string name="toast_restart_success">Перезагрузка системы успешно запущена</string>
+
+    <!-- Storage screen -->
+    <string name="storage_title">Хранилище</string>
+    <string name="storage_no_pools">Нет пулов</string>
+    <string name="storage_subtitle">%1$s · %2$s</string>
+    <string name="storage_loading_data">Загрузка данных…</string>
+    <string name="storage_connection_error">Ошибка подключения</string>
+    <string name="storage_loading">Загрузка хранилища</string>
+    <string name="storage_load_failed">Не удалось загрузить данные хранилища.\n%1$s</string>
+    <string name="storage_shares_suffix">общих папок</string>
+
+    <!-- Tasks tabs -->
+    <string name="tasks_tab_apps">Приложения</string>
+    <string name="tasks_tab_containers">Контейнеры</string>
+    <string name="tasks_tab_vms">Виртуальные машины</string>
+
+    <plurals name="storage_pool_count">
+        <item quantity="one">%1$d пул</item>
+        <item quantity="few">%1$d пула</item>
+        <item quantity="many">%1$d пулов</item>
+        <item quantity="other">%1$d пулов</item>
+    </plurals>
+    <plurals name="storage_share_count">
+        <item quantity="one">%1$d общая папка</item>
+        <item quantity="few">%1$d общие папки</item>
+        <item quantity="many">%1$d общих папок</item>
+        <item quantity="other">%1$d общих папок</item>
+    </plurals>
 </resources>

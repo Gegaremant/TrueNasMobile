@@ -14,7 +14,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Apps
 import com.gegaremant.truenasmobile.data.models.Virt
@@ -24,9 +26,9 @@ import com.gegaremant.truenasmobile.ui.services.containers.ContainersScreen
 import com.gegaremant.truenasmobile.ui.services.vm.VmsScreen
 
 private val TASKS_SUBTABS = listOf(
-    "Приложения" to "apps",
-    "Контейнеры" to "containers",
-    "Виртуальные машины" to "vms"
+    R.string.tasks_tab_apps to "apps",
+    R.string.tasks_tab_containers to "containers",
+    R.string.tasks_tab_vms to "vms"
 )
 
 /**
@@ -52,13 +54,13 @@ fun TasksScreen(
             selectedTabIndex = selectedSubTab,
             containerColor = MaterialTheme.colorScheme.surface
         ) {
-            TASKS_SUBTABS.forEachIndexed { index, (title, _) ->
+            TASKS_SUBTABS.forEachIndexed { index, (titleRes, _) ->
                 Tab(
                     selected = selectedSubTab == index,
                     onClick = { selectedSubTab = index },
                     text = {
                         Text(
-                            text = title,
+                            text = stringResource(titleRes),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
