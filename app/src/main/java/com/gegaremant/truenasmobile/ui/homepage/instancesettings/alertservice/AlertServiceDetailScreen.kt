@@ -53,9 +53,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.res.stringResource
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Alerts
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -74,6 +78,7 @@ fun AlertServiceDetailScreen(
     )
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
     var isEditing by remember { mutableStateOf(false) }
 
     var editName by remember { mutableStateOf("") }
@@ -100,14 +105,14 @@ fun AlertServiceDetailScreen(
     }
     LaunchedEffect(uiState.testResult) {
         uiState.testResult?.let { success ->
-            snackbarHostState.showSnackbar(if (success) "Test alert sent successfully!" else "Test alert failed.")
+            snackbarHostState.showSnackbar(if (success) context.getString(R.string.toast_test_alert_sent) else context.getString(R.string.toast_test_alert_failed))
             viewModel.clearTestResult()
         }
     }
     LaunchedEffect(uiState.updateResult) {
         if (uiState.updateResult == true) {
             isEditing = false
-            snackbarHostState.showSnackbar("Service updated")
+            snackbarHostState.showSnackbar(context.getString(R.string.toast_service_updated))
         }
     }
 
@@ -130,8 +135,8 @@ fun AlertServiceDetailScreen(
             )
     ) {
         UnifiedScreenHeader(
-            title = current?.name ?: "Alert Service",
-            subtitle = current?.type__title ?: "Service details",
+            title = current?.name ?: stringResource(R.string.alertservice_title),
+            subtitle = current?.type__title ?: stringResource(R.string.alertservice_subtitle),
             isLoading = uiState.isLoading,
             isRefreshing = false,
             error = null,
@@ -142,7 +147,7 @@ fun AlertServiceDetailScreen(
 
         Box(modifier = Modifier.weight(1f)) {
             when {
-                uiState.isLoading -> LoadingScreen("Loading service details")
+                uiState.isLoading -> LoadingScreen(stringResource(R.string.alertservice_loading))
                 current != null -> Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -177,7 +182,7 @@ fun AlertServiceDetailScreen(
                                 Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
                                     Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(statusColor))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text(if (current.enabled) "Enabled" else "Disabled", style = MaterialTheme.typography.labelMedium, color = statusColor, fontWeight = FontWeight.Bold)
+                                    Text(if (current.enabled) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled), style = MaterialTheme.typography.labelMedium, color = statusColor, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
@@ -193,7 +198,7 @@ fun AlertServiceDetailScreen(
 
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             OutlinedButton(onClick = { isEditing = false }, modifier = Modifier.weight(1f)) {
-                                Text("Cancel")
+                                Text(stringResource(R.string.common_cancel))
                             }
                             Button(
                                 onClick = {
@@ -210,7 +215,7 @@ fun AlertServiceDetailScreen(
                                 if (uiState.isUpdating) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                                 else Icon(Icons.Default.Save, null, Modifier.size(18.dp))
                                 Spacer(Modifier.width(8.dp))
-                                Text("Save")
+                                Text(stringResource(R.string.common_save))
                             }
                         }
                     } else {
@@ -220,7 +225,7 @@ fun AlertServiceDetailScreen(
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
                         ) {
                             Column(modifier = Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                Text("Attributes", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
+                                Text(stringResource(R.string.alertservice_attributes), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
                                 AlertServiceAttributesSummary(current.attributes)
                             }
                         }
@@ -231,7 +236,7 @@ fun AlertServiceDetailScreen(
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
                         ) {
                             Row(modifier = Modifier.fillMaxWidth().padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
-                                Text("Minimum Level", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
+                                Text(stringResource(R.string.alertservice_min_level), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
                                 Spacer(modifier = Modifier.weight(1f))
                                 Text(current.level.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                             }
@@ -241,7 +246,7 @@ fun AlertServiceDetailScreen(
                             OutlinedButton(onClick = { enterEditMode(current) }, modifier = Modifier.weight(1f)) {
                                 Icon(Icons.Default.Edit, null, Modifier.size(18.dp))
                                 Spacer(Modifier.width(8.dp))
-                                Text("Edit")
+                                Text(stringResource(R.string.common_edit))
                             }
                             OutlinedButton(
                                 onClick = {
@@ -255,7 +260,7 @@ fun AlertServiceDetailScreen(
                                 if (uiState.isTesting) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                                 else Icon(Icons.Default.Send, null, Modifier.size(18.dp))
                                 Spacer(Modifier.width(8.dp))
-                                Text("Test")
+                                Text(stringResource(R.string.common_test))
                             }
                             OutlinedButton(
                                 onClick = { showDeleteDialog = true },
@@ -266,7 +271,7 @@ fun AlertServiceDetailScreen(
                                 if (uiState.isDeleting) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                                 else Icon(Icons.Default.Delete, null, Modifier.size(18.dp))
                                 Spacer(Modifier.width(8.dp))
-                                Text("Delete")
+                                Text(stringResource(R.string.common_delete))
                             }
                         }
                     }
@@ -278,15 +283,15 @@ fun AlertServiceDetailScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Alert Service") },
-            text = { Text("Are you sure you want to delete \"${current?.name}\"? This action cannot be undone.") },
+            title = { Text(stringResource(R.string.alertservice_delete_title)) },
+            text = { Text(stringResource(R.string.alertservice_delete_message, current?.name.orEmpty())) },
             confirmButton = {
                 TextButton(
                     onClick = { showDeleteDialog = false; viewModel.deleteService() },
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
-                ) { Text("Delete") }
+                ) { Text(stringResource(R.string.common_delete)) }
             },
-            dismissButton = { TextButton(onClick = { showDeleteDialog = false }) { Text("Cancel") } }
+            dismissButton = { TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.common_cancel)) } }
         )
     }
 }
@@ -309,13 +314,13 @@ private fun EditServiceForm(
         Column(modifier = Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             OutlinedTextField(
                 value = name, onValueChange = onNameChange,
-                label = { Text("Service Name") }, modifier = Modifier.fillMaxWidth(), singleLine = true
+                label = { Text(stringResource(R.string.alertservice_name)) }, modifier = Modifier.fillMaxWidth(), singleLine = true
             )
 
             ExposedDropdownMenuBox(expanded = levelExpanded, onExpandedChange = { levelExpanded = it }) {
                 OutlinedTextField(
                     value = level.name, onValueChange = {}, readOnly = true,
-                    label = { Text("Minimum Level") },
+                    label = { Text(stringResource(R.string.alertservice_min_level)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = levelExpanded) },
                     modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
@@ -328,56 +333,56 @@ private fun EditServiceForm(
 
             // Per-type attribute fields — mirrors AlertServiceCreateScreen's pattern
             when (attrs.type) {
-                "Slack" -> OutlinedTextField(value = attrs.url ?: "", onValueChange = { onAttrsChange(attrs.copy(url = it)) }, label = { Text("Webhook URL") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                "Mail" -> OutlinedTextField(value = attrs.email ?: "", onValueChange = { onAttrsChange(attrs.copy(email = it)) }, label = { Text("Email Address") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                "Slack" -> OutlinedTextField(value = attrs.url ?: "", onValueChange = { onAttrsChange(attrs.copy(url = it)) }, label = { Text(stringResource(R.string.attr_webhook_url)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                "Mail" -> OutlinedTextField(value = attrs.email ?: "", onValueChange = { onAttrsChange(attrs.copy(email = it)) }, label = { Text(stringResource(R.string.attr_email)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                 "Mattermost" -> {
-                    OutlinedTextField(value = attrs.url ?: "", onValueChange = { onAttrsChange(attrs.copy(url = it)) }, label = { Text("Webhook URL") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.username ?: "", onValueChange = { onAttrsChange(attrs.copy(username = it)) }, label = { Text("Username") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.channel ?: "", onValueChange = { onAttrsChange(attrs.copy(channel = it)) }, label = { Text("Channel (optional)") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.url ?: "", onValueChange = { onAttrsChange(attrs.copy(url = it)) }, label = { Text(stringResource(R.string.attr_webhook_url)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.username ?: "", onValueChange = { onAttrsChange(attrs.copy(username = it)) }, label = { Text(stringResource(R.string.settings_username)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.channel ?: "", onValueChange = { onAttrsChange(attrs.copy(channel = it)) }, label = { Text(stringResource(R.string.attr_channel_optional)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                 }
                 "PagerDuty" -> {
-                    OutlinedTextField(value = attrs.service_key ?: "", onValueChange = { onAttrsChange(attrs.copy(service_key = it)) }, label = { Text("Service Key") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.client_name ?: "", onValueChange = { onAttrsChange(attrs.copy(client_name = it)) }, label = { Text("Client Name") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.service_key ?: "", onValueChange = { onAttrsChange(attrs.copy(service_key = it)) }, label = { Text(stringResource(R.string.attr_service_key)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.client_name ?: "", onValueChange = { onAttrsChange(attrs.copy(client_name = it)) }, label = { Text(stringResource(R.string.attr_client_name)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                 }
                 "Telegram" -> {
-                    OutlinedTextField(value = attrs.bot_token ?: "", onValueChange = { onAttrsChange(attrs.copy(bot_token = it)) }, label = { Text("Bot Token") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.bot_token ?: "", onValueChange = { onAttrsChange(attrs.copy(bot_token = it)) }, label = { Text(stringResource(R.string.attr_bot_token)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                     OutlinedTextField(
                         value = attrs.chat_ids?.joinToString(", ") ?: "",
                         onValueChange = { onAttrsChange(attrs.copy(chat_ids = it.split(",").mapNotNull { id -> id.trim().toIntOrNull() })) },
-                        label = { Text("Chat IDs (comma-separated)") }, modifier = Modifier.fillMaxWidth(), singleLine = true
+                        label = { Text(stringResource(R.string.attr_chat_ids)) }, modifier = Modifier.fillMaxWidth(), singleLine = true
                     )
                 }
                 "OpsGenie" -> {
-                    OutlinedTextField(value = attrs.api_key ?: "", onValueChange = { onAttrsChange(attrs.copy(api_key = it)) }, label = { Text("API Key") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.api_url ?: "", onValueChange = { onAttrsChange(attrs.copy(api_url = it)) }, label = { Text("API URL (optional)") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.api_key ?: "", onValueChange = { onAttrsChange(attrs.copy(api_key = it)) }, label = { Text(stringResource(R.string.settings_api_key)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.api_url ?: "", onValueChange = { onAttrsChange(attrs.copy(api_url = it)) }, label = { Text(stringResource(R.string.attr_api_url_optional)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                 }
                 "VictorOps" -> {
-                    OutlinedTextField(value = attrs.api_key ?: "", onValueChange = { onAttrsChange(attrs.copy(api_key = it)) }, label = { Text("API Key") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.routing_key ?: "", onValueChange = { onAttrsChange(attrs.copy(routing_key = it)) }, label = { Text("Routing Key") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.api_key ?: "", onValueChange = { onAttrsChange(attrs.copy(api_key = it)) }, label = { Text(stringResource(R.string.settings_api_key)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.routing_key ?: "", onValueChange = { onAttrsChange(attrs.copy(routing_key = it)) }, label = { Text(stringResource(R.string.attr_routing_key)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                 }
                 "AWSSNS" -> {
-                    OutlinedTextField(value = attrs.region ?: "", onValueChange = { onAttrsChange(attrs.copy(region = it)) }, label = { Text("Region") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.topic_arn ?: "", onValueChange = { onAttrsChange(attrs.copy(topic_arn = it)) }, label = { Text("Topic ARN") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.aws_access_key_id ?: "", onValueChange = { onAttrsChange(attrs.copy(aws_access_key_id = it)) }, label = { Text("Access Key ID") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.aws_secret_access_key ?: "", onValueChange = { onAttrsChange(attrs.copy(aws_secret_access_key = it)) }, label = { Text("Secret Access Key") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.region ?: "", onValueChange = { onAttrsChange(attrs.copy(region = it)) }, label = { Text(stringResource(R.string.attr_region)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.topic_arn ?: "", onValueChange = { onAttrsChange(attrs.copy(topic_arn = it)) }, label = { Text(stringResource(R.string.attr_topic_arn)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.aws_access_key_id ?: "", onValueChange = { onAttrsChange(attrs.copy(aws_access_key_id = it)) }, label = { Text(stringResource(R.string.attr_access_key_id)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.aws_secret_access_key ?: "", onValueChange = { onAttrsChange(attrs.copy(aws_secret_access_key = it)) }, label = { Text(stringResource(R.string.attr_secret_access_key)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                 }
                 "InfluxDB" -> {
-                    OutlinedTextField(value = attrs.host ?: "", onValueChange = { onAttrsChange(attrs.copy(host = it)) }, label = { Text("Host") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.username ?: "", onValueChange = { onAttrsChange(attrs.copy(username = it)) }, label = { Text("Username") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.password ?: "", onValueChange = { onAttrsChange(attrs.copy(password = it)) }, label = { Text("Password") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.database ?: "", onValueChange = { onAttrsChange(attrs.copy(database = it)) }, label = { Text("Database") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.series_name ?: "", onValueChange = { onAttrsChange(attrs.copy(series_name = it)) }, label = { Text("Series Name") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.host ?: "", onValueChange = { onAttrsChange(attrs.copy(host = it)) }, label = { Text(stringResource(R.string.attr_host)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.username ?: "", onValueChange = { onAttrsChange(attrs.copy(username = it)) }, label = { Text(stringResource(R.string.settings_username)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.password ?: "", onValueChange = { onAttrsChange(attrs.copy(password = it)) }, label = { Text(stringResource(R.string.settings_password_field)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.database ?: "", onValueChange = { onAttrsChange(attrs.copy(database = it)) }, label = { Text(stringResource(R.string.attr_database)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.series_name ?: "", onValueChange = { onAttrsChange(attrs.copy(series_name = it)) }, label = { Text(stringResource(R.string.attr_series_name)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                 }
                 "SNMPTrap" -> {
-                    OutlinedTextField(value = attrs.host ?: "", onValueChange = { onAttrsChange(attrs.copy(host = it)) }, label = { Text("Host") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.port?.toString() ?: "", onValueChange = { onAttrsChange(attrs.copy(port = it.toIntOrNull())) }, label = { Text("Port") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                    OutlinedTextField(value = attrs.community ?: "", onValueChange = { onAttrsChange(attrs.copy(community = it)) }, label = { Text("Community") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.host ?: "", onValueChange = { onAttrsChange(attrs.copy(host = it)) }, label = { Text(stringResource(R.string.attr_host)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.port?.toString() ?: "", onValueChange = { onAttrsChange(attrs.copy(port = it.toIntOrNull())) }, label = { Text(stringResource(R.string.attr_port)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = attrs.community ?: "", onValueChange = { onAttrsChange(attrs.copy(community = it)) }, label = { Text(stringResource(R.string.attr_community)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                 }
-                else -> Text("No editable fields for type: ${attrs.type}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                else -> Text(stringResource(R.string.alertservice_no_fields, attrs.type.orEmpty()), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Text("Enabled", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.common_enabled), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
                 Switch(checked = enabled, onCheckedChange = onEnabledChange)
             }
         }
@@ -388,17 +393,17 @@ private fun EditServiceForm(
 private fun AlertServiceAttributesSummary(attrs: Alerts.AlertServiceAttributes) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         when (attrs.type) {
-            "AWSSNS" -> { DetailRow("Region", attrs.region); DetailRow("Topic ARN", attrs.topic_arn) }
-            "InfluxDB" -> { DetailRow("Host", attrs.host); DetailRow("Username", attrs.username); DetailRow("Database", attrs.database); DetailRow("Series Name", attrs.series_name) }
-            "Mail" -> DetailRow("Email", attrs.email)
-            "Mattermost" -> { DetailRow("URL", attrs.url); DetailRow("Username", attrs.username); DetailRow("Channel", attrs.channel) }
-            "OpsGenie" -> { DetailRow("API Key", attrs.api_key?.take(8) + "..."); DetailRow("API URL", attrs.api_url) }
-            "PagerDuty" -> { DetailRow("Service Key", attrs.service_key?.take(8) + "..."); DetailRow("Client Name", attrs.client_name) }
-            "Slack" -> DetailRow("Webhook URL", attrs.url)
-            "SNMPTrap" -> { DetailRow("Host", attrs.host); DetailRow("Port", attrs.port?.toString()); DetailRow("v3", attrs.v3?.toString()) }
-            "Telegram" -> { DetailRow("Bot Token", attrs.bot_token?.take(8) + "..."); DetailRow("Chat IDs", attrs.chat_ids?.joinToString(", ")) }
-            "VictorOps" -> { DetailRow("API Key", attrs.api_key?.take(8) + "..."); DetailRow("Routing Key", attrs.routing_key) }
-            else -> DetailRow("Type", attrs.type ?: "Unknown")
+            "AWSSNS" -> { DetailRow(stringResource(R.string.attr_region), attrs.region); DetailRow(stringResource(R.string.attr_topic_arn), attrs.topic_arn) }
+            "InfluxDB" -> { DetailRow(stringResource(R.string.attr_host), attrs.host); DetailRow(stringResource(R.string.settings_username), attrs.username); DetailRow(stringResource(R.string.attr_database), attrs.database); DetailRow(stringResource(R.string.attr_series_name), attrs.series_name) }
+            "Mail" -> DetailRow(stringResource(R.string.attr_email), attrs.email)
+            "Mattermost" -> { DetailRow(stringResource(R.string.attr_url), attrs.url); DetailRow(stringResource(R.string.settings_username), attrs.username); DetailRow(stringResource(R.string.attr_channel), attrs.channel) }
+            "OpsGenie" -> { DetailRow(stringResource(R.string.settings_api_key), attrs.api_key?.take(8) + "..."); DetailRow(stringResource(R.string.attr_api_url), attrs.api_url) }
+            "PagerDuty" -> { DetailRow(stringResource(R.string.attr_service_key), attrs.service_key?.take(8) + "..."); DetailRow(stringResource(R.string.attr_client_name), attrs.client_name) }
+            "Slack" -> DetailRow(stringResource(R.string.attr_webhook_url), attrs.url)
+            "SNMPTrap" -> { DetailRow(stringResource(R.string.attr_host), attrs.host); DetailRow(stringResource(R.string.attr_port), attrs.port?.toString()); DetailRow("v3", attrs.v3?.toString()) }
+            "Telegram" -> { DetailRow(stringResource(R.string.attr_bot_token), attrs.bot_token?.take(8) + "..."); DetailRow(stringResource(R.string.attr_chat_ids_title), attrs.chat_ids?.joinToString(", ")) }
+            "VictorOps" -> { DetailRow(stringResource(R.string.settings_api_key), attrs.api_key?.take(8) + "..."); DetailRow(stringResource(R.string.attr_routing_key), attrs.routing_key) }
+            else -> DetailRow(stringResource(R.string.attr_type), attrs.type ?: stringResource(R.string.common_unknown))
         }
     }
 }

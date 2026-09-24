@@ -46,12 +46,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Auth.AuthResponse
 import com.gegaremant.truenasmobile.data.models.System
@@ -83,7 +85,7 @@ fun ProfileScreen(
             )
     ) {
         when (val s = state) {
-            is UiState.Loading -> LoadingScreen("Loading Your Profile")
+            is UiState.Loading -> LoadingScreen(stringResource(R.string.profile_loading))
             is UiState.Error -> ErrorScreen(error = s.message) { viewModel.refresh() }
             is UiState.Success -> ProfileContent(
                 user = s.user,
@@ -134,7 +136,7 @@ private fun ErrorScreen(
                     modifier = Modifier.weight(1f)
                 )
                 TextButton(onClick = onRetry) {
-                    Text("Retry")
+                    Text(stringResource(R.string.common_retry))
                 }
             }
         }
@@ -164,7 +166,7 @@ private fun ProfileContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Profile",
+                text = stringResource(R.string.profile_title),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -173,7 +175,7 @@ private fun ProfileContent(
             IconButton(onClick = onSettingsClick) {
                 Icon(
                     imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings",
+                    contentDescription = stringResource(R.string.profile_settings_cd),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -214,7 +216,7 @@ private fun ProfileContent(
                     ) {
                         Icon(
                             imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "Profile Picture",
+                            contentDescription = stringResource(R.string.profile_picture_cd),
                             modifier = Modifier.size(80.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -224,7 +226,7 @@ private fun ProfileContent(
 
                     // User Name
                     Text(
-                        text = user.pwGecos ?: user.pw_name ?: "Unknown User",
+                        text = user.pwGecos ?: user.pw_name ?: stringResource(R.string.profile_unknown_user),
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -269,7 +271,7 @@ private fun ProfileContent(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = if (user.local) "Local Account" else "External Account",
+                                text = if (user.local) stringResource(R.string.profile_local_account) else stringResource(R.string.profile_external_account),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = if (user.local)
                                     MaterialTheme.colorScheme.onPrimaryContainer
@@ -285,7 +287,7 @@ private fun ProfileContent(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Text(
-                            text = "Roles & Permissions",
+                            text = stringResource(R.string.profile_roles),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.primary,
@@ -346,7 +348,7 @@ private fun ProfileContent(
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
-                                text = "Refresh Profile",
+                                text = stringResource(R.string.profile_refresh),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onPrimary
@@ -361,7 +363,7 @@ private fun ProfileContent(
 
         // System Information Cards - Grid layout
         Text(
-            text = "System Information",
+            text = stringResource(R.string.profile_system_info),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -377,13 +379,13 @@ private fun ProfileContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 SystemInfoCard(
-                    title = "Server",
+                    title = stringResource(R.string.profile_server),
                     value = systemInfo.hostname,
                     icon = Icons.Default.Computer,
                     modifier = Modifier.weight(1f)
                 )
                 SystemInfoCard(
-                    title = "Version",
+                    title = stringResource(R.string.profile_version),
                     value = systemInfo.version,
                     icon = Icons.Default.Update,
                     modifier = Modifier.weight(1f)
@@ -395,14 +397,14 @@ private fun ProfileContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 SystemInfoCard(
-                    title = "CPU Cores",
+                    title = stringResource(R.string.profile_cpu_cores),
                     value = "${systemInfo.cores}",
-                    subtitle = "${systemInfo.physical_cores} physical",
+                    subtitle = stringResource(R.string.profile_physical_cores, systemInfo.physical_cores ?: 0),
                     icon = Icons.Default.Memory,
                     modifier = Modifier.weight(1f)
                 )
                 SystemInfoCard(
-                    title = "Memory",
+                    title = stringResource(R.string.profile_memory),
                     value = "${systemInfo.physmem / (1024 * 1024)} MB",
                     icon = Icons.Default.Storage,
                     modifier = Modifier.weight(1f)
@@ -448,7 +450,7 @@ private fun ProfileContent(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
                             Text(
-                                text = "License",
+                                text = stringResource(R.string.profile_license),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = when {
                                     license.contains("Enterprise", ignoreCase = true) ->

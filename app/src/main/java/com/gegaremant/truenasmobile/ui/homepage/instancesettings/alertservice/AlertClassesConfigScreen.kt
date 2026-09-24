@@ -75,9 +75,12 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Alerts
 import com.gegaremant.truenasmobile.data.models.System
@@ -95,6 +98,7 @@ fun AlertClassesConfigScreen(
     )
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
@@ -104,7 +108,7 @@ fun AlertClassesConfigScreen(
     }
     LaunchedEffect(uiState.saveSuccess) {
         if (uiState.saveSuccess) {
-            snackbarHostState.showSnackbar("Configuration saved!")
+            snackbarHostState.showSnackbar(context.getString(R.string.toast_configuration_saved))
             viewModel.clearSaveSuccess()
         }
     }
@@ -128,8 +132,8 @@ fun AlertClassesConfigScreen(
             )
     ) {
         UnifiedScreenHeader(
-            title = "Alert Categories",
-            subtitle = "Levels, policies & proactive support",
+            title = stringResource(R.string.alertclasses_title),
+            subtitle = stringResource(R.string.alertclasses_subtitle),
             isLoading = uiState.isLoading,
             isRefreshing = false,
             error = null,
@@ -144,7 +148,7 @@ fun AlertClassesConfigScreen(
             containerColor = Color.Transparent
         ) { innerPadding ->
             if (uiState.isLoading) {
-                LoadingScreen("Loading categories")
+                LoadingScreen(stringResource(R.string.alertclasses_loading))
             } else {
                 Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
                     LazyColumn(
@@ -187,7 +191,7 @@ fun AlertClassesConfigScreen(
                                 Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(18.dp))
                             }
                             Spacer(Modifier.width(8.dp))
-                            Text("Save Changes", fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.alertclasses_save), fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }
@@ -398,7 +402,7 @@ private fun AlertClassRow(
 
                     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Proactive Support",
+                            text = stringResource(R.string.alertclasses_proactive_support),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.weight(1f)
@@ -424,7 +428,7 @@ private fun LevelDropdown(
             value = selected.name,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Level") },
+            label = { Text(stringResource(R.string.alertclasses_level)) },
             textStyle = MaterialTheme.typography.bodySmall,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier.menuAnchor().fillMaxWidth(),
@@ -452,7 +456,7 @@ private fun PolicyDropdown(
             value = selected.name,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Policy") },
+            label = { Text(stringResource(R.string.alertclasses_policy)) },
             textStyle = MaterialTheme.typography.bodySmall,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier.menuAnchor().fillMaxWidth(),

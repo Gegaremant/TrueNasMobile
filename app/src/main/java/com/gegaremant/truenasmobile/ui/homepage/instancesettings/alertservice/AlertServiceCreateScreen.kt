@@ -43,6 +43,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Alerts
@@ -62,6 +65,7 @@ fun AlertServiceCreateScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     var name by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("Slack") }
@@ -170,11 +174,11 @@ fun AlertServiceCreateScreen(
             )
             when (val result = manager.alertsService.createAlertServiceWithResult(create)) {
                 is ApiResult.Success -> {
-                    snackbarHostState.showSnackbar("Alert service created!")
+                    snackbarHostState.showSnackbar(context.getString(R.string.toast_alert_service_created))
                     onNavigateBack()
                 }
                 is ApiResult.Error -> {
-                    snackbarHostState.showSnackbar("Error: ${result.message}")
+                    snackbarHostState.showSnackbar(context.getString(R.string.toast_error_pattern, result.message))
                 }
                 else -> {}
             }
@@ -191,11 +195,11 @@ fun AlertServiceCreateScreen(
             when (val result = manager.alertsService.testAlertServiceWithResult(create)) {
                 is ApiResult.Success -> {
                     snackbarHostState.showSnackbar(
-                        if (result.data) "Test successful!" else "Test failed."
+                        if (result.data) context.getString(R.string.toast_test_successful) else context.getString(R.string.toast_test_failed)
                     )
                 }
                 is ApiResult.Error -> {
-                    snackbarHostState.showSnackbar("Test error: ${result.message}")
+                    snackbarHostState.showSnackbar(context.getString(R.string.toast_test_error_pattern, result.message))
                 }
                 else -> {}
             }
@@ -206,8 +210,8 @@ fun AlertServiceCreateScreen(
     Scaffold(
         topBar = {
             UnifiedScreenHeader(
-                title = "New Alert Service",
-                subtitle = "Configure a notification service",
+                title = stringResource(R.string.alertservice_create_title),
+                subtitle = stringResource(R.string.alertservice_create_subtitle),
                 isLoading = false,
                 isRefreshing = false,
                 error = null,
@@ -230,7 +234,7 @@ fun AlertServiceCreateScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Service Name") },
+                label = { Text(stringResource(R.string.alertservice_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -243,7 +247,7 @@ fun AlertServiceCreateScreen(
                     value = selectedType,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Service Type") },
+                    label = { Text(stringResource(R.string.alertservice_type)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = typeExpanded) },
                     modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
@@ -271,7 +275,7 @@ fun AlertServiceCreateScreen(
                     value = level.name,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Minimum Level") },
+                    label = { Text(stringResource(R.string.alertservice_min_level)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = levelExpanded) },
                     modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
@@ -305,7 +309,7 @@ fun AlertServiceCreateScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "$selectedType Configuration",
+                        text = stringResource(R.string.alertservice_type_config, selectedType),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary
@@ -314,78 +318,78 @@ fun AlertServiceCreateScreen(
                     when (selectedType) {
                         "Slack" -> OutlinedTextField(
                             value = slackUrl, onValueChange = { slackUrl = it },
-                            label = { Text("Webhook URL") }, modifier = Modifier.fillMaxWidth(), singleLine = true
+                            label = { Text(stringResource(R.string.attr_webhook_url)) }, modifier = Modifier.fillMaxWidth(), singleLine = true
                         )
                         "Mail" -> OutlinedTextField(
                             value = mailEmail, onValueChange = { mailEmail = it },
-                            label = { Text("Email Address") }, modifier = Modifier.fillMaxWidth(), singleLine = true
+                            label = { Text(stringResource(R.string.attr_email)) }, modifier = Modifier.fillMaxWidth(), singleLine = true
                         )
                         "Mattermost" -> {
-                            OutlinedTextField(value = mattermostUrl, onValueChange = { mattermostUrl = it }, label = { Text("Webhook URL") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = mattermostUsername, onValueChange = { mattermostUsername = it }, label = { Text("Username") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = mattermostChannel, onValueChange = { mattermostChannel = it }, label = { Text("Channel (optional)") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = mattermostUrl, onValueChange = { mattermostUrl = it }, label = { Text(stringResource(R.string.attr_webhook_url)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = mattermostUsername, onValueChange = { mattermostUsername = it }, label = { Text(stringResource(R.string.settings_username)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = mattermostChannel, onValueChange = { mattermostChannel = it }, label = { Text(stringResource(R.string.attr_channel_optional)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                         }
                         "PagerDuty" -> {
-                            OutlinedTextField(value = pagerdutyServiceKey, onValueChange = { pagerdutyServiceKey = it }, label = { Text("Service Key") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = pagerdutyClientName, onValueChange = { pagerdutyClientName = it }, label = { Text("Client Name") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = pagerdutyServiceKey, onValueChange = { pagerdutyServiceKey = it }, label = { Text(stringResource(R.string.attr_service_key)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = pagerdutyClientName, onValueChange = { pagerdutyClientName = it }, label = { Text(stringResource(R.string.attr_client_name)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                         }
                         "Telegram" -> {
-                            OutlinedTextField(value = telegramBotToken, onValueChange = { telegramBotToken = it }, label = { Text("Bot Token") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = telegramChatIds, onValueChange = { telegramChatIds = it }, label = { Text("Chat IDs (comma-separated)") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = telegramBotToken, onValueChange = { telegramBotToken = it }, label = { Text(stringResource(R.string.attr_bot_token)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = telegramChatIds, onValueChange = { telegramChatIds = it }, label = { Text(stringResource(R.string.attr_chat_ids)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                         }
                         "OpsGenie" -> {
-                            OutlinedTextField(value = opsgenieApiKey, onValueChange = { opsgenieApiKey = it }, label = { Text("API Key") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = opsgenieApiUrl, onValueChange = { opsgenieApiUrl = it }, label = { Text("API URL (optional)") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = opsgenieApiKey, onValueChange = { opsgenieApiKey = it }, label = { Text(stringResource(R.string.settings_api_key)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = opsgenieApiUrl, onValueChange = { opsgenieApiUrl = it }, label = { Text(stringResource(R.string.attr_api_url_optional)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                         }
                         "VictorOps" -> {
-                            OutlinedTextField(value = victoropsApiKey, onValueChange = { victoropsApiKey = it }, label = { Text("API Key") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = victoropsRoutingKey, onValueChange = { victoropsRoutingKey = it }, label = { Text("Routing Key") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = victoropsApiKey, onValueChange = { victoropsApiKey = it }, label = { Text(stringResource(R.string.settings_api_key)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = victoropsRoutingKey, onValueChange = { victoropsRoutingKey = it }, label = { Text(stringResource(R.string.attr_routing_key)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                         }
                         "AWSSNS" -> {
-                            OutlinedTextField(value = awsRegion, onValueChange = { awsRegion = it }, label = { Text("Region") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = awsTopicArn, onValueChange = { awsTopicArn = it }, label = { Text("Topic ARN") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = awsAccessKey, onValueChange = { awsAccessKey = it }, label = { Text("Access Key ID") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = awsSecretKey, onValueChange = { awsSecretKey = it }, label = { Text("Secret Access Key") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = awsRegion, onValueChange = { awsRegion = it }, label = { Text(stringResource(R.string.attr_region)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = awsTopicArn, onValueChange = { awsTopicArn = it }, label = { Text(stringResource(R.string.attr_topic_arn)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = awsAccessKey, onValueChange = { awsAccessKey = it }, label = { Text(stringResource(R.string.attr_access_key_id)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = awsSecretKey, onValueChange = { awsSecretKey = it }, label = { Text(stringResource(R.string.attr_secret_access_key)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                         }
                         "InfluxDB" -> {
-                            OutlinedTextField(value = influxHost, onValueChange = { influxHost = it }, label = { Text("Host") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = influxUsername, onValueChange = { influxUsername = it }, label = { Text("Username") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = influxPassword, onValueChange = { influxPassword = it }, label = { Text("Password") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = influxDatabase, onValueChange = { influxDatabase = it }, label = { Text("Database") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = influxSeriesName, onValueChange = { influxSeriesName = it }, label = { Text("Series Name") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = influxHost, onValueChange = { influxHost = it }, label = { Text(stringResource(R.string.attr_host)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = influxUsername, onValueChange = { influxUsername = it }, label = { Text(stringResource(R.string.settings_username)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = influxPassword, onValueChange = { influxPassword = it }, label = { Text(stringResource(R.string.settings_password_field)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = influxDatabase, onValueChange = { influxDatabase = it }, label = { Text(stringResource(R.string.attr_database)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = influxSeriesName, onValueChange = { influxSeriesName = it }, label = { Text(stringResource(R.string.attr_series_name)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                         }
                         "SNMPTrap" -> {
-                            OutlinedTextField(value = snmpHost, onValueChange = { snmpHost = it }, label = { Text("Host") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = snmpPort, onValueChange = { snmpPort = it }, label = { Text("Port") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = snmpCommunity, onValueChange = { snmpCommunity = it }, label = { Text("Community") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = snmpHost, onValueChange = { snmpHost = it }, label = { Text(stringResource(R.string.attr_host)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = snmpPort, onValueChange = { snmpPort = it }, label = { Text(stringResource(R.string.attr_port)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = snmpCommunity, onValueChange = { snmpCommunity = it }, label = { Text(stringResource(R.string.attr_community)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text("SNMP v3", modifier = Modifier.weight(1f))
+                                Text(stringResource(R.string.alertservice_snmp_v3), modifier = Modifier.weight(1f))
                                 Switch(checked = snmpV3, onCheckedChange = { snmpV3 = it })
                             }
                         }
                         "Webhook" -> {
-                            OutlinedTextField(value = webhookUrl, onValueChange = { webhookUrl = it }, label = { Text("Webhook URL") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = webhookUrl, onValueChange = { webhookUrl = it }, label = { Text(stringResource(R.string.attr_webhook_url)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                OutlinedTextField(value = webhookHttpMethod, onValueChange = { webhookHttpMethod = it }, label = { Text("HTTP Method (POST)") }, modifier = Modifier.weight(1f), singleLine = true)
-                                OutlinedTextField(value = webhookHttpAuth, onValueChange = { webhookHttpAuth = it }, label = { Text("Auth (NONE/BASIC_AUTH)") }, modifier = Modifier.weight(1f), singleLine = true)
+                                OutlinedTextField(value = webhookHttpMethod, onValueChange = { webhookHttpMethod = it }, label = { Text(stringResource(R.string.attr_http_method)) }, modifier = Modifier.weight(1f), singleLine = true)
+                                OutlinedTextField(value = webhookHttpAuth, onValueChange = { webhookHttpAuth = it }, label = { Text(stringResource(R.string.attr_auth_mode)) }, modifier = Modifier.weight(1f), singleLine = true)
                             }
-                            OutlinedTextField(value = webhookUsername, onValueChange = { webhookUsername = it }, label = { Text("Username (for BASIC_AUTH)") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                            OutlinedTextField(value = webhookPassword, onValueChange = { webhookPassword = it }, label = { Text("Password (for BASIC_AUTH)") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = webhookUsername, onValueChange = { webhookUsername = it }, label = { Text(stringResource(R.string.attr_username_basic_auth)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                            OutlinedTextField(value = webhookPassword, onValueChange = { webhookPassword = it }, label = { Text(stringResource(R.string.attr_password_basic_auth)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                             OutlinedTextField(
                                 value = webhookHeaders,
                                 onValueChange = { webhookHeaders = it },
-                                label = { Text("Headers (one per line, \"Name: Value\")") },
+                                label = { Text(stringResource(R.string.attr_headers)) },
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Text(
-                                text = "Tip: for a TrueNasMobile relay put \"Authorization: Bearer <token>\" on the first line and keep auth NONE.",
+                                text = stringResource(R.string.attr_webhook_tip),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -408,7 +412,7 @@ fun AlertServiceCreateScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Enabled",
+                        text = stringResource(R.string.common_enabled),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f)
                     )
@@ -429,7 +433,7 @@ fun AlertServiceCreateScreen(
                     if (isTesting) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                     else Icon(Icons.Default.Send, null, Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Test")
+                    Text(stringResource(R.string.common_test))
                 }
                 Button(
                     onClick = { save() },
@@ -439,7 +443,7 @@ fun AlertServiceCreateScreen(
                     if (isSaving) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                     else Icon(Icons.Default.Save, null, Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Create")
+                    Text(stringResource(R.string.common_create))
                 }
             }
         }

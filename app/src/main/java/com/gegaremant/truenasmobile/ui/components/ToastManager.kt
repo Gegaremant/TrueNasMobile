@@ -47,6 +47,10 @@ object ToastManager {
         return context.getString(resId, *formatArgs)
     }
 
+    /** Resolve a localized string via the app context (for non-composable code). */
+    fun resolveString(@StringRes resId: Int, vararg formatArgs: Any): String =
+        resolveText(resId, *formatArgs)
+
     fun showToast(
         message: String,
         type: ToastType = ToastType.INFO,

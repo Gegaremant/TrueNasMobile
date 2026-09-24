@@ -3,6 +3,7 @@ package com.gegaremant.truenasmobile.ui.alerts
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
@@ -90,7 +91,7 @@ class AlertsViewModel(private val manager: TrueNASApiManager) : ViewModel() {
                 manager.system.dismissAlertWithResult(uuid)
                 ApiResult.Success(Unit)
             } catch (e: Exception) {
-                ApiResult.Error(e.message ?: "Failed to dismiss alert")
+                ApiResult.Error(e.message ?: ToastManager.resolveString(R.string.toast_alert_dismiss_failed))
             }
 
             when (result) {
@@ -114,12 +115,12 @@ class AlertsViewModel(private val manager: TrueNASApiManager) : ViewModel() {
                 manager.system.restoreAlertWithResult(uuid)
                 ApiResult.Success(Unit)
             } catch (e: Exception) {
-                ApiResult.Error(e.message ?: "Failed to restore alert")
+                ApiResult.Error(e.message ?: ToastManager.resolveString(R.string.toast_alert_restore_failed))
             }
 
             when (result) {
                 is ApiResult.Success -> {
-                    ToastManager.showSuccess("Alert restored")
+                    ToastManager.showSuccessRes(R.string.toast_alert_restored)
                     loadAlerts(isRefresh = true)
                 }
                 is ApiResult.Error -> {

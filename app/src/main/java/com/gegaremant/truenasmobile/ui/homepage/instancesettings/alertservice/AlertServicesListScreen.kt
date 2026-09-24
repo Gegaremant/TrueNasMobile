@@ -78,6 +78,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Alerts
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -115,8 +118,8 @@ fun AlertServicesListScreen(
             )
     ) {
         UnifiedScreenHeader(
-            title = "Alert Services",
-            subtitle = "${uiState.services.size} service(s) configured",
+            title = stringResource(R.string.alertservices_list_title),
+            subtitle = stringResource(R.string.alertservices_list_subtitle, uiState.services.size),
             isLoading = uiState.isLoading,
             isRefreshing = uiState.isRefreshing,
             error = null,
@@ -144,7 +147,7 @@ fun AlertServicesListScreen(
                     .padding(innerPadding)
             ) {
                 when {
-                    uiState.isLoading -> LoadingScreen("Loading alert services...")
+                    uiState.isLoading -> LoadingScreen(stringResource(R.string.alertservices_list_loading))
                     uiState.services.isEmpty() -> EmptyServicesState()
                     else -> LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -174,6 +177,7 @@ private fun AlertServicesFabMenu(
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val colorScheme = MaterialTheme.colorScheme
+    val context = LocalContext.current
 
     BackHandler(expanded) { expanded = false }
 
@@ -189,10 +193,10 @@ private fun AlertServicesFabMenu(
                     PlainTooltip(
                         modifier = Modifier.semantics {
                             liveRegion = LiveRegionMode.Assertive
-                            paneTitle = "Alert service options"
+                            paneTitle = context.getString(R.string.alertservices_options)
                         }
                     ) {
-                        Text(if (expanded) "Close" else "Alert service options")
+                        Text(if (expanded) context.getString(R.string.common_close) else context.getString(R.string.alertservices_options))
                     }
                 },
                 state = rememberTooltipState()
@@ -201,8 +205,8 @@ private fun AlertServicesFabMenu(
                     modifier = Modifier
                         .semantics {
                             traversalIndex = -1f
-                            stateDescription = if (expanded) "Expanded" else "Collapsed"
-                            contentDescription = "Alert service options"
+                            stateDescription = if (expanded) context.getString(R.string.common_expanded) else context.getString(R.string.common_collapsed)
+                            contentDescription = context.getString(R.string.alertservices_options)
                         }
                         .animateFloatingActionButton(
                             visible = true,
@@ -239,7 +243,7 @@ private fun AlertServicesFabMenu(
                 onAddClick()
             },
             icon = { Icon(Icons.Default.Add, contentDescription = null) },
-            text = { Text("New Service") }
+            text = { Text(stringResource(R.string.alertservices_new)) }
         )
         FloatingActionButtonMenuItem(
             onClick = {
@@ -247,7 +251,7 @@ private fun AlertServicesFabMenu(
                 onConfigureCategoriesClick()
             },
             icon = { Icon(Icons.Default.Tune, contentDescription = null) },
-            text = { Text("Configure Categories") }
+            text = { Text(stringResource(R.string.alertservices_categories)) }
         )
     }
 }
@@ -267,13 +271,13 @@ private fun EmptyServicesState() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "No alert services configured",
+            text = stringResource(R.string.alertservices_empty),
             style = MaterialTheme.typography.bodyLarge,
             color = colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Tap the + button to add one",
+            text = stringResource(R.string.alertservices_empty_hint),
             style = MaterialTheme.typography.bodySmall,
             color = colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
         )
@@ -345,7 +349,7 @@ private fun AlertServiceCard(
                     Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(statusColor))
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = if (service.enabled) "Active" else "Off",
+                        text = if (service.enabled) stringResource(R.string.common_active) else stringResource(R.string.common_off),
                         style = MaterialTheme.typography.labelSmall,
                         color = statusColor,
                         fontWeight = FontWeight.Bold

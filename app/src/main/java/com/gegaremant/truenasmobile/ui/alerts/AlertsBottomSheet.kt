@@ -1,5 +1,7 @@
 package com.gegaremant.truenasmobile.ui.alerts
 
+import android.content.Context
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,9 +59,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import java.time.Instant
@@ -107,14 +112,14 @@ fun AlertsBottomSheet(
             ) {
                 Column {
                     Text(
-                        text = "Alerts",
+                        text = stringResource(R.string.alerts_title),
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     if (uiState.unreadCount > 0) {
                         Text(
-                            text = "${uiState.unreadCount} unread",
+                            text = stringResource(R.string.alerts_unread, uiState.unreadCount),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -128,7 +133,7 @@ fun AlertsBottomSheet(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh",
+                            contentDescription = stringResource(R.string.common_refresh_cd),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -136,7 +141,7 @@ fun AlertsBottomSheet(
                     IconButton(onClick = onDismiss) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
+                            contentDescription = stringResource(R.string.common_close),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -157,7 +162,7 @@ fun AlertsBottomSheet(
                         onClick = { selectedFilter = filter },
                         label = {
                             Text(
-                                text = filter.label,
+                                text = stringResource(filter.labelRes),
                                 style = MaterialTheme.typography.labelMedium
                             )
                         },
@@ -206,7 +211,7 @@ fun AlertsBottomSheet(
                         IconButton(onClick = onClearError) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "Dismiss",
+                                contentDescription = stringResource(R.string.common_dismiss),
                                 tint = MaterialTheme.colorScheme.onErrorContainer,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -222,7 +227,7 @@ fun AlertsBottomSheet(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        LoadingScreen("Loading alerts")
+                        LoadingScreen(stringResource(R.string.alerts_loading))
                     }
                 }
                 else -> {
@@ -285,17 +290,17 @@ private fun EmptyAlertsContent(filter: AlertFilter) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = when (filter) {
-                AlertFilter.ALL -> "No alerts"
-                AlertFilter.UNREAD -> "No unread alerts"
-                AlertFilter.NOTICE -> "No notice alerts"
-                AlertFilter.INFO -> "No info alerts"
+                AlertFilter.ALL -> stringResource(R.string.alerts_empty_all)
+                AlertFilter.UNREAD -> stringResource(R.string.alerts_empty_unread)
+                AlertFilter.NOTICE -> stringResource(R.string.alerts_empty_notice)
+                AlertFilter.INFO -> stringResource(R.string.alerts_empty_info)
             },
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Medium
         )
         Text(
-            text = "Your system is running smoothly",
+            text = stringResource(R.string.alerts_all_clear),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -309,6 +314,7 @@ private fun AlertItem(
     onRestore: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -370,7 +376,7 @@ private fun AlertItem(
                         }
 
                         Text(
-                            text = formatTimeAgo(alert.datetime),
+                            text = formatTimeAgo(context, alert.datetime),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -396,7 +402,7 @@ private fun AlertItem(
                             contentPadding = PaddingValues(0.dp)
                         ) {
                             Text(
-                                text = "Show more",
+                                text = stringResource(R.string.common_show_more),
                                 style = MaterialTheme.typography.labelMedium
                             )
                         }
@@ -408,9 +414,9 @@ private fun AlertItem(
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        InfoRow("Source", alert.source)
-                        InfoRow("Node", alert.node)
-                        InfoRow("Last Occurrence", formatDateTime(alert.last_occurrence))
+                        InfoRow(stringResource(R.string.attr_source), alert.source)
+                        InfoRow(stringResource(R.string.attr_node), alert.node)
+                        InfoRow(stringResource(R.string.attr_last_occurrence), formatDateTime(context, alert.last_occurrence))
 
                         if (expanded) {
                             TextButton(
@@ -418,7 +424,7 @@ private fun AlertItem(
                                 contentPadding = PaddingValues(0.dp)
                             ) {
                                 Text(
-                                    text = "Show less",
+                                    text = stringResource(R.string.common_show_less),
                                     style = MaterialTheme.typography.labelMedium
                                 )
                             }
@@ -441,7 +447,7 @@ private fun AlertItem(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Restore")
+                        Text(stringResource(R.string.common_restore))
                     }
                 } else {
                     TextButton(onClick = onDismiss) {
@@ -451,7 +457,7 @@ private fun AlertItem(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Dismiss")
+                        Text(stringResource(R.string.common_dismiss))
                     }
                 }
             }
@@ -503,7 +509,7 @@ private fun getAlertLevelIcon(level: String): ImageVector {
     }
 }
 
-private fun formatTimeAgo(mongoDate: System.MongoDate): String {
+private fun formatTimeAgo(context: Context, mongoDate: System.MongoDate): String {
     return try {
         val instant = Instant.ofEpochMilli(mongoDate.date)
         val now = Instant.now()
@@ -512,31 +518,31 @@ private fun formatTimeAgo(mongoDate: System.MongoDate): String {
         val days = ChronoUnit.DAYS.between(instant, now)
 
         when {
-            minutes < 1 -> "Just now"
-            minutes < 60 -> "${minutes}m ago"
-            hours < 24 -> "${hours}h ago"
-            days < 7 -> "${days}d ago"
-            else -> formatDateTime(mongoDate)
+            minutes < 1 -> context.getString(R.string.time_just_now)
+            minutes < 60 -> context.getString(R.string.time_minutes_ago, minutes)
+            hours < 24 -> context.getString(R.string.time_hours_ago, hours)
+            days < 7 -> context.getString(R.string.time_days_ago, days)
+            else -> formatDateTime(context, mongoDate)
         }
     } catch (_: Exception) {
-        "Invalid date"
+        context.getString(R.string.common_invalid_date)
     }
 }
 
-private fun formatDateTime(mongoDate: System.MongoDate): String {
+private fun formatDateTime(context: Context, mongoDate: System.MongoDate): String {
     return try {
         val instant = Instant.ofEpochMilli(mongoDate.date)
         val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")
             .withZone(ZoneId.systemDefault())
         formatter.format(instant)
     } catch (_: Exception) {
-        "Invalid date"
+        context.getString(R.string.common_invalid_date)
     }
 }
 
-enum class AlertFilter(val label: String) {
-    ALL("All"),
-    UNREAD("Unread"),
-    NOTICE("Notice"),
-    INFO("Info")
+enum class AlertFilter(@StringRes val labelRes: Int) {
+    ALL(R.string.filter_all),
+    UNREAD(R.string.filter_unread),
+    NOTICE(R.string.filter_notice),
+    INFO(R.string.filter_info)
 }
