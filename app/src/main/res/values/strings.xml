@@ -1,18 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App -->
     <string name="app_name">TrueNasMobile</string>
-    <string name="title_activity_setup_screen">Экран настройки</string>
-    <string name="AppUpdateWidgetDescription">Просмотр ожидающих обновлений приложений TrueNAS</string>
-    <string name="PoolWidgetDescription">Мониторинг состояния пулов хранения TrueNAS</string>
-    <string name="quick_launch_widget_description">Быстрый запуск веб-интерфейса приложений с главного экрана</string>
+    <string name="title_activity_setup_screen">Setup screen</string>
 
-    <string name="shortcut_disabled">Этот ярлык сейчас недоступен.</string>
-    <string name="shortcut_install_app_short">Установить приложение</string>
-    <string name="shortcut_install_app_long">Установить новое приложение</string>
-    <string name="shortcut_update_apps_short">Обновить приложения</string>
-    <string name="shortcut_update_apps_long">Обновить установленные приложения</string>
-    <string name="shortcut_configure_instance_short">Настроить инстанс</string>
-    <string name="shortcut_configure_instance_long">Настройка инстанса TrueNAS</string>
-    <string name="shortcut_update_instance_short">Обновить инстанс</string>
-    <string name="shortcut_update_instance_long">Обновить инстанс TrueNAS</string>
+    <!-- Widget descriptions -->
+    <string name="AppUpdateWidgetDescription">View pending TrueNAS app updates</string>
+    <string name="PoolWidgetDescription">Monitor TrueNAS storage pool status</string>
+    <string name="quick_launch_widget_description">Quick launch of app web interfaces from home screen</string>
+
+    <!-- App shortcuts -->
+    <string name="shortcut_disabled">This shortcut is currently unavailable.</string>
+    <string name="shortcut_install_app_short">Install app</string>
+    <string name="shortcut_install_app_long">Install new app</string>
+    <string name="shortcut_update_apps_short">Update apps</string>
+    <string name="shortcut_update_apps_long">Update installed apps</string>
+    <string name="shortcut_configure_instance_short">Configure instance</string>
+    <string name="shortcut_configure_instance_long">Configure TrueNAS instance</string>
+    <string name="shortcut_update_instance_short">Update instance</string>
+    <string name="shortcut_update_instance_long">Update TrueNAS instance</string>
+
+    <!-- Common -->
+    <string name="common_loading">Loading…</string>
+    <string name="common_connecting">Connecting…</string>
+    <string name="common_connecting_to_server">Connecting to server…</string>
+    <string name="common_retry">Retry</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_delete">Delete</string>
+    <string name="common_close">Close</string>
+    <string name="common_unknown_error">Unknown error</string>
+    <string name="common_server_url">Server URL</string>
+    <string name="common_username">Username</string>
+    <string name="common_password">Password</string>
+    <string name="common_api_key">API Key</string>
+
+    <!-- Startup flow -->
+    <string name="startup_preparing">Preparing…</string>
+    <string name="startup_initializing">Initializing…</string>
+    <string name="startup_validating_credentials">Validating credentials…</string>
+    <string name="startup_attempting_auto_login">Attempting auto sign-in…</string>
+    <string name="startup_no_internet">No internet connection.</string>
+    <string name="startup_no_internet_hint">Please check your network connection and try again.</string>
+    <string name="startup_connection_issue">Connection Issue</string>
+    <string name="startup_redirecting">Redirecting…</string>
+    <string name="startup_redirecting_to_login">Redirecting to login…</string>
+    <string name="startup_session_invalid">Session invalid. Please log in again.</string>
+    <string name="startup_failed_login_saved_account">Failed to login with saved account</string>
+    <string name="startup_work_in_progress">Work in progress for: %1$s</string>
+
+    <!-- Biometric lock -->
+    <string name="biometric_app_locked">TrueNasMobile is locked</string>
+    <string name="biometric_authenticate_to_open">Authenticate to open your TrueNAS data safely.</string>
+    <string name="biometric_unlock">Unlock</string>
+    <string name="biometric_prompt_title">Unlock TrueNasMobile</string>
+    <string name="biometric_prompt_subtitle">Authenticate to open your TrueNAS data.</string>
+    <string name="biometric_unavailable">Biometrics unavailable: %1$s</string>
+
+    <!-- Login screen -->
+    <string name="login_enter_your">Enter your\n</string>
+    <string name="login_credentials">Credentials</string>
+    <string name="login_sign_in_to_continue">Please sign in to continue</string>
+    <string name="login_mode_password">Password</string>
+    <string name="login_mode_api_key">API Key</string>
+    <string name="login_username_hint">Username</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_hide_password">Hide password</string>
+    <string name="login_show_password">Show password</string>
+    <string name="login_save_details_autologin">Save details for autologin?</string>
+    <string name="login_paste_api_key">Paste your TrueNAS API key here</string>
+    <string name="login_hide_api_key">Hide API Key</string>
+    <string name="login_show_api_key">Show API Key</string>
+    <string name="login_save_key_autologin">Save key for autologin?</string>
+    <string name="login_signing_in">Signing in…</string>
+    <string name="login_sign_in">Sign In</string>
+    <string name="login_need_help">Need help accessing your %1$s?</string>
+    <string name="login_need_help_account">account</string>
+    <string name="login_need_help_api_key">API key</string>
+    <string name="login_contact_administrator">Contact your administrator for assistance</string>
+    <string name="login_configure_server">Configure Server</string>
+    <string name="login_connected_success">Connected to server!</string>
+    <string name="login_connected_successfully">Connected successfully!</string>
+    <string name="login_initial_connection_failed">Initial connection failed: Could not reach server.</string>
+    <string name="login_connection_failed_pattern">Connection failed: %1$s</string>
+    <string name="login_failed_connect_details">Failed to connect: Could not reach server with provided details.</string>
+    <string name="login_failed_connect_pattern">Failed to connect: %1$s</string>
+    <string name="login_two_factor_title">Two-Factor\nAuthentication</string>
+    <string name="login_otp_code_requested">A 6-digit code has been requested for\n%1$s</string>
+    <string name="login_otp_your_account">your account</string>
+    <string name="login_enter_verification_code">Enter Verification Code</string>
+    <string name="login_verifying">Verifying…</string>
+    <string name="login_verify_and_sign_in">Verify &amp; Sign In</string>
+    <string name="login_back_to_login">Back to login</string>
+    <string name="login_change_server">Change server</string>
+    <string name="login_enter_all_6_digits">Enter all 6 digits</string>
+    <string name="login_code_from_authenticator">Code from your authenticator app</string>
+    <string name="login_status_connected">Connected</string>
+    <string name="login_status_connecting">Connecting…</string>
+    <string name="login_status_disconnected">Disconnected</string>
+    <string name="login_status_connection_error">Connection Error</string>
+    <string name="login_status_checking">Checking connection…</string>
+    <string name="login_accessing_from">Accessing from:</string>
+    <string name="login_unknown_server">Unknown server</string>
+    <string name="login_server_setup_required">Server Setup Required</string>
+    <string name="login_get_started">Connect to your TrueNAS server to get started</string>
+    <string name="login_setup_item_url">Server URL</string>
+    <string name="login_setup_item_url_desc">Enter your TrueNAS server address</string>
+    <string name="login_setup_item_security">Secure Connection</string>
+    <string name="login_setup_item_security_desc">Configure SSL/TLS settings</string>
+    <string name="login_setup_item_quick">Quick Setup</string>
+    <string name="login_setup_item_quick_desc">Connect in just a few steps</string>
+    <string name="login_first_time_guide">First time? We\'ll guide you through</string>
+
+    <!-- Login toasts -->
+    <string name="toast_connection_not_ready">Connection not ready. Please check server configuration.</string>
+    <string name="toast_not_connected_to_server">Not connected to server</string>
+    <string name="toast_enter_username_password">Please enter username and password</string>
+    <string name="toast_enter_api_key">Please enter your API key</string>
+    <string name="toast_login_failed">Login failed: %1$s</string>
+    <string name="toast_login_timeout">Login timeout. Server may be slow or unreachable.</string>
+    <string name="toast_login_error">Login error: %1$s</string>
+    <string name="toast_token_generation_failed">Token generation failed: %1$s</string>
+    <string name="toast_otp_required">OTP token required. Please enter your 2FA code.</string>
+    <string name="toast_invalid_username_password">Invalid username or password</string>
+    <string name="toast_session_expired">Session expired. Please try again.</string>
+    <string name="toast_auth_redirect_required">Authentication redirect required: %1$s</string>
+    <string name="toast_enter_otp_token">Please enter the OTP token</string>
+    <string name="toast_token_failed">Token failed: %1$s</string>
+    <string name="toast_invalid_otp_token">Invalid OTP token</string>
+    <string name="toast_otp_auth_failed">OTP authentication failed</string>
+    <string name="toast_otp_failed">OTP failed: %1$s</string>
+    <string name="toast_otp_error">OTP error: %1$s</string>
+    <string name="toast_validating_api_key">Validating API key…</string>
+    <string name="toast_invalid_api_key">Invalid API key</string>
+    <string name="toast_api_key_auth_failed">API key authentication failed</string>
+    <string name="toast_api_key_validation_failed">API key validation failed: %1$s</string>
+    <string name="toast_validation_timeout">Validation timeout. Please check your connection.</string>
+    <string name="toast_validation_error">Validation error: %1$s</string>
+    <string name="toast_server_url_not_configured">Server URL not configured</string>
+
+    <!-- Server config sheet -->
+    <string name="setup_title_change">Server Configuration</string>
+    <string name="setup_title_new">Configure Your Server URL</string>
+    <string name="setup_subtitle_change">Update your connection settings</string>
+    <string name="setup_subtitle_new">Connect to your TrueNAS instance</string>
+    <string name="setup_server_address">Server Address</string>
+    <string name="setup_url_label">URL</string>
+    <string name="setup_security_settings">Security Settings</string>
+    <string name="setup_allow_insecure">Allow insecure connections</string>
+    <string name="setup_allow_insecure_desc">For self-signed certificates</string>
+    <string name="setup_connection_tips">Connection Tips</string>
+    <string name="setup_connection_tips_text">• Use ws:// for HTTP or wss:// for HTTPS\n• Include port number if needed\n• Example: ws://192.168.1.100:80</string>
+    <string name="setup_update_server">Update Server</string>
+    <string name="setup_connect_now">Connect Now</string>
+    <string name="setup_enter_valid_url">Please enter a valid server URL</string>
+    <string name="setup_connection_timeout">Connection timeout. Please check the server URL and your network.</string>
+    <string name="setup_connection_failed">Connection failed: %1$s</string>
+    <string name="setup_unable_establish_connection">Unable to establish connection</string>
+
+    <!-- Account switcher -->
+    <string name="account_select_title">Select Account</string>
+    <string name="account_none_saved">No saved accounts yet</string>
+    <string name="account_add_new">Add New Account</string>
+    <string name="account_add_another_server">Add another server</string>
+    <string name="account_delete_all_credentials">Delete all saved credentials</string>
+    <string name="account_delete_dialog_title">Delete Account</string>
+    <string name="account_delete_dialog_message">Are you sure you want to delete \'%1$s\'? This will remove saved credentials.</string>
+    <string name="account_delete_all_title">Delete All Credentials</string>
+    <string name="account_delete_all_message">Are you sure you want to delete ALL saved accounts and credentials? This cannot be undone.</string>
+    <string name="account_delete_all">Delete All</string>
+    <string name="account_choose_server">Choose Server</string>
+    <string name="account_choose_server_message">Multiple servers are saved. Pick which server to add an account to:</string>
+    <string name="account_no_servers">No servers saved.</string>
+    <string name="account_unnamed_server">Unnamed Server</string>
+    <string name="account_auto_login_enabled">Auto-login enabled</string>
+    <string name="account_delete_account_cd">Delete account</string>
+    <string name="account_select_account_cd">Select account</string>
+    <string name="account_more_options_cd">More options</string>
+
+    <plurals name="account_saved_count">
+        <item quantity="one">%1$d saved account</item>
+        <item quantity="other">%1$d saved accounts</item>
+    </plurals>
 </resources>

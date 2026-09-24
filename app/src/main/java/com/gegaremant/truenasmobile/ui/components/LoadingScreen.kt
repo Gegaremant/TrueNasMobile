@@ -24,11 +24,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 
 @Composable
-fun LoadingScreen(message: String = "Loading...") {
+fun LoadingScreen(message: String = stringResource(R.string.common_loading)) {
         Box(
             modifier = Modifier
                 .fillMaxSize()

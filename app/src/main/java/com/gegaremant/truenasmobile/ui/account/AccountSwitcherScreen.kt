@@ -15,10 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.helpers.MultiAccountPrefs
 import com.gegaremant.truenasmobile.data.helpers.PersonalizationManager
 import com.gegaremant.truenasmobile.data.models.AccountProfile
@@ -79,7 +82,7 @@ fun AccountSwitcherScreen(
             ) {
                 // Header
                 Text(
-                    text = "Select Account",
+                    text = stringResource(R.string.account_select_title),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -88,9 +91,9 @@ fun AccountSwitcherScreen(
 
                 Text(
                     text = if (profiles.isEmpty()) {
-                        "No saved accounts yet"
+                        stringResource(R.string.account_none_saved)
                     } else {
-                        "${profiles.size} saved account${if (profiles.size != 1) "s" else ""}"
+                        pluralStringResource(R.plurals.account_saved_count, profiles.size, profiles.size)
                     },
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
@@ -127,7 +130,7 @@ fun AccountSwitcherScreen(
                 // Split button: primary action + dropdown of additional options
                 Box(modifier = Modifier.fillMaxWidth()) {
                     SplitButtonRow(
-                        primaryText = "Add New Account",
+                        primaryText = stringResource(R.string.account_add_new),
                         primaryIcon = Icons.Default.Add,
                         onPrimaryClick = {
                             // If multiple saved servers exist, ask the user which server to add an account to.
@@ -146,7 +149,7 @@ fun AccountSwitcherScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Add New Account") },
+                            text = { Text(stringResource(R.string.account_add_new)) },
                             leadingIcon = { Icon(Icons.Default.PersonAdd, contentDescription = null) },
                             onClick = {
                                 showAddMenu = false
@@ -158,7 +161,7 @@ fun AccountSwitcherScreen(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Add another server") },
+                            text = { Text(stringResource(R.string.account_add_another_server)) },
                             leadingIcon = { Icon(Icons.Default.Dns, contentDescription = null) },
                             onClick = {
                                 showAddMenu = false
@@ -167,7 +170,7 @@ fun AccountSwitcherScreen(
                         )
                         HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
                         DropdownMenuItem(
-                            text = { Text("Delete all saved credentials", color = MaterialTheme.colorScheme.error) },
+                            text = { Text(stringResource(R.string.account_delete_all_credentials), color = MaterialTheme.colorScheme.error) },
                             leadingIcon = { Icon(Icons.Default.DeleteSweep, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
                             onClick = {
                                 showAddMenu = false
@@ -185,9 +188,9 @@ fun AccountSwitcherScreen(
         showDeleteDialog?.let { profile ->
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = null },
-                title = { Text("Delete Account") },
+                title = { Text(stringResource(R.string.account_delete_dialog_title)) },
                 text = {
-                    Text("Are you sure you want to delete '${profile.displayName}'? This will remove saved credentials.")
+                    Text(stringResource(R.string.account_delete_dialog_message, profile.displayName))
                 },
                 confirmButton = {
                     TextButton(
@@ -200,12 +203,12 @@ fun AccountSwitcherScreen(
                             }
                         }
                     ) {
-                        Text("Delete", color = MaterialTheme.colorScheme.error)
+                        Text(stringResource(R.string.common_delete), color = MaterialTheme.colorScheme.error)
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showDeleteDialog = null }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.common_cancel))
                     }
                 }
             )
@@ -215,9 +218,9 @@ fun AccountSwitcherScreen(
         if (showDeleteAllDialog) {
             AlertDialog(
                 onDismissRequest = { showDeleteAllDialog = false },
-                title = { Text("Delete All Credentials") },
+                title = { Text(stringResource(R.string.account_delete_all_title)) },
                 text = {
-                    Text("Are you sure you want to delete ALL saved accounts and credentials? This cannot be undone.")
+                    Text(stringResource(R.string.account_delete_all_message))
                 },
                 confirmButton = {
                     TextButton(
@@ -233,12 +236,12 @@ fun AccountSwitcherScreen(
                             }
                         }
                     ) {
-                        Text("Delete All", color = MaterialTheme.colorScheme.error)
+                        Text(stringResource(R.string.account_delete_all), color = MaterialTheme.colorScheme.error)
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showDeleteAllDialog = false }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.common_cancel))
                     }
                 }
             )
@@ -330,7 +333,7 @@ private fun SplitButtonRow(
             ),
             elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
         ) {
-            Icon(Icons.Default.ArrowDropDown, contentDescription = "More options")
+            Icon(Icons.Default.ArrowDropDown, contentDescription = stringResource(R.string.account_more_options_cd))
         }
     }
 }
@@ -343,17 +346,17 @@ private fun ServerPickerDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Choose Server") },
+        title = { Text(stringResource(R.string.account_choose_server)) },
         text = {
             Column {
                 Text(
-                    "Multiple servers are saved. Pick which server to add an account to:",
+                    stringResource(R.string.account_choose_server_message),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 if (servers.isEmpty()) {
-                    Text("No servers saved.")
+                    Text(stringResource(R.string.account_no_servers))
                 } else {
                     servers.forEach { server ->
                         HorizontalDivider(
@@ -384,7 +387,7 @@ private fun ServerPickerDialog(
                             Spacer(modifier = Modifier.width(12.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = server.nickname ?: "Unnamed Server",
+                                    text = server.nickname ?: stringResource(R.string.account_unnamed_server),
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -412,7 +415,7 @@ private fun ServerPickerDialog(
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.common_cancel))
             }
         }
     )
@@ -506,7 +509,7 @@ private fun AccountProfileCard(
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
-                            text = "Auto-login enabled",
+                            text = stringResource(R.string.account_auto_login_enabled),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Medium
@@ -520,7 +523,7 @@ private fun AccountProfileCard(
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete account",
+                        contentDescription = stringResource(R.string.account_delete_account_cd),
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
@@ -529,7 +532,7 @@ private fun AccountProfileCard(
 
                 Icon(
                     imageVector = Icons.Default.ChevronRight,
-                    contentDescription = "Select account",
+                    contentDescription = stringResource(R.string.account_select_account_cd),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                     modifier = Modifier.size(20.dp)
                 )

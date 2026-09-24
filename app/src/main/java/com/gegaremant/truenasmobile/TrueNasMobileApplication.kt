@@ -8,11 +8,13 @@ import coil.memory.MemoryCache
 import coil.util.DebugLogger
 import com.gegaremant.truenasmobile.data.helpers.TrueNasMobileLogger
 import com.gegaremant.truenasmobile.data.workers.AlertsWorker
+import com.gegaremant.truenasmobile.ui.components.ToastManager
 
 class TrueNasMobileApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
         TrueNasMobileLogger.initialize(this)
+        ToastManager.init(this)
         AlertsWorker.schedule(this)
     }
     override fun newImageLoader(): ImageLoader {

@@ -62,6 +62,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -78,6 +79,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.TrueNASClient
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.Prefs
@@ -126,7 +128,7 @@ fun LoginScreen(
         if (localManager == null && savedUrl != null) {
             lifecycleOwner.lifecycleScope.launch {
                 try {
-                    ToastManager.showInfo("Connecting to server...")
+                    ToastManager.showInfo(context.getString(R.string.common_connecting_to_server))
 
                     val config = Config.ClientConfig(
                         serverUrl = savedUrl,
@@ -144,14 +146,14 @@ fun LoginScreen(
                         localManager = newManager
                         onManagerInitialized(newManager)
                         viewModel.updateManager(newManager)
-                        ToastManager.showSuccess("Connected to server!")
+                        ToastManager.showSuccess(context.getString(R.string.login_connected_success))
                         showSetupSheet = false
                     } else {
-                        ToastManager.showError("Initial connection failed: Could not reach server.")
+                        ToastManager.showError(context.getString(R.string.login_initial_connection_failed))
                         showSetupSheet = true
                     }
                 } catch (e: Exception) {
-                    ToastManager.showError("Connection failed: ${e.message}")
+                    ToastManager.showError(context.getString(R.string.login_connection_failed_pattern, e.message ?: ""))
                     showSetupSheet = true
                 }
             }
@@ -202,10 +204,10 @@ fun LoginScreen(
                 ) {
                     CircularProgressIndicator()
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("Connecting to server...")
+                    Text(stringResource(R.string.common_connecting_to_server))
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = { showSetupSheet = true }) {
-                        Text("Configure Server")
+                        Text(stringResource(R.string.login_configure_server))
                     }
                 }
             }
@@ -224,7 +226,7 @@ fun LoginScreen(
                 onConfigured = { url, insecure ->
                     lifecycleOwner.lifecycleScope.launch {
                         try {
-                            ToastManager.showInfo("Connecting to server...")
+                            ToastManager.showInfo(context.getString(R.string.common_connecting_to_server))
 
                             val config = Config.ClientConfig(
                                 serverUrl = url,
@@ -247,14 +249,14 @@ fun LoginScreen(
                                 viewModel.updateManager(newManager)
 
                                 showSetupSheet = false
-                                ToastManager.showSuccess("Connected successfully!")
+                                ToastManager.showSuccess(context.getString(R.string.login_connected_successfully))
                             } else {
-                                ToastManager.showError("Failed to connect: Could not reach server with provided details.")
+                                ToastManager.showError(context.getString(R.string.login_failed_connect_details))
                                 showSetupSheet = true
                             }
 
                         } catch (e: Exception) {
-                            ToastManager.showError("Failed to connect: ${e.message}")
+                            ToastManager.showError(context.getString(R.string.login_failed_connect_pattern, e.message ?: ""))
                         }
                     }
                 },
@@ -310,9 +312,9 @@ private fun LoginContent(
                 ) {
                     Text(
                         text = buildAnnotatedString {
-                            append("Enter your\n")
+                            append(stringResource(R.string.login_enter_your))
                             withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                                append("Credentials")
+                                append(stringResource(R.string.login_credentials))
                             }
                         },
                         fontSize = 32.sp,
@@ -323,7 +325,7 @@ private fun LoginContent(
                     )
 
                     Text(
-                        text = "Please sign in to continue",
+                        text = stringResource(R.string.login_sign_in_to_continue),
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 32.dp)
@@ -340,7 +342,7 @@ private fun LoginContent(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     LoginMethodTab(
-                        text = "Password",
+                        text = stringResource(R.string.login_mode_password),
                         isSelected = uiState.loginMode == LoginMode.PASSWORD,
                         onClick = {
                             viewModel.handleEvent(LoginEvent.UpdateLoginMode(LoginMode.PASSWORD))
@@ -350,7 +352,7 @@ private fun LoginContent(
                     Spacer(modifier = Modifier.width(24.dp))
 
                     LoginMethodTab(
-                        text = "API Key",
+                        text = stringResource(R.string.login_mode_api_key),
                         isSelected = uiState.loginMode == LoginMode.API_KEY,
                         onClick = {
                             viewModel.handleEvent(LoginEvent.UpdateLoginMode(LoginMode.API_KEY))
@@ -373,11 +375,11 @@ private fun LoginContent(
                                     onValueChange = {
                                         viewModel.handleEvent(LoginEvent.UpdateUsername(it))
                                     },
-                                    label = { Text("Username") },
+                                    label = { Text(stringResource(R.string.login_username_hint)) },
                                     leadingIcon = {
                                         Icon(
                                             imageVector = Icons.Default.Person,
-                                            contentDescription = "Username"
+                                            contentDescription = stringResource(R.string.login_username_hint)
                                         )
                                     },
                                     singleLine = true,
@@ -395,11 +397,11 @@ private fun LoginContent(
                                     onValueChange = {
                                         viewModel.handleEvent(LoginEvent.UpdatePassword(it))
                                     },
-                                    label = { Text("Password") },
+                                    label = { Text(stringResource(R.string.login_password_hint)) },
                                     leadingIcon = {
                                         Icon(
                                             imageVector = Icons.Default.Lock,
-                                            contentDescription = "Password"
+                                            contentDescription = stringResource(R.string.login_password_hint)
                                         )
                                     },
                                     trailingIcon = {
@@ -415,9 +417,9 @@ private fun LoginContent(
                                                     Icons.Default.Visibility
                                                 },
                                                 contentDescription = if (uiState.isPasswordVisible) {
-                                                    "Hide password"
+                                                    stringResource(R.string.login_hide_password)
                                                 } else {
-                                                    "Show password"
+                                                    stringResource(R.string.login_show_password)
                                                 }
                                             )
                                         }
@@ -451,7 +453,7 @@ private fun LoginContent(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = "Save details for autologin?",
+                                        text = stringResource(R.string.login_save_details_autologin),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.weight(1f)
@@ -469,18 +471,18 @@ private fun LoginContent(
                                 OutlinedTextField(
                                     value = apiKey,
                                     onValueChange = onApiKeyChange,
-                                    label = { Text("Paste your TrueNAS API key here") },
+                                    label = { Text(stringResource(R.string.login_paste_api_key)) },
                                     leadingIcon = {
                                         Icon(
                                             imageVector = Icons.Default.Key,
-                                            contentDescription = "API Key"
+                                            contentDescription = stringResource(R.string.common_api_key)
                                         )
                                     },
                                     trailingIcon = {
                                         IconButton(onClick = onToggleVisibilityClick) {
                                             Icon(
                                                 imageVector = if (isApiKeyVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                                                contentDescription = if (isApiKeyVisible) "Hide API Key" else "Show API Key"
+                                                contentDescription = if (isApiKeyVisible) stringResource(R.string.login_hide_api_key) else stringResource(R.string.login_show_api_key)
                                             )
                                         }
                                     },
@@ -509,7 +511,7 @@ private fun LoginContent(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = "Save key for autologin?",
+                                        text = stringResource(R.string.login_save_key_autologin),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.weight(1f)
@@ -549,11 +551,11 @@ private fun LoginContent(
                                 color = MaterialTheme.colorScheme.onPrimary
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Signing in...")
+                            Text(stringResource(R.string.login_signing_in))
                         }
                     } else {
                         Text(
-                            "Sign In",
+                            stringResource(R.string.login_sign_in),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
                         )
@@ -562,14 +564,21 @@ private fun LoginContent(
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Need help accessing your ${if (uiState.loginMode == LoginMode.PASSWORD) "account" else "API key"}?",
+                    text = stringResource(
+                        R.string.login_need_help,
+                        if (uiState.loginMode == LoginMode.PASSWORD) {
+                            stringResource(R.string.login_need_help_account)
+                        } else {
+                            stringResource(R.string.login_need_help_api_key)
+                        }
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            ToastManager.showInfo("Contact your administrator for assistance")
+                            ToastManager.showInfo(context.getString(R.string.login_contact_administrator))
                         }
                 )
 
@@ -638,7 +647,7 @@ private fun OtpFullScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Two-Factor\nAuthentication",
+            text = stringResource(R.string.login_two_factor_title),
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -649,7 +658,10 @@ private fun OtpFullScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "A 6-digit code has been requested for\n${uiState.otpUsername.ifBlank { "your account" }}",
+            text = stringResource(
+                R.string.login_otp_code_requested,
+                uiState.otpUsername.ifBlank { stringResource(R.string.login_otp_your_account) }
+            ),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -671,7 +683,7 @@ private fun OtpFullScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Enter Verification Code",
+                    text = stringResource(R.string.login_enter_verification_code),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -721,9 +733,9 @@ private fun OtpFullScreen(
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Verifying...", fontSize = 15.sp)
+                        Text(stringResource(R.string.login_verifying), fontSize = 15.sp)
                     } else {
-                        Text("Verify & Sign In", fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.login_verify_and_sign_in), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
                     }
                 }
             }
@@ -745,7 +757,7 @@ private fun OtpFullScreen(
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Back to login", fontWeight = FontWeight.Medium)
+                Text(stringResource(R.string.login_back_to_login), fontWeight = FontWeight.Medium)
             }
 
             TextButton(onClick = onChangeServerConfig) {
@@ -755,15 +767,15 @@ private fun OtpFullScreen(
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Change server", fontWeight = FontWeight.Medium)
+                Text(stringResource(R.string.login_change_server), fontWeight = FontWeight.Medium)
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = if (uiState.otpToken.isNotEmpty() && uiState.otpToken.length < 6) "Enter all 6 digits"
-            else "Code from your authenticator app",
+            text = if (uiState.otpToken.isNotEmpty() && uiState.otpToken.length < 6) stringResource(R.string.login_enter_all_6_digits)
+            else stringResource(R.string.login_code_from_authenticator),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -780,11 +792,11 @@ private fun ConnectionStatusCard(
     onRetryClick: () -> Unit
 ) {
     val (statusText, statusColor, showRetryButton) = when (connectionStatus) {
-        is ConnectionStatus.Connected -> Triple("Connected", MaterialTheme.colorScheme.primary, false)
-        is ConnectionStatus.Connecting -> Triple("Connecting...", MaterialTheme.colorScheme.tertiary, false)
-        is ConnectionStatus.Disconnected -> Triple("Disconnected", MaterialTheme.colorScheme.error, true)
-        is ConnectionStatus.Error -> Triple("Connection Error", MaterialTheme.colorScheme.error, true)
-        is ConnectionStatus.Unknown -> Triple("Checking connection...", MaterialTheme.colorScheme.onSurfaceVariant, false)
+        is ConnectionStatus.Connected -> Triple(stringResource(R.string.login_status_connected), MaterialTheme.colorScheme.primary, false)
+        is ConnectionStatus.Connecting -> Triple(stringResource(R.string.login_status_connecting), MaterialTheme.colorScheme.tertiary, false)
+        is ConnectionStatus.Disconnected -> Triple(stringResource(R.string.login_status_disconnected), MaterialTheme.colorScheme.error, true)
+        is ConnectionStatus.Error -> Triple(stringResource(R.string.login_status_connection_error), MaterialTheme.colorScheme.error, true)
+        is ConnectionStatus.Unknown -> Triple(stringResource(R.string.login_status_checking), MaterialTheme.colorScheme.onSurfaceVariant, false)
     }
 
     Card(
@@ -822,7 +834,7 @@ private fun ConnectionStatusCard(
 
             if (showRetryButton) {
                 Text(
-                    text = "Retry",
+                    text = stringResource(R.string.common_retry),
                     style = MaterialTheme.typography.bodySmall,
                     color = statusColor,
                     fontWeight = FontWeight.Medium,
@@ -897,12 +909,12 @@ private fun ServerInfoSection(onChangeServerClick: () -> Unit) {
 
             Column {
                 Text(
-                    text = "Accessing from:",
+                    text = stringResource(R.string.login_accessing_from),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = serverUrl ?: "Unknown server",
+                    text = serverUrl ?: stringResource(R.string.login_unknown_server),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Medium
@@ -957,7 +969,7 @@ private fun ServerConfigurationPrompt(
 
             // Title with gradient effect
             Text(
-                text = "Server Setup Required",
+                text = stringResource(R.string.login_server_setup_required),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -967,7 +979,7 @@ private fun ServerConfigurationPrompt(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Connect to your TrueNAS server to get started",
+                text = stringResource(R.string.login_get_started),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -988,8 +1000,8 @@ private fun ServerConfigurationPrompt(
                 ) {
                     SetupInfoItem(
                         icon = Icons.Default.Web,
-                        title = "Server URL",
-                        description = "Enter your TrueNAS server address"
+                        title = stringResource(R.string.login_setup_item_url),
+                        description = stringResource(R.string.login_setup_item_url_desc)
                     )
 
                     HorizontalDivider(
@@ -998,8 +1010,8 @@ private fun ServerConfigurationPrompt(
 
                     SetupInfoItem(
                         icon = Icons.Default.Security,
-                        title = "Secure Connection",
-                        description = "Configure SSL/TLS settings"
+                        title = stringResource(R.string.login_setup_item_security),
+                        description = stringResource(R.string.login_setup_item_security_desc)
                     )
 
                     HorizontalDivider(
@@ -1008,8 +1020,8 @@ private fun ServerConfigurationPrompt(
 
                     SetupInfoItem(
                         icon = Icons.Default.Check,
-                        title = "Quick Setup",
-                        description = "Connect in just a few steps"
+                        title = stringResource(R.string.login_setup_item_quick),
+                        description = stringResource(R.string.login_setup_item_quick_desc)
                     )
                 }
             }
@@ -1035,7 +1047,7 @@ private fun ServerConfigurationPrompt(
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        "Configure Server",
+                        stringResource(R.string.login_configure_server),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -1055,7 +1067,7 @@ private fun ServerConfigurationPrompt(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "First time? We'll guide you through",
+                    text = stringResource(R.string.login_first_time_guide),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Medium

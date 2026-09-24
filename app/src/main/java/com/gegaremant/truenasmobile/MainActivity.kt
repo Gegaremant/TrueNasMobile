@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -53,6 +54,7 @@ import com.gegaremant.truenasmobile.data.helpers.ThemeMode
 import com.gegaremant.truenasmobile.data.helpers.dataStore
 import com.gegaremant.truenasmobile.data.security.BiometricLockPrefs
 import com.gegaremant.truenasmobile.data.security.shouldReLock
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.ui.MainScreen
 import com.gegaremant.truenasmobile.ui.Screen
 import com.gegaremant.truenasmobile.ui.account.AccountSwitcherScreen
@@ -113,7 +115,7 @@ class MainActivity : FragmentActivity() {
                 isBlackMode = personalization.blackMode
             ) {
                 when {
-                    !lockResolved.value -> LoadingScreen("Preparing...")
+                    !lockResolved.value -> LoadingScreen(stringResource(R.string.startup_preparing))
                     !appUnlocked.value -> BiometricLockScreen(
                         statusMessage = lockErrorMessage,
                         onUnlock = { requestBiometricUnlock() }
@@ -144,8 +146,8 @@ class MainActivity : FragmentActivity() {
     private fun requestBiometricUnlock() {
         try {
             val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Unlock TrueNasMobile")
-                .setSubtitle("Authenticate to open your TrueNAS data.")
+                .setTitle(getString(R.string.biometric_prompt_title))
+                .setSubtitle(getString(R.string.biometric_prompt_subtitle))
                 // NOTE: androidx.biometric forbids a negative button when
                 // DEVICE_CREDENTIAL is among the allowed authenticators.
                 .setAllowedAuthenticators(
@@ -169,7 +171,7 @@ class MainActivity : FragmentActivity() {
             )
             prompt.authenticate(promptInfo)
         } catch (e: Exception) {
-            lockErrorMessage = "Biometrics unavailable: ${e.message}"
+            lockErrorMessage = getString(R.string.biometric_unavailable, e.message)
         }
     }
 
@@ -247,10 +249,10 @@ fun MainActivityContent(
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (appState) {
-            is AppState.Initializing -> LoadingScreen("Initializing...")
-            is AppState.CheckingConnection -> LoadingScreen("Connecting to server...")
-            is AppState.ValidatingToken -> LoadingScreen("Validating credentials...")
-            is AppState.AttemptingAutoLogin -> LoadingScreen("Attempting auto sign-in...")
+            is AppState.Initializing -> LoadingScreen(stringResource(R.string.startup_initializing))
+            is AppState.CheckingConnection -> LoadingScreen(stringResource(R.string.common_connecting_to_server))
+            is AppState.ValidatingToken -> LoadingScreen(stringResource(R.string.startup_validating_credentials))
+            is AppState.AttemptingAutoLogin -> LoadingScreen(stringResource(R.string.startup_attempting_auto_login))
             is AppState.Ready -> {
                 AppNavigation(
                     startRoute = (appState as AppState.Ready).startRoute,
@@ -273,7 +275,7 @@ fun MainActivityContent(
             is AppState.NoInternet -> {
                 TrueNasMobileAppTheme {
                     NoInternetScreen(
-                        message = "No internet connection.",
+                        message = stringResource(R.string.startup_no_internet),
                         onRetry = {
                             viewModel.initializeApp(context)
                         }
@@ -375,7 +377,7 @@ private fun AppNavigation(
                                 popUpTo(Screen.AccountSwitcher.route) { inclusive = true }
                             }
                         } else {
-                            ToastManager.showError("Failed to login with saved account")
+                            ToastManager.showErrorRes(R.string.startup_failed_login_saved_account)
                             navController.navigate(Screen.Login.route) {
                                 popUpTo(Screen.AccountSwitcher.route) { inclusive = true }
                             }
@@ -397,12 +399,12 @@ private fun AppNavigation(
                 )
             } ?: run {
                 LaunchedEffect(Unit) {
-                    ToastManager.showError("Session invalid. Please log in again.")
+                    ToastManager.showErrorRes(R.string.startup_session_invalid)
                     navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.Main.route) { inclusive = true }
                     }
                 }
-                LoadingScreen("Redirecting to login...")
+                LoadingScreen(stringResource(R.string.startup_redirecting_to_login))
             }
         }
 
@@ -410,7 +412,7 @@ private fun AppNavigation(
             SettingsScreen(
                 manager = manager,
                 onDummyAction = { settingAction ->
-                    ToastManager.showInfo("Work in progress for: $settingAction")
+                    ToastManager.showInfoRes(R.string.startup_work_in_progress, settingAction)
                 },
                 onNavigateToTheme = {
                     navController.navigate(Screen.Theme.route)
@@ -523,7 +525,7 @@ private fun AppNavigation(
                     onNavigateBack = { navController.popBackStack() }
                 )
             } ?: run {
-                LoadingScreen("Redirecting...")
+                LoadingScreen(stringResource(R.string.startup_redirecting))
                 LaunchedEffect(Unit) { navController.popBackStack() }
             }
         }
@@ -535,7 +537,7 @@ private fun AppNavigation(
                     onNavigateBack = { navController.popBackStack() }
                 )
             } ?: run {
-                LoadingScreen("Redirecting...")
+                LoadingScreen(stringResource(R.string.startup_redirecting))
                 LaunchedEffect(Unit) { navController.popBackStack() }
             }
         }

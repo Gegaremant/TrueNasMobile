@@ -3,6 +3,7 @@ package com.gegaremant.truenasmobile.ui.setup
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.TrueNASClient
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.Prefs
@@ -67,7 +68,7 @@ class SetupScreenViewModel : ViewModel() {
         // Validate before proceeding
         if (!currentState.urlValidation.isValid || currentState.serverUrl.isEmpty()) {
             _uiState.value = currentState.copy(
-                connectionError = "Please enter a valid server URL"
+                connectionError = context.getString(R.string.setup_enter_valid_url)
             )
             return
         }
@@ -105,18 +106,21 @@ class SetupScreenViewModel : ViewModel() {
                             setupComplete = true
                         )
                     } else {
-                        throw Exception("Unable to establish connection")
+                        throw Exception(context.getString(R.string.setup_unable_establish_connection))
                     }
                 }
             } catch (e: kotlinx.coroutines.TimeoutCancellationException) {
                 _uiState.value = _uiState.value.copy(
                     isConfiguring = false,
-                    connectionError = "Connection timeout. Please check the server URL and your network."
+                    connectionError = context.getString(R.string.setup_connection_timeout)
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isConfiguring = false,
-                    connectionError = "Connection failed: ${e.message ?: "Unknown error"}"
+                    connectionError = context.getString(
+                        R.string.setup_connection_failed,
+                        e.message ?: context.getString(R.string.common_unknown_error)
+                    )
                 )
             } finally {
                 // Clean up temporary resources

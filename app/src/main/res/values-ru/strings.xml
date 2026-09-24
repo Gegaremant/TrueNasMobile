@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">TrueNasMobile</string>
+    <string name="title_activity_setup_screen">Экран настройки</string>
+
+    <!-- Widget descriptions -->
+    <string name="AppUpdateWidgetDescription">Просмотр ожидающих обновлений приложений TrueNAS</string>
+    <string name="PoolWidgetDescription">Мониторинг состояния пулов хранения TrueNAS</string>
+    <string name="quick_launch_widget_description">Быстрый запуск веб-интерфейса приложений с главного экрана</string>
+
+    <!-- App shortcuts -->
+    <string name="shortcut_disabled">Этот ярлык сейчас недоступен.</string>
+    <string name="shortcut_install_app_short">Установить приложение</string>
+    <string name="shortcut_install_app_long">Установить новое приложение</string>
+    <string name="shortcut_update_apps_short">Обновить приложения</string>
+    <string name="shortcut_update_apps_long">Обновить установленные приложения</string>
+    <string name="shortcut_configure_instance_short">Настроить инстанс</string>
+    <string name="shortcut_configure_instance_long">Настройка инстанса TrueNAS</string>
+    <string name="shortcut_update_instance_short">Обновить инстанс</string>
+    <string name="shortcut_update_instance_long">Обновить инстанс TrueNAS</string>
+
+    <!-- Common -->
+    <string name="common_loading">Загрузка…</string>
+    <string name="common_connecting">Подключение…</string>
+    <string name="common_connecting_to_server">Подключение к серверу…</string>
+    <string name="common_retry">Повторить</string>
+    <string name="common_cancel">Отмена</string>
+    <string name="common_delete">Удалить</string>
+    <string name="common_close">Закрыть</string>
+    <string name="common_unknown_error">Неизвестная ошибка</string>
+    <string name="common_server_url">URL сервера</string>
+    <string name="common_username">Имя пользователя</string>
+    <string name="common_password">Пароль</string>
+    <string name="common_api_key">API-ключ</string>
+
+    <!-- Startup flow -->
+    <string name="startup_preparing">Подготовка…</string>
+    <string name="startup_initializing">Инициализация…</string>
+    <string name="startup_validating_credentials">Проверка учётных данных…</string>
+    <string name="startup_attempting_auto_login">Автоматический вход…</string>
+    <string name="startup_no_internet">Нет подключения к интернету.</string>
+    <string name="startup_no_internet_hint">Проверьте сетевое подключение и попробуйте снова.</string>
+    <string name="startup_connection_issue">Проблема с подключением</string>
+    <string name="startup_redirecting">Перенаправление…</string>
+    <string name="startup_redirecting_to_login">Переход к экрану входа…</string>
+    <string name="startup_session_invalid">Сессия недействительна. Пожалуйста, войдите снова.</string>
+    <string name="startup_failed_login_saved_account">Не удалось войти с сохранённым аккаунтом</string>
+    <string name="startup_work_in_progress">В разработке: %1$s</string>
+
+    <!-- Biometric lock -->
+    <string name="biometric_app_locked">TrueNasMobile заблокирован</string>
+    <string name="biometric_authenticate_to_open">Подтвердите личность, чтобы безопасно открыть данные TrueNAS.</string>
+    <string name="biometric_unlock">Разблокировать</string>
+    <string name="biometric_prompt_title">Разблокируйте TrueNasMobile</string>
+    <string name="biometric_prompt_subtitle">Подтвердите личность, чтобы открыть данные TrueNAS.</string>
+    <string name="biometric_unavailable">Биометрия недоступна: %1$s</string>
+
+    <!-- Login screen -->
+    <string name="login_enter_your">Введите ваши\n</string>
+    <string name="login_credentials">учётные данные</string>
+    <string name="login_sign_in_to_continue">Войдите, чтобы продолжить</string>
+    <string name="login_mode_password">Пароль</string>
+    <string name="login_mode_api_key">API-ключ</string>
+    <string name="login_username_hint">Имя пользователя</string>
+    <string name="login_password_hint">Пароль</string>
+    <string name="login_hide_password">Скрыть пароль</string>
+    <string name="login_show_password">Показать пароль</string>
+    <string name="login_save_details_autologin">Сохранить данные для автовхода?</string>
+    <string name="login_paste_api_key">Вставьте ваш API-ключ TrueNAS</string>
+    <string name="login_hide_api_key">Скрыть API-ключ</string>
+    <string name="login_show_api_key">Показать API-ключ</string>
+    <string name="login_save_key_autologin">Сохранить ключ для автовхода?</string>
+    <string name="login_signing_in">Выполняется вход…</string>
+    <string name="login_sign_in">Войти</string>
+    <string name="login_need_help">Нужна помощь с доступом к %1$s?</string>
+    <string name="login_need_help_account">аккаунту</string>
+    <string name="login_need_help_api_key">API-ключу</string>
+    <string name="login_contact_administrator">Обратитесь к администратору за помощью</string>
+    <string name="login_configure_server">Настроить сервер</string>
+    <string name="login_connected_success">Подключено к серверу!</string>
+    <string name="login_connected_successfully">Успешно подключено!</string>
+    <string name="login_initial_connection_failed">Первичное подключение не удалось: не удаётся связаться с сервером.</string>
+    <string name="login_connection_failed_pattern">Не удалось подключиться: %1$s</string>
+    <string name="login_failed_connect_details">Не удалось подключиться: не удаётся связаться с сервером с указанными данными.</string>
+    <string name="login_failed_connect_pattern">Не удалось подключиться: %1$s</string>
+    <string name="login_two_factor_title">Двухфакторная\nаутентификация</string>
+    <string name="login_otp_code_requested">6-значный код запрошен для\n%1$s</string>
+    <string name="login_otp_your_account">вашего аккаунта</string>
+    <string name="login_enter_verification_code">Введите код подтверждения</string>
+    <string name="login_verifying">Проверка…</string>
+    <string name="login_verify_and_sign_in">Подтвердить и войти</string>
+    <string name="login_back_to_login">Назад ко входу</string>
+    <string name="login_change_server">Сменить сервер</string>
+    <string name="login_enter_all_6_digits">Введите все 6 цифр</string>
+    <string name="login_code_from_authenticator">Код из приложения-аутентификатора</string>
+    <string name="login_status_connected">Подключено</string>
+    <string name="login_status_connecting">Подключение…</string>
+    <string name="login_status_disconnected">Отключено</string>
+    <string name="login_status_connection_error">Ошибка подключения</string>
+    <string name="login_status_checking">Проверка подключения…</string>
+    <string name="login_accessing_from">Доступ с:</string>
+    <string name="login_unknown_server">Неизвестный сервер</string>
+    <string name="login_server_setup_required">Требуется настройка сервера</string>
+    <string name="login_get_started">Подключитесь к серверу TrueNAS, чтобы начать работу</string>
+    <string name="login_setup_item_url">URL сервера</string>
+    <string name="login_setup_item_url_desc">Введите адрес сервера TrueNAS</string>
+    <string name="login_setup_item_security">Безопасное подключение</string>
+    <string name="login_setup_item_security_desc">Настройка параметров SSL/TLS</string>
+    <string name="login_setup_item_quick">Быстрая настройка</string>
+    <string name="login_setup_item_quick_desc">Подключение за несколько шагов</string>
+    <string name="login_first_time_guide">Впервые здесь? Мы проведём вас по шагам</string>
+
+    <!-- Login toasts -->
+    <string name="toast_connection_not_ready">Подключение не готово. Проверьте конфигурацию сервера.</string>
+    <string name="toast_not_connected_to_server">Нет подключения к серверу</string>
+    <string name="toast_enter_username_password">Пожалуйста, введите имя пользователя и пароль</string>
+    <string name="toast_enter_api_key">Пожалуйста, введите ваш API-ключ</string>
+    <string name="toast_login_failed">Ошибка входа: %1$s</string>
+    <string name="toast_login_timeout">Истекло время входа. Сервер может быть недоступен.</string>
+    <string name="toast_login_error">Ошибка входа: %1$s</string>
+    <string name="toast_token_generation_failed">Не удалось сгенерировать токен: %1$s</string>
+    <string name="toast_otp_required">Требуется OTP-токен. Введите ваш 2FA-код.</string>
+    <string name="toast_invalid_username_password">Неверное имя пользователя или пароль</string>
+    <string name="toast_session_expired">Сессия истекла. Попробуйте ещё раз.</string>
+    <string name="toast_auth_redirect_required">Требуется перенаправление аутентификации: %1$s</string>
+    <string name="toast_enter_otp_token">Пожалуйста, введите OTP-токен</string>
+    <string name="toast_token_failed">Сбой токена: %1$s</string>
+    <string name="toast_invalid_otp_token">Неверный OTP-токен</string>
+    <string name="toast_otp_auth_failed">Не удалось выполнить OTP-аутентификацию</string>
+    <string name="toast_otp_failed">Сбой OTP: %1$s</string>
+    <string name="toast_otp_error">Ошибка OTP: %1$s</string>
+    <string name="toast_validating_api_key">Проверка API-ключа…</string>
+    <string name="toast_invalid_api_key">Неверный API-ключ</string>
+    <string name="toast_api_key_auth_failed">Не удалось выполнить аутентификацию по API-ключу</string>
+    <string name="toast_api_key_validation_failed">Не удалось проверить API-ключ: %1$s</string>
+    <string name="toast_validation_timeout">Истекло время проверки. Проверьте подключение.</string>
+    <string name="toast_validation_error">Ошибка проверки: %1$s</string>
+    <string name="toast_server_url_not_configured">URL сервера не настроен</string>
+
+    <!-- Server config sheet -->
+    <string name="setup_title_change">Конфигурация сервера</string>
+    <string name="setup_title_new">Настройте URL вашего сервера</string>
+    <string name="setup_subtitle_change">Обновите настройки подключения</string>
+    <string name="setup_subtitle_new">Подключитесь к вашему экземпляру TrueNAS</string>
+    <string name="setup_server_address">Адрес сервера</string>
+    <string name="setup_url_label">URL</string>
+    <string name="setup_security_settings">Настройки безопасности</string>
+    <string name="setup_allow_insecure">Разрешить небезопасные подключения</string>
+    <string name="setup_allow_insecure_desc">Для самоподписанных сертификатов</string>
+    <string name="setup_connection_tips">Советы по подключению</string>
+    <string name="setup_connection_tips_text">• Используйте ws:// для HTTP или wss:// для HTTPS\n• Укажите порт, если это необходимо\n• Пример: ws://192.168.1.100:80</string>
+    <string name="setup_update_server">Обновить сервер</string>
+    <string name="setup_connect_now">Подключиться</string>
+    <string name="setup_enter_valid_url">Пожалуйста, введите корректный URL сервера</string>
+    <string name="setup_connection_timeout">Истекло время подключения. Проверьте URL сервера и сеть.</string>
+    <string name="setup_connection_failed">Не удалось подключиться: %1$s</string>
+    <string name="setup_unable_establish_connection">Не удалось установить соединение</string>
+
+    <!-- Account switcher -->
+    <string name="account_select_title">Выберите аккаунт</string>
+    <string name="account_none_saved">Сохранённых аккаунтов пока нет</string>
+    <string name="account_add_new">Добавить аккаунт</string>
+    <string name="account_add_another_server">Добавить ещё один сервер</string>
+    <string name="account_delete_all_credentials">Удалить все сохранённые учётные данные</string>
+    <string name="account_delete_dialog_title">Удалить аккаунт</string>
+    <string name="account_delete_dialog_message">Вы уверены, что хотите удалить «%1$s»? Сохранённые учётные данные будут удалены.</string>
+    <string name="account_delete_all_title">Удалить все учётные данные</string>
+    <string name="account_delete_all_message">Вы уверены, что хотите удалить ВСЕ сохранённые аккаунты и учётные данные? Это действие необратимо.</string>
+    <string name="account_delete_all">Удалить всё</string>
+    <string name="account_choose_server">Выберите сервер</string>
+    <string name="account_choose_server_message">Сохранено несколько серверов. Выберите, для какого сервера добавить аккаунт:</string>
+    <string name="account_no_servers">Серверы не сохранены.</string>
+    <string name="account_unnamed_server">Безымянный сервер</string>
+    <string name="account_auto_login_enabled">Автовход включён</string>
+    <string name="account_delete_account_cd">Удалить аккаунт</string>
+    <string name="account_select_account_cd">Выбрать аккаунт</string>
+    <string name="account_more_options_cd">Дополнительные параметры</string>
+
+    <plurals name="account_saved_count">
+        <item quantity="one">%1$d сохранённый аккаунт</item>
+        <item quantity="few">%1$d сохранённых аккаунта</item>
+        <item quantity="many">%1$d сохранённых аккаунтов</item>
+        <item quantity="other">%1$d сохранённых аккаунтов</item>
+    </plurals>
+</resources>

@@ -51,10 +51,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.ui.background.WavyGradientBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -146,7 +148,7 @@ fun ServerConfigBottomSheet(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "Close",
+                                contentDescription = stringResource(R.string.common_close),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -165,7 +167,7 @@ fun ServerConfigBottomSheet(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = if (showChangeUrlOption) "Server Configuration" else "Configure Your Server URL",
+                        text = if (showChangeUrlOption) stringResource(R.string.setup_title_change) else stringResource(R.string.setup_title_new),
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -174,9 +176,9 @@ fun ServerConfigBottomSheet(
 
                     Text(
                         text = if (showChangeUrlOption)
-                            "Update your connection settings"
+                            stringResource(R.string.setup_subtitle_change)
                         else
-                            "Connect to your TrueNAS instance",
+                            stringResource(R.string.setup_subtitle_new),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -261,7 +263,7 @@ private fun ServerUrlCard(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Server Address",
+                text = stringResource(R.string.setup_server_address),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary
@@ -270,12 +272,12 @@ private fun ServerUrlCard(
             OutlinedTextField(
                 value = serverUrl,
                 onValueChange = onUrlChange,
-                label = { Text("URL") },
+                label = { Text(stringResource(R.string.setup_url_label)) },
                 placeholder = { Text("ws://192.168.1.100") },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Web,
-                        contentDescription = "Server URL"
+                        contentDescription = stringResource(R.string.common_server_url)
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -331,7 +333,7 @@ private fun SecurityCard(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Security Settings",
+                text = stringResource(R.string.setup_security_settings),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary
@@ -357,12 +359,12 @@ private fun SecurityCard(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Allow insecure connections",
+                                text = stringResource(R.string.setup_allow_insecure),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
-                                text = "For self-signed certificates",
+                                text = stringResource(R.string.setup_allow_insecure_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -401,14 +403,14 @@ private fun InfoCard() {
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
-                    text = "Connection Tips",
+                    text = stringResource(R.string.setup_connection_tips),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "• Use ws:// for HTTP or wss:// for HTTPS\n• Include port number if needed\n• Example: ws://192.168.1.100:80",
+                    text = stringResource(R.string.setup_connection_tips_text),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 18.sp
@@ -472,7 +474,7 @@ private fun ActionButtons(
                 )
             ) {
                 Text(
-                    "Cancel",
+                    stringResource(R.string.common_cancel),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -502,7 +504,7 @@ private fun ActionButtons(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                     Text(
-                        "Connecting...",
+                        stringResource(R.string.common_connecting),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -518,7 +520,7 @@ private fun ActionButtons(
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        if (showChangeUrlOption) "Update Server" else "Connect Now",
+                        if (showChangeUrlOption) stringResource(R.string.setup_update_server) else stringResource(R.string.setup_connect_now),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold
                     )

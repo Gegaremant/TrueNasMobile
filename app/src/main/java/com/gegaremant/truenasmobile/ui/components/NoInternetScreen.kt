@@ -24,9 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 
 @Composable
 fun NoInternetScreen(
@@ -71,7 +73,7 @@ fun NoInternetScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = "Connection Issue",
+                text = stringResource(R.string.startup_connection_issue),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -81,7 +83,7 @@ fun NoInternetScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = message ?: "Please check your network connection and try again.",
+                text = message ?: stringResource(R.string.startup_no_internet_hint),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -111,7 +113,7 @@ fun NoInternetScreen(
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        "Retry",
+                        stringResource(R.string.common_retry),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold
                     )

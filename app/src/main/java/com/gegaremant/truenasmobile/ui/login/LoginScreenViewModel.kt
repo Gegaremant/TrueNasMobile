@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.AuthService
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
@@ -193,10 +194,13 @@ class LoginScreenViewModel(
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
-                        connectionStatus = ConnectionStatus.Error(e.message ?: "Connection failed")
+                        connectionStatus = ConnectionStatus.Error(e.message ?: application.getString(R.string.common_unknown_error))
                     )
                 }
-                ToastManager.showError("Connection failed: ${e.message ?: "Unknown error"}")
+                ToastManager.showErrorRes(
+                    R.string.login_connection_failed_pattern,
+                    e.message ?: application.getString(R.string.common_unknown_error)
+                )
             }
         }
     }
@@ -205,25 +209,25 @@ class LoginScreenViewModel(
         val currentState = _uiState.value
 
         if (manager == null) {
-            ToastManager.showError("Connection not ready. Please check server configuration.")
+            ToastManager.showErrorRes(R.string.toast_connection_not_ready)
             return
         }
 
         if (currentState.connectionStatus !is ConnectionStatus.Connected) {
-            ToastManager.showWarning("Not connected to server")
+            ToastManager.showWarningRes(R.string.toast_not_connected_to_server)
             return
         }
         when (currentState.loginMode) {
             LoginMode.PASSWORD -> {
                 if (currentState.username.isBlank() || currentState.password.isBlank()) {
-                    ToastManager.showWarning("Please enter username and password")
+                    ToastManager.showWarningRes(R.string.toast_enter_username_password)
                     return
                 }
             }
 
             LoginMode.API_KEY -> {
                 if (currentState.apiKey.isBlank()) {
-                    ToastManager.showWarning("Please enter your API key")
+                    ToastManager.showWarningRes(R.string.toast_enter_api_key)
                     return
                 }
             }
@@ -260,7 +264,7 @@ class LoginScreenViewModel(
                     }
                     is ApiResult.Error -> {
                         _uiState.update { it.copy(isLoading = false) }
-                        ToastManager.showError("Login failed: ${result.message}")
+                        ToastManager.showErrorRes(R.string.toast_login_failed, result.message)
                     }
                     is ApiResult.Loading -> { /* no-op */ }
                 }
@@ -269,8 +273,8 @@ class LoginScreenViewModel(
             _uiState.update { it.copy(isLoading = false) }
             when (e) {
                 is kotlinx.coroutines.TimeoutCancellationException ->
-                    ToastManager.showError("Login timeout. Server may be slow or unreachable.")
-                else -> ToastManager.showError("Login error: ${e.message}")
+                    ToastManager.showErrorRes(R.string.toast_login_timeout)
+                else -> ToastManager.showErrorRes(R.string.toast_login_error, e.message.orEmpty())
             }
         }
     }
@@ -298,7 +302,7 @@ class LoginScreenViewModel(
                     }
                     is ApiResult.Error -> {
                         _uiState.update { it.copy(isLoading = false) }
-                        ToastManager.showError("Token generation failed: ${tokenResult.message}")
+                        ToastManager.showErrorRes(R.string.toast_token_generation_failed, tokenResult.message)
                     }
                     is ApiResult.Loading -> { /* no-op */ }
                 }
@@ -313,22 +317,22 @@ class LoginScreenViewModel(
                         otpToken = ""
                     )
                 }
-                ToastManager.showInfo("OTP token required. Please enter your 2FA code.")
+                ToastManager.showInfoRes(R.string.toast_otp_required)
             }
 
             is LoginExResult.AuthRespAuthErr -> {
                 _uiState.update { it.copy(isLoading = false) }
-                ToastManager.showError("Invalid username or password")
+                ToastManager.showErrorRes(R.string.toast_invalid_username_password)
             }
 
             is LoginExResult.AuthRespAuthExpired -> {
                 _uiState.update { it.copy(isLoading = false) }
-                ToastManager.showError("Session expired. Please try again.")
+                ToastManager.showErrorRes(R.string.toast_session_expired)
             }
 
             is LoginExResult.AuthRespAuthRedirect -> {
                 _uiState.update { it.copy(isLoading = false) }
-                ToastManager.showError("Authentication redirect required: ${loginResult.urls.joinToString()}")
+                ToastManager.showErrorRes(R.string.toast_auth_redirect_required, loginResult.urls.joinToString())
             }
         }
     }
@@ -336,7 +340,7 @@ class LoginScreenViewModel(
     private fun submitOtpToken() {
         val state = _uiState.value
         if (state.otpToken.isBlank()) {
-            ToastManager.showWarning("Please enter the OTP token")
+            ToastManager.showWarningRes(R.string.toast_enter_otp_token)
             return
         }
         _uiState.update { it.copy(isLoading = true) }
@@ -376,37 +380,37 @@ class LoginScreenViewModel(
                                         }
                                         is ApiResult.Error -> {
                                             _uiState.update { it.copy(isLoading = false) }
-                                            ToastManager.showError("Token failed: ${tokenResult.message}")
+                                            ToastManager.showErrorRes(R.string.toast_token_failed, tokenResult.message)
                                         }
                                         is ApiResult.Loading -> {}
                                     }
                                 }
                                 is LoginExResult.AuthRespAuthErr -> {
                                     _uiState.update { it.copy(isLoading = false) }
-                                    ToastManager.showError("Invalid OTP token")
+                                    ToastManager.showErrorRes(R.string.toast_invalid_otp_token)
                                 }
                                 else -> {
                                     _uiState.update { it.copy(isLoading = false) }
-                                    ToastManager.showError("OTP authentication failed")
+                                    ToastManager.showErrorRes(R.string.toast_otp_auth_failed)
                                 }
                             }
                         }
                         is ApiResult.Error -> {
                             _uiState.update { it.copy(isLoading = false) }
-                            ToastManager.showError("OTP failed: ${result.message}")
+                            ToastManager.showErrorRes(R.string.toast_otp_failed, result.message)
                         }
                         is ApiResult.Loading -> {}
                     }
                 }
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false) }
-                ToastManager.showError("OTP error: ${e.message}")
+                ToastManager.showErrorRes(R.string.toast_otp_error, e.message.orEmpty())
             }
         }
     }
 
     private suspend fun performApiKeyLogin(context: Context, state: LoginUiState) {
-        ToastManager.showInfo("Validating API key...")
+        ToastManager.showInfoRes(R.string.toast_validating_api_key)
         try {
             withTimeout(10000L) {
                 val mechanism = LoginMechanisms.AuthApiKeyPlain(
@@ -434,24 +438,24 @@ class LoginScreenViewModel(
                                     }
                                     is ApiResult.Error -> {
                                         _uiState.update { it.copy(isLoading = false) }
-                                        ToastManager.showError("Token generation failed: ${tokenResult.message}")
+                                        ToastManager.showErrorRes(R.string.toast_token_generation_failed, tokenResult.message)
                                     }
                                     is ApiResult.Loading -> {}
                                 }
                             }
                             is LoginExResult.AuthRespAuthErr -> {
                                 _uiState.update { it.copy(isLoading = false) }
-                                ToastManager.showError("Invalid API key")
+                                ToastManager.showErrorRes(R.string.toast_invalid_api_key)
                             }
                             else -> {
                                 _uiState.update { it.copy(isLoading = false) }
-                                ToastManager.showError("API key authentication failed")
+                                ToastManager.showErrorRes(R.string.toast_api_key_auth_failed)
                             }
                         }
                     }
                     is ApiResult.Error -> {
                         _uiState.update { it.copy(isLoading = false) }
-                        ToastManager.showError("API key validation failed: ${result.message}")
+                        ToastManager.showErrorRes(R.string.toast_api_key_validation_failed, result.message)
                     }
                     is ApiResult.Loading -> {}
                 }
@@ -460,8 +464,8 @@ class LoginScreenViewModel(
             _uiState.update { it.copy(isLoading = false) }
             when (e) {
                 is kotlinx.coroutines.TimeoutCancellationException ->
-                    ToastManager.showError("Validation timeout. Please check your connection.")
-                else -> ToastManager.showError("Validation error: ${e.message}")
+                    ToastManager.showErrorRes(R.string.toast_validation_timeout)
+                else -> ToastManager.showErrorRes(R.string.toast_validation_error, e.message.orEmpty())
             }
         }
     }
@@ -489,7 +493,7 @@ class LoginScreenViewModel(
         val (serverUrl, serverInsecure) = Prefs.load(context)
 
         if (serverUrl == null) {
-            ToastManager.showError("Server URL not configured")
+            ToastManager.showErrorRes(R.string.toast_server_url_not_configured)
             return
         }
 

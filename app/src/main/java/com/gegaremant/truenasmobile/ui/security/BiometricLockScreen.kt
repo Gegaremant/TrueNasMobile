@@ -18,9 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 
 @Composable
 fun BiometricLockScreen(
@@ -46,21 +48,21 @@ fun BiometricLockScreen(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "TrueNasMobile is locked",
+                text = stringResource(R.string.biometric_app_locked),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Authenticate to open your TrueNAS data safely.",
+                text = stringResource(R.string.biometric_authenticate_to_open),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(32.dp))
             Button(onClick = onUnlock) {
-                Text("Unlock")
+                Text(stringResource(R.string.biometric_unlock))
             }
             if (statusMessage != null) {
                 Spacer(modifier = Modifier.height(16.dp))

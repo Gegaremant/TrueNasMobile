@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="AppUpdateWidgetDescription">Просмотр ожидающих обновлений приложений TrueNAS</string>
-    <string name="PoolWidgetDescription">Мониторинг состояния пулов хранения TrueNAS</string>
-    <string name="quick_launch_widget_description">Быстрый запуск веб-интерфейса приложений с главного экрана</string>
-</resources>
