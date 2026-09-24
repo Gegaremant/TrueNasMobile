@@ -41,8 +41,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.PersonalizationManager
 import com.gegaremant.truenasmobile.data.helpers.ThemeMode
@@ -82,8 +84,8 @@ fun ThemeScreen(
             .statusBarsPadding()
     ) {
         UnifiedScreenHeader(
-            title = "Тема",
-            subtitle = "Выберите цветовую схему и режим",
+            title = stringResource(R.string.theme_title),
+            subtitle = stringResource(R.string.theme_subtitle),
             onDismissError = {},
             onBackPressed = onNavigateBack,
             isLoading = false,
@@ -121,7 +123,7 @@ fun ThemeScreen(
                 }
                 Column {
                     Text(
-                        text = "Цветовая схема",
+                        text = stringResource(R.string.theme_color_scheme),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -162,13 +164,13 @@ fun ThemeScreen(
                         .padding(20.dp)
                 ) {
                     Text(
-                        text = "Тёмный режим",
+                        text = stringResource(R.string.theme_dark_mode),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Светлая, тёмная или по умолчанию из системы",
+                        text = stringResource(R.string.theme_dark_mode_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 4.dp)
@@ -192,7 +194,7 @@ fun ThemeScreen(
                                     .weight(1f)
                             ) {
                                 Text(
-                                    text = mode.displayName,
+                                    text = stringResource(mode.displayNameRes),
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                     color = if (isSelected) {
@@ -226,13 +228,13 @@ fun ThemeScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Search Bar at Bottom",
+                            text = stringResource(R.string.theme_search_bar_bottom),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "Align the unified search field to the bottom of the screen",
+                            text = stringResource(R.string.theme_search_bar_bottom_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -364,7 +366,7 @@ private fun ThemePreviewCard(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = theme.displayName,
+            text = stringResource(theme.displayNameRes),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
             color = MaterialTheme.colorScheme.onSurface,

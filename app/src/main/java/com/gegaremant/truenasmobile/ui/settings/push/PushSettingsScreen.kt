@@ -41,7 +41,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 
@@ -63,8 +65,8 @@ fun PushSettingsScreen(
     Scaffold(
         topBar = {
             UnifiedScreenHeader(
-                title = "Push Notifications",
-                subtitle = "TrueNAS alerts straight to this device",
+                title = stringResource(R.string.push_title),
+                subtitle = stringResource(R.string.push_subtitle),
                 isLoading = false,
                 isRefreshing = false,
                 error = null,
@@ -106,15 +108,18 @@ fun PushSettingsScreen(
                     Spacer(Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Push notifications",
+                            text = stringResource(R.string.push_notifications),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
                             text = if (state.enabled) {
-                                "Enabled — topic ${state.ntfyTopic.ifBlank { "(none)" }}"
+                                stringResource(
+                                    R.string.push_enabled_topic,
+                                    state.ntfyTopic.ifBlank { stringResource(R.string.push_none_topic) }
+                                )
                             } else {
-                                "Relay alerts to your phone. No Google services required (ntfy)."
+                                stringResource(R.string.push_disabled_desc)
                             },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -131,7 +136,7 @@ fun PushSettingsScreen(
             OutlinedTextField(
                 value = state.relayUrl,
                 onValueChange = viewModel::updateRelayUrl,
-                label = { Text("Relay URL") },
+                label = { Text(stringResource(R.string.push_relay_url)) },
                 placeholder = { Text("https://relay.example.com") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -139,7 +144,7 @@ fun PushSettingsScreen(
             OutlinedTextField(
                 value = state.relayToken,
                 onValueChange = viewModel::updateRelayToken,
-                label = { Text("Relay token") },
+                label = { Text(stringResource(R.string.push_relay_token)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -147,7 +152,7 @@ fun PushSettingsScreen(
             OutlinedTextField(
                 value = state.ntfyBaseUrl,
                 onValueChange = viewModel::updateNtfyBaseUrl,
-                label = { Text("ntfy server") },
+                label = { Text(stringResource(R.string.push_ntfy_server)) },
                 placeholder = { Text("https://ntfy.sh") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -165,7 +170,7 @@ fun PushSettingsScreen(
                     if (state.isBusy) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                     else Icon(Icons.Default.Notifications, null, Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Test")
+                    Text(stringResource(R.string.push_test))
                 }
                 Button(
                     onClick = viewModel::registerAndEnable,
@@ -175,7 +180,7 @@ fun PushSettingsScreen(
                     if (state.isBusy) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                     else Icon(Icons.Default.Notifications, null, Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Register & Enable")
+                    Text(stringResource(R.string.push_register_enable))
                 }
             }
 
@@ -185,7 +190,7 @@ fun PushSettingsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Spacer(Modifier.width(8.dp))
-                Text("Send test alert")
+                Text(stringResource(R.string.push_send_test_alert))
             }
 
             OutlinedButton(
@@ -195,11 +200,11 @@ fun PushSettingsScreen(
             ) {
                 Icon(Icons.Default.Save, null, Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
-                Text("Create webhook on TrueNAS")
+                Text(stringResource(R.string.push_create_webhook))
             }
 
             Text(
-                text = state.status ?: "Step 1: point TrueNAS at your relay webhook. Step 2: register this device. Then press “Send test alert”.",
+                text = state.status ?: stringResource(R.string.push_status_hint),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

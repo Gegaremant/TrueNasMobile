@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.EncryptedPrefs
@@ -74,14 +75,14 @@ class SettingsScreenViewModel(
                         BiometricManager.Authenticators.DEVICE_CREDENTIAL
                 )
                 if (canAuthenticate != BiometricManager.BIOMETRIC_SUCCESS) {
-                    ToastManager.showError("Set up a device lock first (Settings → Security)")
+                    ToastManager.showErrorRes(R.string.toast_biometric_need_lock)
                     return@launch
                 }
             }
             BiometricLockPrefs.setEnabled(application.dataStore, enabled)
             _uiState.value = _uiState.value.copy(isBiometricLockEnabled = enabled)
-            ToastManager.showSuccess(
-                if (enabled) "Biometric lock enabled" else "Biometric lock disabled"
+            ToastManager.showSuccessRes(
+                if (enabled) R.string.toast_biometric_enabled else R.string.toast_biometric_disabled
             )
         }
     }
@@ -132,7 +133,7 @@ class SettingsScreenViewModel(
                         if (hasCredentials) {
                             val updatedAccount = account.copy(autoLoginEnabled = true)
                             MultiAccountPrefs.saveAccount(application, updatedAccount)
-                            ToastManager.showSuccess("Auto Login Enabled.")
+                            ToastManager.showSuccessRes(R.string.toast_autologin_enabled)
                             _uiState.value = _uiState.value.copy(isLoading = false)
                         } else {
                             // Prompt for credentials
@@ -148,11 +149,11 @@ class SettingsScreenViewModel(
                             )
                         }
                     } else {
-                        ToastManager.showError("Current account not found")
+                        ToastManager.showErrorRes(R.string.toast_current_account_not_found)
                         _uiState.value = _uiState.value.copy(isLoading = false)
                     }
                 } else {
-                    ToastManager.showError("No active session found")
+                    ToastManager.showErrorRes(R.string.toast_no_active_session)
                     _uiState.value = _uiState.value.copy(isLoading = false)
                 }
             } else {
@@ -194,7 +195,7 @@ class SettingsScreenViewModel(
                             showAutoLoginDialog = false,
                             isAutoLoginSaving = false
                         )
-                        ToastManager.showSuccess("Credentials saved and Auto Login enabled.")
+                        ToastManager.showSuccessRes(R.string.toast_credentials_saved_autologin)
                     } else {
                         throw Exception("Account not found")
                     }
@@ -203,7 +204,7 @@ class SettingsScreenViewModel(
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(isAutoLoginSaving = false)
-                ToastManager.showError("Failed to save credentials: ${e.message}")
+                ToastManager.showErrorRes(R.string.toast_save_credentials_failed, e.message.orEmpty())
             }
         }
     }
@@ -228,14 +229,14 @@ class SettingsScreenViewModel(
                     error = null
                 )
 
-                ToastManager.showSuccess("Signed out successfully")
+                ToastManager.showSuccessRes(R.string.toast_signed_out)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoggingOut = false,
                     logoutSuccess = false,
-                    error = e.message ?: "Sign out failed"
+                    error = e.message ?: application.getString(R.string.toast_sign_out_failed)
                 )
-                ToastManager.showError("Sign out failed: ${e.message}")
+                ToastManager.showErrorRes(R.string.toast_sign_out_failed_pattern, e.message.orEmpty())
             }
         }
     }
@@ -253,14 +254,14 @@ class SettingsScreenViewModel(
                     error = null
                 )
 
-                ToastManager.showSuccess("Logged out successfully")
+                ToastManager.showSuccessRes(R.string.toast_logged_out)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoggingOut = false,
                     logoutSuccess = false,
-                    error = e.message ?: "Logout failed"
+                    error = e.message ?: application.getString(R.string.toast_logout_failed)
                 )
-                ToastManager.showError("Logout failed: ${e.message}")
+                ToastManager.showErrorRes(R.string.toast_logout_failed_pattern, e.message.orEmpty())
             }
         }
     }
@@ -269,14 +270,14 @@ class SettingsScreenViewModel(
         viewModelScope.launch {
             val username = EncryptedPrefs.getUsername(application)
             if (username == null) {
-                ToastManager.showError("Username not found")
+                ToastManager.showErrorRes(R.string.toast_username_not_found)
                 return@launch
             }
             try {
                 val result = manager?.user?.changeUserPasswordWithResult(username,oldPassword,newPassword)
                 when (result){
                     is ApiResult.Error -> {
-                        ToastManager.showError("Password change failed: ${result.message}")
+                        ToastManager.showErrorRes(R.string.toast_password_change_failed_pattern, result.message.orEmpty())
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             isChangePassSuccess = false,
@@ -288,20 +289,20 @@ class SettingsScreenViewModel(
                     }
                     is ApiResult.Success -> {
                         _uiState.value = _uiState.value.copy(isLoading = false, isChangePassSuccess = true, error = null)
-                        ToastManager.showSuccess("Password changed successfully")
+                        ToastManager.showSuccessRes(R.string.toast_password_changed)
                     }
                     else -> {
                         _uiState.value = _uiState.value.copy(isLoading = false)
-                        ToastManager.showError("Password change failed")
+                        ToastManager.showErrorRes(R.string.toast_password_change_failed)
                     }
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isChangePassSuccess = false,
-                    error = e.message ?: "Password change failed"
+                    error = e.message ?: application.getString(R.string.toast_password_change_failed)
                 )
-                ToastManager.showError("Password change failed: ${e.message}")
+                ToastManager.showErrorRes(R.string.toast_password_change_failed_pattern, e.message.orEmpty())
             }
         }
     }
@@ -317,7 +318,7 @@ class SettingsScreenViewModel(
 
                 MultiAccountPrefs.clearAccountCredentials(application, accountId)
 
-                ToastManager.showSuccess("Auto Login disabled")
+                ToastManager.showSuccessRes(R.string.toast_autologin_disabled)
             }
         }
     }

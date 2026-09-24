@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.gegaremant.truenasmobile.data.ApiResult
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Alerts
 import com.gegaremant.truenasmobile.data.push.PushConfig
@@ -88,15 +89,15 @@ class PushSettingsViewModel(
 
     fun testRelay() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isBusy = true, status = "Testing relay connection…") }
+            _uiState.update { it.copy(isBusy = true, status = getApplication<Application>().getString(R.string.push_testing)) }
             val state = _uiState.value
             val result = RelayClient().healthz(state.relayUrl)
             _uiState.update {
                 when (result) {
                     is RelayClient.RelayResult.Success ->
-                        it.copy(isBusy = false, status = "Relay is reachable")
+                        it.copy(isBusy = false, status = getApplication<Application>().getString(R.string.push_relay_reachable))
                     is RelayClient.RelayResult.Error ->
-                        it.copy(isBusy = false, status = "Relay unreachable: ${result.message}")
+                        it.copy(isBusy = false, status = getApplication<Application>().getString(R.string.push_relay_unreachable, result.message))
                 }
             }
         }
@@ -104,12 +105,12 @@ class PushSettingsViewModel(
 
     fun registerAndEnable() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isBusy = true, status = "Registering device…") }
+            _uiState.update { it.copy(isBusy = true, status = getApplication<Application>().getString(R.string.push_registering)) }
             val ok = registerDevice()
             if (ok) {
                 PushPrefs.setEnabled(getApplication(), true)
                 PushService.start(getApplication())
-                _uiState.update { it.copy(isBusy = false, status = "Device registered — push is live.") }
+                _uiState.update { it.copy(isBusy = false, status = getApplication<Application>().getString(R.string.push_registered)) }
             } else {
                 _uiState.update { it.copy(isBusy = false) }
             }
@@ -122,7 +123,7 @@ class PushSettingsViewModel(
         val relayUrl = state.relayUrl.trim().trimEnd('/')
         val token = state.relayToken.trim()
         if (relayUrl.isBlank() || token.isBlank()) {
-            _uiState.update { it.copy(status = "Relay URL and token are required.") }
+            _uiState.update { it.copy(status = getApplication<Application>().getString(R.string.push_required)) }
             return false
         }
 
@@ -132,7 +133,7 @@ class PushSettingsViewModel(
         val pubkey = try {
             PushE2E.publicKeyPointB64(getApplication())
         } catch (e: Exception) {
-            _uiState.update { it.copy(status = "Failed to create E2E key: ${e.message}") }
+            _uiState.update { it.copy(status = getApplication<Application>().getString(R.string.push_e2e_failed, e.message)) }
             return false
         }
 
@@ -163,13 +164,13 @@ class PushSettingsViewModel(
                         enabled = true,
                         ntfyTopic = topic,
                         deviceId = deviceId,
-                        status = "Registered (id=$deviceId)"
+                        status = getApplication<Application>().getString(R.string.push_registered_id, deviceId)
                     )
                 }
                 true
             }
             is RelayClient.RelayResult.Error -> {
-                _uiState.update { it.copy(status = "Registration failed: ${result.message}") }
+                _uiState.update { it.copy(status = getApplication<Application>().getString(R.string.push_registration_failed, result.message)) }
                 false
             }
         }
@@ -177,12 +178,12 @@ class PushSettingsViewModel(
 
     fun sendTestAlert() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isBusy = true, status = "Sending test alert…") }
+            _uiState.update { it.copy(isBusy = true, status = getApplication<Application>().getString(R.string.push_sending_test)) }
             val state = _uiState.value
             val payload = JSONObject()
                 .put("level", "WARNING")
-                .put("title", "TrueNasMobile test alert")
-                .put("text", "This push proves the full relay path works.")
+                .put("title", getApplication<Application>().getString(R.string.push_test_alert_title))
+                .put("text", getApplication<Application>().getString(R.string.push_test_alert_text))
                 .put("uuid", UUID.randomUUID().toString())
             val result = RelayClient().sendTest(state.relayUrl, state.relayToken, payload)
             _uiState.update {
@@ -190,10 +191,13 @@ class PushSettingsViewModel(
                     is RelayClient.RelayResult.Success ->
                         it.copy(
                             isBusy = false,
-                            status = "Delivered to ${result.body.optInt("delivered", 0)} device(s). Watch for the notification."
+                            status = getApplication<Application>().getString(
+                                R.string.push_delivered,
+                                result.body.optInt("delivered", 0)
+                            )
                         )
                     is RelayClient.RelayResult.Error ->
-                        it.copy(isBusy = false, status = "Test alert failed: ${result.message}")
+                        it.copy(isBusy = false, status = getApplication<Application>().getString(R.string.push_test_failed, result.message))
                 }
             }
         }
@@ -202,21 +206,21 @@ class PushSettingsViewModel(
     fun createWebhook() {
         val apiManager = manager
         if (apiManager == null) {
-            _uiState.update { it.copy(status = "Not connected to TrueNAS. Open an instance first.") }
+            _uiState.update { it.copy(status = getApplication<Application>().getString(R.string.push_not_connected)) }
             return
         }
         viewModelScope.launch {
-            _uiState.update { it.copy(isBusy = true, status = "Creating webhook on TrueNAS…") }
+            _uiState.update { it.copy(isBusy = true, status = getApplication<Application>().getString(R.string.push_creating_webhook)) }
             val state = _uiState.value
             val relayUrl = state.relayUrl.trim().trimEnd('/')
             val token = state.relayToken.trim()
             if (relayUrl.isBlank() || token.isBlank()) {
-                _uiState.update { it.copy(isBusy = false, status = "Relay URL and token are required.") }
+                _uiState.update { it.copy(isBusy = false, status = getApplication<Application>().getString(R.string.push_required)) }
                 return@launch
             }
 
             val create = Alerts.AlertServiceCreate(
-                name = "TrueNasMobile Push",
+                name = getApplication<Application>().getString(R.string.push_service_name),
                 attributes = Alerts.AlertServiceAttributes(
                     type = "Webhook",
                     webhook_url = "$relayUrl/api/send",
@@ -233,12 +237,15 @@ class PushSettingsViewModel(
             when (val result = apiManager.alertsService.createAlertServiceWithResult(create)) {
                 is ApiResult.Success ->
                     _uiState.update {
-                        it.copy(isBusy = false, status = "Webhook '${result.data.name}' created on TrueNAS.")
+                        it.copy(
+                            isBusy = false,
+                            status = getApplication<Application>().getString(R.string.push_webhook_created, result.data.name)
+                        )
                     }
                 is ApiResult.Error ->
-                    _uiState.update { it.copy(isBusy = false, status = "Webhook create failed: ${result.message}") }
+                    _uiState.update { it.copy(isBusy = false, status = getApplication<Application>().getString(R.string.push_webhook_failed, result.message)) }
                 else ->
-                    _uiState.update { it.copy(isBusy = false, status = "Webhook create returned an unexpected result.") }
+                    _uiState.update { it.copy(isBusy = false, status = getApplication<Application>().getString(R.string.push_webhook_unexpected)) }
             }
         }
     }

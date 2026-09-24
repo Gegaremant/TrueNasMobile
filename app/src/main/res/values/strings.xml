@@ -245,4 +245,197 @@
         <item quantity="one">%1$d shared folder</item>
         <item quantity="other">%1$d shared folders</item>
     </plurals>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_subtitle">Account &amp; preferences</string>
+    <string name="settings_section_account">Account</string>
+    <string name="settings_password">Password</string>
+    <string name="settings_change_password">Change password</string>
+    <string name="settings_section_app">App</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_desc">Light or dark theme</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_privacy_desc">Control data sharing &amp; permissions</string>
+    <string name="settings_biometric">Biometric lock</string>
+    <string name="settings_biometric_desc">Lock the app with your fingerprint or device PIN</string>
+    <string name="settings_push">Push notifications</string>
+    <string name="settings_push_desc">Relay TrueNAS alerts to this device</string>
+    <string name="settings_section_session">Session</string>
+    <string name="settings_auto_login">Auto-login</string>
+    <string name="settings_auto_login_desc">Automatically log in with saved credentials.</string>
+    <string name="settings_switch_account">Switch account</string>
+    <string name="settings_switch_account_desc">Switch to another saved account</string>
+    <string name="settings_sign_out">Sign out</string>
+    <string name="settings_sign_out_desc">Clear credentials and sign out</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_about_app">About TrueNasMobile</string>
+    <string name="settings_about_desc">Version and application details</string>
+    <string name="settings_licenses">Licenses</string>
+    <string name="settings_licenses_desc">View open source licenses</string>
+    <string name="settings_app_logging">App Logging</string>
+    <string name="settings_app_logging_desc">Internal logging &amp; diagnostics</string>
+    <string name="common_processing">Processing…</string>
+    <string name="settings_autologin_off_title">Disable Auto Login?</string>
+    <string name="settings_autologin_api_title">Save API Key for Auto Login</string>
+    <string name="settings_autologin_credentials_title">Save Credentials for Auto Login</string>
+    <string name="settings_autologin_off_warning">Your login credentials (username/password or API key) will remain persistent in the app until you explicitly log out. They will be cleared upon successful logout.</string>
+    <string name="settings_disable">Disable</string>
+    <string name="settings_autologin_api_prompt">Please provide your API key to enable auto login.</string>
+    <string name="settings_api_key">API Key</string>
+    <string name="settings_saving">Saving…</string>
+    <string name="settings_submit">Submit</string>
+    <string name="settings_autologin_password_prompt">Please provide your username and password to enable auto login.</string>
+    <string name="settings_username">Username</string>
+    <string name="settings_password_field">Password</string>
+
+    <!-- Settings toasts -->
+    <string name="toast_biometric_need_lock">Set up a device lock first (Settings → Security)</string>
+    <string name="toast_biometric_enabled">Biometric lock enabled</string>
+    <string name="toast_biometric_disabled">Biometric lock disabled</string>
+    <string name="toast_autologin_enabled">Auto Login Enabled.</string>
+    <string name="toast_current_account_not_found">Current account not found</string>
+    <string name="toast_no_active_session">No active session found</string>
+    <string name="toast_credentials_saved_autologin">Credentials saved and Auto Login enabled.</string>
+    <string name="toast_save_credentials_failed">Failed to save credentials: %1$s</string>
+    <string name="toast_signed_out">Signed out successfully</string>
+    <string name="toast_sign_out_failed">Sign out failed</string>
+    <string name="toast_sign_out_failed_pattern">Sign out failed: %1$s</string>
+    <string name="toast_logged_out">Logged out successfully</string>
+    <string name="toast_logout_failed">Logout failed</string>
+    <string name="toast_logout_failed_pattern">Logout failed: %1$s</string>
+    <string name="toast_username_not_found">Username not found</string>
+    <string name="toast_password_change_failed_pattern">Password change failed: %1$s</string>
+    <string name="toast_password_changed">Password changed successfully</string>
+    <string name="toast_password_change_failed">Password change failed</string>
+    <string name="toast_autologin_disabled">Auto Login disabled</string>
+
+    <!-- Change password -->
+    <string name="settings_change_password_title">Security</string>
+    <string name="settings_change_password_subtitle">Change Password</string>
+    <string name="settings_security_requirements">Security Requirements</string>
+    <string name="settings_password_min_length">New password must be at least 8 characters long</string>
+    <string name="settings_passwords_match_req">New passwords must match</string>
+    <string name="settings_password_details">Password Details</string>
+    <string name="settings_current_password">Current Password</string>
+    <string name="settings_current_password_cd">Current password</string>
+    <string name="settings_new_password">New Password</string>
+    <string name="settings_new_password_cd">New password</string>
+    <string name="settings_confirm_new_password">Confirm New Password</string>
+    <string name="settings_confirm_password_cd">Confirm password</string>
+    <string name="settings_passwords_do_not_match">Passwords do not match</string>
+    <string name="settings_change_password_button">Change Password</string>
+
+    <!-- App logging -->
+    <string name="logging_title">App Logging</string>
+    <string name="logging_capturing">Capturing</string>
+    <string name="logging_disabled">Disabled</string>
+    <string name="logging_enable_logging">Enable Logging</string>
+    <string name="logging_enable_desc">Capture dispatched API calls and app logs</string>
+    <string name="logging_to_logcat">Log to Logcat</string>
+    <string name="logging_logcat_desc">Print each line to Logcat (capture still works even when off)</string>
+    <string name="logging_to_file">Write to Local File</string>
+    <string name="logging_file_desc">Also append to rotating files under files/logs/</string>
+    <string name="logging_export_format">Export Format</string>
+    <string name="logging_exporting">Exporting…</string>
+    <string name="logging_share">Share</string>
+    <string name="logging_clear_buffer">Clear Buffer</string>
+    <string name="logging_clear_files">Clear Files</string>
+    <string name="logging_live_log">Live Log (%1$d)</string>
+    <string name="logging_off">logging off</string>
+    <string name="logging_empty">No log entries captured yet.</string>
+
+    <!-- About screen -->
+    <string name="about_title">About</string>
+    <string name="about_subtitle">About</string>
+    <string name="about_app_logo_cd">App Logo</string>
+    <string name="about_app_name">TrueNasMobile</string>
+    <string name="about_easter_egg_unlocked">You have unlocked the secret easter egg!</string>
+    <string name="about_companion">Your TrueNAS Companion</string>
+    <string name="about_secret_features">Secret Features</string>
+    <string name="about_easter_egg_master">Easter Egg Master</string>
+    <string name="about_easter_egg_master_desc">You have unlocked the hidden achievement!</string>
+    <string name="about_curious_explorer">Curious Explorer</string>
+    <string name="about_curious_explorer_desc">Thanks for being awesome! 🚀</string>
+    <string name="about_features">Features</string>
+    <string name="about_system_monitoring">System Monitoring</string>
+    <string name="about_system_monitoring_desc">Real-time monitoring of your TrueNAS system</string>
+    <string name="about_performance_tracking">Performance Tracking</string>
+    <string name="about_performance_tracking_desc">Track CPU, memory, and disk performance</string>
+    <string name="about_secure_connection">Secure Connection</string>
+    <string name="about_secure_connection_desc">Encrypted communication with your server</string>
+    <string name="about_developer">Developer</string>
+    <string name="about_legal">Legal</string>
+    <string name="about_copyright">© 2025 Gegaremant Labs. All rights reserved.</string>
+    <string name="about_disclaimer">TrueNasMobile is not affiliated with iXsystems or TrueNAS.</string>
+    <string name="about_made_with">Made with</string>
+
+    <!-- Theme screen -->
+    <string name="theme_title">Theme</string>
+    <string name="theme_subtitle">Choose a color scheme and mode</string>
+    <string name="theme_color_scheme">Color scheme</string>
+    <string name="theme_dark_mode">Dark mode</string>
+    <string name="theme_dark_mode_desc">Light, dark, or follow the system</string>
+    <string name="theme_search_bar_bottom">Search Bar at Bottom</string>
+    <string name="theme_search_bar_bottom_desc">Align the unified search field to the bottom of the screen</string>
+
+    <!-- Licenses screen -->
+    <string name="licenses_title">Licenses</string>
+    <string name="licenses_subtitle">Licenses</string>
+    <string name="licenses_open_source">Open Source Licenses</string>
+    <string name="licenses_failed">Failed to load license.</string>
+    <string name="licenses_gpl_title">GNU General Public License v3.0</string>
+    <string name="licenses_gpl_desc">This application is licensed under GPL-3.0</string>
+
+    <!-- Theme modes & app themes -->
+    <string name="theme_mode_light">Light</string>
+    <string name="theme_mode_dark">Dark</string>
+    <string name="theme_mode_system">System</string>
+    <string name="apptheme_dynamic">Dynamic</string>
+    <string name="apptheme_truenasmobile">TrueNasMobile</string>
+    <string name="apptheme_ocean">Ocean</string>
+    <string name="apptheme_forest">Forest</string>
+    <string name="apptheme_sunset">Sunset</string>
+    <string name="apptheme_lavender">Lavender</string>
+    <string name="apptheme_monochrome">Monochrome</string>
+
+    <!-- Push notifications -->
+    <string name="push_title">Push Notifications</string>
+    <string name="push_subtitle">TrueNAS alerts straight to this device</string>
+    <string name="push_notifications">Push notifications</string>
+    <string name="push_enabled_topic">Enabled — topic %1$s</string>
+    <string name="push_none_topic">(none)</string>
+    <string name="push_disabled_desc">Relay alerts to your phone. No Google services required (ntfy).</string>
+    <string name="push_relay_url">Relay URL</string>
+    <string name="push_relay_token">Relay token</string>
+    <string name="push_ntfy_server">ntfy server</string>
+    <string name="push_test">Test</string>
+    <string name="push_register_enable">Register &amp; Enable</string>
+    <string name="push_send_test_alert">Send test alert</string>
+    <string name="push_create_webhook">Create webhook on TrueNAS</string>
+    <string name="push_status_hint">Step 1: point TrueNAS at your relay webhook. Step 2: register this device. Then press “Send test alert”.</string>
+    <string name="push_testing">Testing relay connection…</string>
+    <string name="push_relay_reachable">Relay is reachable</string>
+    <string name="push_relay_unreachable">Relay unreachable: %1$s</string>
+    <string name="push_registering">Registering device…</string>
+    <string name="push_registered">Device registered — push is live.</string>
+    <string name="push_required">Relay URL and token are required.</string>
+    <string name="push_e2e_failed">Failed to create E2E key: %1$s</string>
+    <string name="push_registered_id">Registered (id=%1$s)</string>
+    <string name="push_registration_failed">Registration failed: %1$s</string>
+    <string name="push_sending_test">Sending test alert…</string>
+    <string name="push_delivered">Delivered to %1$d device(s). Watch for the notification.</string>
+    <string name="push_test_failed">Test alert failed: %1$s</string>
+    <string name="push_not_connected">Not connected to TrueNAS. Open an instance first.</string>
+    <string name="push_creating_webhook">Creating webhook on TrueNAS…</string>
+    <string name="push_webhook_created">Webhook “%1$s” created on TrueNAS.</string>
+    <string name="push_webhook_failed">Webhook create failed: %1$s</string>
+    <string name="push_webhook_unexpected">Webhook create returned an unexpected result.</string>
+    <string name="push_test_alert_title">TrueNasMobile test alert</string>
+    <string name="push_test_alert_text">This push proves the full relay path works.</string>
+    <string name="push_service_name">TrueNasMobile Push</string>
+    <string name="logging_share_text">TrueNasMobile internal log (%1$s)</string>
+    <string name="logging_share_intent_title">Share log</string>
+    <string name="licenses_loading">Loading…</string>
+    <string name="about_developer_year">Developer • %1$s</string>
 </resources>

@@ -1,17 +1,19 @@
 package com.gegaremant.truenasmobile.ui.theme
 
+import androidx.annotation.StringRes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
+import com.gegaremant.truenasmobile.R
 
-enum class AppTheme(val displayName: String, val description: String) {
-    DYNAMIC("Dynamic", "Adapts to your system colors"),
-    TRUENASMOBILE("TrueNasMobile", "Классические синие и бирюзовые тона"),
-    OCEAN("Ocean", "Deep blue waters"),
-    FOREST("Forest", "Natural greens"),
-    SUNSET("Sunset", "Warm orange and pink"),
-    LAVENDER("Lavender", "Soft purple tones"),
-    MONOCHROME("Monochrome", "Elegant grayscale")
+enum class AppTheme(@StringRes val displayNameRes: Int, val description: String) {
+    DYNAMIC(R.string.apptheme_dynamic, "Adapts to your system colors"),
+    TRUENASMOBILE(R.string.apptheme_truenasmobile, "Классические синие и бирюзовые тона"),
+    OCEAN(R.string.apptheme_ocean, "Deep blue waters"),
+    FOREST(R.string.apptheme_forest, "Natural greens"),
+    SUNSET(R.string.apptheme_sunset, "Warm orange and pink"),
+    LAVENDER(R.string.apptheme_lavender, "Soft purple tones"),
+    MONOCHROME(R.string.apptheme_monochrome, "Elegant grayscale")
 }
 
 // TrueNasMobile Theme (Blue/Teal)

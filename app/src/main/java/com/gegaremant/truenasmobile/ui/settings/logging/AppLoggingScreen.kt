@@ -46,10 +46,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.helpers.InternalLogger
 import com.gegaremant.truenasmobile.data.helpers.LogFormat
 import com.gegaremant.truenasmobile.data.helpers.LoggingPrefs
@@ -90,8 +92,8 @@ fun AppLoggingScreen(
         modifier = Modifier.padding(WindowInsets.systemBars.asPaddingValues()),
         topBar = {
             com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader(
-                title = "App Logging",
-                subtitle = if (enabled) "Capturing" else "Disabled",
+                title = stringResource(R.string.logging_title),
+                subtitle = if (enabled) stringResource(R.string.logging_capturing) else stringResource(R.string.logging_disabled),
                 isLoading = false,
                 isRefreshing = false,
                 error = null,
@@ -116,8 +118,8 @@ fun AppLoggingScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     ToggleRow(
-                        title = "Enable Logging",
-                        subtitle = "Capture dispatched API calls and app logs",
+                        title = stringResource(R.string.logging_enable_logging),
+                        subtitle = stringResource(R.string.logging_enable_desc),
                         checked = enabled,
                         onCheckedChange = {
                             enabled = it
@@ -125,8 +127,8 @@ fun AppLoggingScreen(
                         }
                     )
                     ToggleRow(
-                        title = "Log to Logcat",
-                        subtitle = "Print each line to Logcat (capture still works even when off)",
+                        title = stringResource(R.string.logging_to_logcat),
+                        subtitle = stringResource(R.string.logging_logcat_desc),
                         checked = logcatSink,
                         onCheckedChange = {
                             logcatSink = it
@@ -134,8 +136,8 @@ fun AppLoggingScreen(
                         }
                     )
                     ToggleRow(
-                        title = "Write to Local File",
-                        subtitle = "Also append to rotating files under files/logs/",
+                        title = stringResource(R.string.logging_to_file),
+                        subtitle = stringResource(R.string.logging_file_desc),
                         checked = fileSink,
                         onCheckedChange = {
                             fileSink = it
@@ -151,7 +153,7 @@ fun AppLoggingScreen(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Export Format", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.logging_export_format), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         LogFormat.entries.forEach { f ->
                             Row(
@@ -182,7 +184,7 @@ fun AppLoggingScreen(
                 ) {
                     Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(if (exporting) "Exporting…" else "Share")
+                    Text(if (exporting) stringResource(R.string.logging_exporting) else stringResource(R.string.logging_share))
                 }
                 OutlinedButton(
                     onClick = { InternalLogger.clearBuffer() },
@@ -190,7 +192,7 @@ fun AppLoggingScreen(
                 ) {
                     Icon(Icons.Default.Clear, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Clear Buffer")
+                    Text(stringResource(R.string.logging_clear_buffer))
                 }
                 OutlinedButton(
                     onClick = { InternalLogger.clearFiles() },
@@ -198,7 +200,7 @@ fun AppLoggingScreen(
                 ) {
                     Icon(Icons.Default.DeleteSweep, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Clear Files")
+                    Text(stringResource(R.string.logging_clear_files))
                 }
             }
 
@@ -213,8 +215,8 @@ fun AppLoggingScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Live Log (${entries.size})", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                        if (!enabled) Text("logging off", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.logging_live_log, entries.size), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                        if (!enabled) Text(stringResource(R.string.logging_off), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     LogView(entries = entries)
                 }
@@ -247,7 +249,7 @@ private fun ToggleRow(
 private fun LogView(entries: List<InternalLogger.Entry>) {
     if (entries.isEmpty()) {
         Box(modifier = Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
-            Text("No log entries captured yet.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.logging_empty), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         return
     }
@@ -307,7 +309,7 @@ private fun shareFile(context: android.content.Context, file: java.io.File) {
         type = "text/plain"
         putExtra(android.content.Intent.EXTRA_STREAM, uri)
         addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        putExtra(android.content.Intent.EXTRA_TEXT, "TrueNasMobile internal log (${file.extension})")
+        putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.logging_share_text, file.extension))
     }
-    context.startActivity(android.content.Intent.createChooser(intent, "Share log"))
+    context.startActivity(android.content.Intent.createChooser(intent, context.getString(R.string.logging_share_intent_title)))
 }

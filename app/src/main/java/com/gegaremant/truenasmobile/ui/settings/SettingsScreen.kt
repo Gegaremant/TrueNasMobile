@@ -57,11 +57,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material.icons.filled.BugReport
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.LoggingPrefs
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
@@ -114,8 +116,8 @@ fun SettingsScreen(
             .padding(WindowInsets.systemBars.asPaddingValues())
     ) {
         UnifiedScreenHeader(
-            title = "Настройки",
-            subtitle = "Аккаунт и предпочтения",
+            title = stringResource(R.string.settings_title),
+            subtitle = stringResource(R.string.settings_subtitle),
             isLoading = uiState.isLoading,
             isRefreshing = false,
             error = null,
@@ -133,12 +135,12 @@ fun SettingsScreen(
                 .padding(bottom = 16.dp)
         ) {
             SettingsSection(
-                title = "Аккаунт",
+                title = stringResource(R.string.settings_section_account),
                 items = listOf(
                     SettingItem(
                         icon = Icons.Default.Security,
-                        name = "Пароль",
-                        description = "Сменить пароль",
+                        name = stringResource(R.string.settings_password),
+                        description = stringResource(R.string.settings_change_password),
                         onClick = {
                             onNavigateToChangePassword()
                         }
@@ -149,24 +151,24 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             SettingsSection(
-                title = "Приложение",
+                title = stringResource(R.string.settings_section_app),
                 items = listOf(
                     SettingItem(
                         icon = Icons.Default.Apps,
-                        name = "Тема",
-                        description = "Светлая или тёмная тема",
+                        name = stringResource(R.string.settings_theme),
+                        description = stringResource(R.string.settings_theme_desc),
                         onClick = { onNavigateToTheme() }
                     ),
                     SettingItem(
                         icon = Icons.Default.PrivacyTip,
-                        name = "Конфиденциальность",
-                        description = "Control data sharing & permissions",
+                        name = stringResource(R.string.settings_privacy),
+                        description = stringResource(R.string.settings_privacy_desc),
                         onClick = { onDummyAction("Privacy") }
                     ),
                     SettingItem(
                         icon = Icons.Default.Fingerprint,
-                        name = "Биометрическая блокировка",
-                        description = "Lock the app with your fingerprint or device PIN",
+                        name = stringResource(R.string.settings_biometric),
+                        description = stringResource(R.string.settings_biometric_desc),
                         onClick = {},
                         onToggle = { newValue ->
                             viewModel.setBiometricLockEnabled(newValue)
@@ -175,8 +177,8 @@ fun SettingsScreen(
                     ),
                     SettingItem(
                         icon = Icons.Default.Notifications,
-                        name = "Push-уведомления",
-                        description = "Relay TrueNAS alerts to this device",
+                        name = stringResource(R.string.settings_push),
+                        description = stringResource(R.string.settings_push_desc),
                         onClick = { onNavigateToPushSettings() }
                     )
                 )
@@ -185,12 +187,12 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             SettingsSection(
-                title = "Сессия",
+                title = stringResource(R.string.settings_section_session),
                 items = listOf(
                     SettingItem(
                         icon = Icons.Default.Timer,
-                        name = "Автовход",
-                        description = "Automatically log in with saved credentials.",
+                        name = stringResource(R.string.settings_auto_login),
+                        description = stringResource(R.string.settings_auto_login_desc),
                         onClick = {},
                         isLoading = uiState.isLoading,
                         onToggle = { newValue ->
@@ -200,16 +202,16 @@ fun SettingsScreen(
                     ),
                     SettingItem(
                         icon = Icons.Default.AccountCircle,
-                        name = "Сменить аккаунт",
-                        description = "Switch to another saved account",
+                        name = stringResource(R.string.settings_switch_account),
+                        description = stringResource(R.string.settings_switch_account_desc),
                         onClick = {
                             onNavigateToLogin()
                         }
                     ),
                     SettingItem(
                         icon = Icons.AutoMirrored.Filled.Logout,
-                        name = "Выйти",
-                        description = "Clear credentials and sign out",
+                        name = stringResource(R.string.settings_sign_out),
+                        description = stringResource(R.string.settings_sign_out_desc),
                         onClick = { viewModel.handleEvent(SettingsEvent.SignOut) },
                         isLoading = uiState.isLoggingOut
                     )
@@ -217,21 +219,21 @@ fun SettingsScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             SettingsSection(
-                title = "О приложении",
+                title = stringResource(R.string.settings_section_about),
                 items = buildList {
                     add(
                         SettingItem(
                             icon = Icons.Default.Info,
-                            name = "О TrueNasMobile",
-                            description = "Version and application details",
+                            name = stringResource(R.string.settings_about_app),
+                            description = stringResource(R.string.settings_about_desc),
                             onClick = { onNavigateToAbout() }
                         )
                     )
                     add(
                         SettingItem(
                             icon = Icons.Default.Description,
-                            name = "Лицензии",
-                            description = "View open source licenses",
+                            name = stringResource(R.string.settings_licenses),
+                            description = stringResource(R.string.settings_licenses_desc),
                             onClick = { onNavigateToLicenses() }
                         )
                     )
@@ -241,8 +243,8 @@ fun SettingsScreen(
                         add(
                             SettingItem(
                                 icon = Icons.Default.BugReport,
-                                name = "App Logging",
-                                description = "Internal logging & diagnostics",
+                                name = stringResource(R.string.settings_app_logging),
+                                description = stringResource(R.string.settings_app_logging_desc),
                                 onClick = { onNavigateToLogging() }
                             )
                         )
@@ -357,7 +359,7 @@ private fun SettingCard(item: SettingItem) {
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = if (item.isLoading) "Processing..." else item.description,
+                    text = if (item.isLoading) stringResource(R.string.common_processing) else item.description,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -395,9 +397,9 @@ fun AutoLoginConfigDialog(
         title = {
             Text(
                 text = when (dialogType) {
-                    AutoLoginDialogType.OFF_WARNING -> "Disable Auto Login?"
-                    AutoLoginDialogType.PROMPT_API_KEY -> "Save API Key for Auto Login"
-                    AutoLoginDialogType.PROMPT_PASSWORD -> "Save Credentials for Auto Login"
+                    AutoLoginDialogType.OFF_WARNING -> stringResource(R.string.settings_autologin_off_title)
+                    AutoLoginDialogType.PROMPT_API_KEY -> stringResource(R.string.settings_autologin_api_title)
+                    AutoLoginDialogType.PROMPT_PASSWORD -> stringResource(R.string.settings_autologin_credentials_title)
                 }
             )
         },
@@ -430,44 +432,44 @@ private fun AutoLoginDialogContent(
     Column(modifier = Modifier.padding(top = 8.dp)) {
         when (dialogType) {
             AutoLoginDialogType.OFF_WARNING -> {
-                Text("Your login credentials (username/password or API key) will remain persistent in the app until you explicitly log out. They will be cleared upon successful logout.")
+                Text(stringResource(R.string.settings_autologin_off_warning))
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    TextButton(onClick = onCancel) { Text("Cancel") }
+                    TextButton(onClick = onCancel) { Text(stringResource(R.string.common_cancel)) }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Button(onClick = onClearAutoLogin) { Text("Disable") }
+                    Button(onClick = onClearAutoLogin) { Text(stringResource(R.string.settings_disable)) }
                 }
             }
             AutoLoginDialogType.PROMPT_API_KEY -> {
-                Text("Please provide your API key to enable auto login.")
+                Text(stringResource(R.string.settings_autologin_api_prompt))
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = apiKey,
                     onValueChange = { apiKey = it },
-                    label = { Text("API Key") },
+                    label = { Text(stringResource(R.string.settings_api_key)) },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !isSaving
                 )
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 16.dp), horizontalArrangement = Arrangement.End) {
-                    TextButton(onClick = onCancel) { Text("Cancel") }
+                    TextButton(onClick = onCancel) { Text(stringResource(R.string.common_cancel)) }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = { onConfirmToggle(apiKey, null, null) },
                         enabled = !isSaving && apiKey.isNotBlank()
                     ) {
-                        Text(if (isSaving) "Saving..." else "Submit")
+                        Text(if (isSaving) stringResource(R.string.settings_saving) else stringResource(R.string.settings_submit))
                     }
                 }
             }
             AutoLoginDialogType.PROMPT_PASSWORD -> {
-                Text("Please provide your username and password to enable auto login.")
+                Text(stringResource(R.string.settings_autologin_password_prompt))
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = username,
                     onValueChange = { username = it },
-                    label = { Text("Username") },
+                    label = { Text(stringResource(R.string.settings_username)) },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !isSaving
                 )
@@ -475,19 +477,19 @@ private fun AutoLoginDialogContent(
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Password") },
+                    label = { Text(stringResource(R.string.settings_password_field)) },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !isSaving
                 )
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 16.dp), horizontalArrangement = Arrangement.End) {
-                    TextButton(onClick = onCancel) { Text("Cancel") }
+                    TextButton(onClick = onCancel) { Text(stringResource(R.string.common_cancel)) }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = { onConfirmToggle(null, username, password) },
                         enabled = !isSaving && username.isNotBlank() && password.isNotBlank()
                     ) {
-                        Text(if (isSaving) "Saving..." else "Submit")
+                        Text(if (isSaving) stringResource(R.string.settings_saving) else stringResource(R.string.settings_submit))
                     }
                 }
             }

@@ -45,6 +45,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 
@@ -78,8 +80,8 @@ fun ChangePasswordScreen(
             .statusBarsPadding()
     ) {
         UnifiedScreenHeader(
-        title = "Security",
-        subtitle = "Change Password",
+        title = stringResource(R.string.settings_change_password_title),
+        subtitle = stringResource(R.string.settings_change_password_subtitle),
         isLoading = false,
         isRefreshing = false,
         error = null,
@@ -138,34 +140,34 @@ private fun PasswordChangeForm(
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         PasswordInfoSection(
-            title = "Security Requirements",
+            title = stringResource(R.string.settings_security_requirements),
             icon = Icons.Default.Info
         ) {
             PasswordRequirementRow(
-                text = "New password must be at least 8 characters long",
+                text = stringResource(R.string.settings_password_min_length),
                 met = newPassword.length >= 8
             )
             PasswordRequirementRow(
-                text = "New passwords must match",
+                text = stringResource(R.string.settings_passwords_match_req),
                 met = passwordsMatch && confirmPassword.isNotEmpty()
             )
         }
 
         PasswordInfoSection(
-            title = "Password Details",
+            title = stringResource(R.string.settings_password_details),
             icon = Icons.Default.Lock
         ) {
             OutlinedTextField(
                 value = oldPassword,
                 onValueChange = onOldPasswordChange,
-                label = { Text("Current Password") },
+                label = { Text(stringResource(R.string.settings_current_password)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(oldPasswordFocusRequester),
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 trailingIcon = {
-                    Icon(Icons.Default.VpnKey, contentDescription = "Current password")
+                    Icon(Icons.Default.VpnKey, contentDescription = stringResource(R.string.settings_current_password_cd))
                 },
                 singleLine = true
             )
@@ -175,14 +177,14 @@ private fun PasswordChangeForm(
             OutlinedTextField(
                 value = newPassword,
                 onValueChange = onNewPasswordChange,
-                label = { Text("New Password") },
+                label = { Text(stringResource(R.string.settings_new_password)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(newPasswordFocusRequester),
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 trailingIcon = {
-                    Icon(Icons.Default.Lock, contentDescription = "New password")
+                    Icon(Icons.Default.Lock, contentDescription = stringResource(R.string.settings_new_password_cd))
                 },
                 singleLine = true,
                 isError = newPassword.isNotEmpty() && newPassword.length < 8
@@ -193,7 +195,7 @@ private fun PasswordChangeForm(
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = onConfirmPasswordChange,
-                label = { Text("Confirm New Password") },
+                label = { Text(stringResource(R.string.settings_confirm_new_password)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(confirmPasswordFocusRequester),
@@ -206,7 +208,7 @@ private fun PasswordChangeForm(
                         } else {
                             Icons.Default.Lock
                         },
-                        contentDescription = "Confirm password",
+                        contentDescription = stringResource(R.string.settings_confirm_password_cd),
                         tint = if (passwordsMatch && confirmPassword.isNotEmpty()) {
                             MaterialTheme.colorScheme.primary
                         } else {
@@ -220,7 +222,7 @@ private fun PasswordChangeForm(
 
             if (confirmPassword.isNotEmpty() && !passwordsMatch) {
                 Text(
-                    text = "Passwords do not match",
+                    text = stringResource(R.string.settings_passwords_do_not_match),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(top = 4.dp, start = 4.dp)
@@ -248,7 +250,7 @@ private fun PasswordChangeForm(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Change Password",
+                    text = stringResource(R.string.settings_change_password_button),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -268,7 +270,7 @@ private fun PasswordChangeForm(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Cancel",
+                    text = stringResource(R.string.common_cancel),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold
                 )

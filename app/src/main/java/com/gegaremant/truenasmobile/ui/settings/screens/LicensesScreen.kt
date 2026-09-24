@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
@@ -54,8 +55,8 @@ fun LicensesScreen(
     manager: TrueNASApiManager,
     onNavigateBack: () -> Unit = {},
 ) {
-    var licenseText by remember { mutableStateOf("Loading...") }
     val context = LocalContext.current
+    var licenseText by remember { mutableStateOf(context.getString(R.string.licenses_loading)) }
 
     LaunchedEffect(Unit) {
         licenseText = withContext(Dispatchers.IO) {
@@ -65,7 +66,7 @@ fun LicensesScreen(
                     reader.readText()
                 }
             } catch (e: Exception) {
-                "Failed to load license."
+                context.getString(R.string.licenses_failed)
             }
         }
     }
@@ -73,8 +74,8 @@ fun LicensesScreen(
     Scaffold(
         topBar = {
             UnifiedScreenHeader(
-                title = "Licenses",
-                subtitle = "Licenses",
+                title = stringResource(R.string.licenses_title),
+                subtitle = stringResource(R.string.licenses_subtitle),
                 isLoading = false,
                 isRefreshing = false,
                 error = null,
@@ -114,7 +115,7 @@ fun LicensesScreen(
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Text(
-                            text = "Open Source Licenses",
+                            text = stringResource(R.string.licenses_open_source),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -143,13 +144,13 @@ fun LicensesScreen(
                                 .padding(16.dp)
                         ) {
                             Text(
-                                text = "GNU General Public License v3.0",
+                                text = stringResource(R.string.licenses_gpl_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                             Text(
-                                text = "This application is licensed under GPL-3.0",
+                                text = stringResource(R.string.licenses_gpl_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
                                 modifier = Modifier.padding(top = 4.dp)

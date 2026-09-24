@@ -1,16 +1,18 @@
 package com.gegaremant.truenasmobile.data.helpers
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.core.content.edit
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-enum class ThemeMode(val displayName: String) {
-    LIGHT("Светлая"),
-    DARK("Тёмная"),
-    SYSTEM("Системная")
+enum class ThemeMode(@StringRes val displayNameRes: Int) {
+    LIGHT(R.string.theme_mode_light),
+    DARK(R.string.theme_mode_dark),
+    SYSTEM(R.string.theme_mode_system)
 }
 
 /**

@@ -251,4 +251,197 @@
         <item quantity="many">%1$d общих папок</item>
         <item quantity="other">%1$d общих папок</item>
     </plurals>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_subtitle">Аккаунт и предпочтения</string>
+    <string name="settings_section_account">Аккаунт</string>
+    <string name="settings_password">Пароль</string>
+    <string name="settings_change_password">Сменить пароль</string>
+    <string name="settings_section_app">Приложение</string>
+    <string name="settings_theme">Тема</string>
+    <string name="settings_theme_desc">Светлая или тёмная тема</string>
+    <string name="settings_privacy">Конфиденциальность</string>
+    <string name="settings_privacy_desc">Управление обменом данными и разрешениями</string>
+    <string name="settings_biometric">Биометрическая блокировка</string>
+    <string name="settings_biometric_desc">Блокируйте приложение отпечатком пальца или PIN-кодом устройства</string>
+    <string name="settings_push">Push-уведомления</string>
+    <string name="settings_push_desc">Пересылать оповещения TrueNAS на это устройство</string>
+    <string name="settings_section_session">Сессия</string>
+    <string name="settings_auto_login">Автовход</string>
+    <string name="settings_auto_login_desc">Автоматический вход с сохранёнными учётными данными.</string>
+    <string name="settings_switch_account">Сменить аккаунт</string>
+    <string name="settings_switch_account_desc">Переключиться на другой сохранённый аккаунт</string>
+    <string name="settings_sign_out">Выйти</string>
+    <string name="settings_sign_out_desc">Очистить учётные данные и выйти</string>
+    <string name="settings_section_about">О приложении</string>
+    <string name="settings_about_app">О TrueNasMobile</string>
+    <string name="settings_about_desc">Версия и сведения о приложении</string>
+    <string name="settings_licenses">Лицензии</string>
+    <string name="settings_licenses_desc">Просмотреть лицензии с открытым исходным кодом</string>
+    <string name="settings_app_logging">Журнал приложения</string>
+    <string name="settings_app_logging_desc">Внутреннее ведение журнала и диагностика</string>
+    <string name="common_processing">Обработка…</string>
+    <string name="settings_autologin_off_title">Отключить автовход?</string>
+    <string name="settings_autologin_api_title">Сохранить API-ключ для автовхода</string>
+    <string name="settings_autologin_credentials_title">Сохранить учётные данные для автовхода</string>
+    <string name="settings_autologin_off_warning">Ваши учётные данные (имя пользователя/пароль или API-ключ) останутся в приложении, пока вы явно не выйдете. Они будут удалены после успешного выхода.</string>
+    <string name="settings_disable">Отключить</string>
+    <string name="settings_autologin_api_prompt">Укажите ваш API-ключ, чтобы включить автовход.</string>
+    <string name="settings_api_key">API-ключ</string>
+    <string name="settings_saving">Сохранение…</string>
+    <string name="settings_submit">Отправить</string>
+    <string name="settings_autologin_password_prompt">Укажите имя пользователя и пароль, чтобы включить автовход.</string>
+    <string name="settings_username">Имя пользователя</string>
+    <string name="settings_password_field">Пароль</string>
+
+    <!-- Settings toasts -->
+    <string name="toast_biometric_need_lock">Сначала установите блокировку устройства (Настройки → Безопасность)</string>
+    <string name="toast_biometric_enabled">Биометрическая блокировка включена</string>
+    <string name="toast_biometric_disabled">Биометрическая блокировка отключена</string>
+    <string name="toast_autologin_enabled">Автовход включён.</string>
+    <string name="toast_current_account_not_found">Текущий аккаунт не найден</string>
+    <string name="toast_no_active_session">Активная сессия не найдена</string>
+    <string name="toast_credentials_saved_autologin">Учётные данные сохранены, автовход включён.</string>
+    <string name="toast_save_credentials_failed">Не удалось сохранить учётные данные: %1$s</string>
+    <string name="toast_signed_out">Выход выполнен успешно</string>
+    <string name="toast_sign_out_failed">Не удалось выйти</string>
+    <string name="toast_sign_out_failed_pattern">Не удалось выйти: %1$s</string>
+    <string name="toast_logged_out">Выход выполнен успешно</string>
+    <string name="toast_logout_failed">Не удалось выйти</string>
+    <string name="toast_logout_failed_pattern">Не удалось выйти: %1$s</string>
+    <string name="toast_username_not_found">Имя пользователя не найдено</string>
+    <string name="toast_password_change_failed_pattern">Не удалось изменить пароль: %1$s</string>
+    <string name="toast_password_changed">Пароль успешно изменён</string>
+    <string name="toast_password_change_failed">Не удалось изменить пароль</string>
+    <string name="toast_autologin_disabled">Автовход отключён</string>
+
+    <!-- Change password -->
+    <string name="settings_change_password_title">Безопасность</string>
+    <string name="settings_change_password_subtitle">Сменить пароль</string>
+    <string name="settings_security_requirements">Требования безопасности</string>
+    <string name="settings_password_min_length">Новый пароль должен содержать не менее 8 символов</string>
+    <string name="settings_passwords_match_req">Новые пароли должны совпадать</string>
+    <string name="settings_password_details">Данные пароля</string>
+    <string name="settings_current_password">Текущий пароль</string>
+    <string name="settings_current_password_cd">Текущий пароль</string>
+    <string name="settings_new_password">Новый пароль</string>
+    <string name="settings_new_password_cd">Новый пароль</string>
+    <string name="settings_confirm_new_password">Подтвердите новый пароль</string>
+    <string name="settings_confirm_password_cd">Подтверждение пароля</string>
+    <string name="settings_passwords_do_not_match">Пароли не совпадают</string>
+    <string name="settings_change_password_button">Сменить пароль</string>
+
+    <!-- App logging -->
+    <string name="logging_title">Журнал приложения</string>
+    <string name="logging_capturing">Идёт запись</string>
+    <string name="logging_disabled">Отключено</string>
+    <string name="logging_enable_logging">Включить журналирование</string>
+    <string name="logging_enable_desc">Записывать исходящие API-вызовы и журналы приложения</string>
+    <string name="logging_to_logcat">Вывод в Logcat</string>
+    <string name="logging_logcat_desc">Выводить каждую строку в Logcat (запись работает, даже когда выключено)</string>
+    <string name="logging_to_file">Запись в локальный файл</string>
+    <string name="logging_file_desc">Дополнительно дописывать в ротируемые файлы в files/logs/</string>
+    <string name="logging_export_format">Формат экспорта</string>
+    <string name="logging_exporting">Экспорт…</string>
+    <string name="logging_share">Поделиться</string>
+    <string name="logging_clear_buffer">Очистить буфер</string>
+    <string name="logging_clear_files">Очистить файлы</string>
+    <string name="logging_live_log">Живой журнал (%1$d)</string>
+    <string name="logging_off">запись отключена</string>
+    <string name="logging_empty">Записей в журнале пока нет.</string>
+
+    <!-- About screen -->
+    <string name="about_title">О приложении</string>
+    <string name="about_subtitle">О приложении</string>
+    <string name="about_app_logo_cd">Логотип приложения</string>
+    <string name="about_app_name">TrueNasMobile</string>
+    <string name="about_easter_egg_unlocked">Вы открыли секретное пасхальное яйцо!</string>
+    <string name="about_companion">Ваш компаньон TrueNAS</string>
+    <string name="about_secret_features">Секретные функции</string>
+    <string name="about_easter_egg_master">Мастер пасхалок</string>
+    <string name="about_easter_egg_master_desc">Вы открыли скрытое достижение!</string>
+    <string name="about_curious_explorer">Любознательный исследователь</string>
+    <string name="about_curious_explorer_desc">Спасибо, что вы классные! 🚀</string>
+    <string name="about_features">Возможности</string>
+    <string name="about_system_monitoring">Мониторинг системы</string>
+    <string name="about_system_monitoring_desc">Мониторинг вашей системы TrueNAS в реальном времени</string>
+    <string name="about_performance_tracking">Отслеживание производительности</string>
+    <string name="about_performance_tracking_desc">Отслеживание производительности ЦП, памяти и диска</string>
+    <string name="about_secure_connection">Безопасное соединение</string>
+    <string name="about_secure_connection_desc">Зашифрованное соединение с вашим сервером</string>
+    <string name="about_developer">Разработчик</string>
+    <string name="about_legal">Правовая информация</string>
+    <string name="about_copyright">© 2025 Gegaremant Labs. Все права защищены.</string>
+    <string name="about_disclaimer">TrueNasMobile не связан с iXsystems или TrueNAS.</string>
+    <string name="about_made_with">Сделано с</string>
+
+    <!-- Theme screen -->
+    <string name="theme_title">Тема</string>
+    <string name="theme_subtitle">Выберите цветовую схему и режим</string>
+    <string name="theme_color_scheme">Цветовая схема</string>
+    <string name="theme_dark_mode">Тёмный режим</string>
+    <string name="theme_dark_mode_desc">Светлая, тёмная или по умолчанию из системы</string>
+    <string name="theme_search_bar_bottom">Строка поиска внизу</string>
+    <string name="theme_search_bar_bottom_desc">Выровнять единое поле поиска по нижней части экрана</string>
+
+    <!-- Licenses screen -->
+    <string name="licenses_title">Лицензии</string>
+    <string name="licenses_subtitle">Лицензии</string>
+    <string name="licenses_open_source">Лицензии с открытым исходным кодом</string>
+    <string name="licenses_failed">Не удалось загрузить лицензию.</string>
+    <string name="licenses_gpl_title">GNU General Public License v3.0</string>
+    <string name="licenses_gpl_desc">Это приложение распространяется по лицензии GPL-3.0</string>
+
+    <!-- Theme modes & app themes -->
+    <string name="theme_mode_light">Светлая</string>
+    <string name="theme_mode_dark">Тёмная</string>
+    <string name="theme_mode_system">Системная</string>
+    <string name="apptheme_dynamic">Динамическая</string>
+    <string name="apptheme_truenasmobile">TrueNasMobile</string>
+    <string name="apptheme_ocean">Океан</string>
+    <string name="apptheme_forest">Лес</string>
+    <string name="apptheme_sunset">Закат</string>
+    <string name="apptheme_lavender">Лаванда</string>
+    <string name="apptheme_monochrome">Монохром</string>
+
+    <!-- Push notifications -->
+    <string name="push_title">Push-уведомления</string>
+    <string name="push_subtitle">Оповещения TrueNAS прямо на это устройство</string>
+    <string name="push_notifications">Push-уведомления</string>
+    <string name="push_enabled_topic">Включено — тема %1$s</string>
+    <string name="push_none_topic">(нет)</string>
+    <string name="push_disabled_desc">Пересылайте оповещения на телефон. Сервисы Google не требуются (ntfy).</string>
+    <string name="push_relay_url">URL ретранслятора</string>
+    <string name="push_relay_token">Токен ретранслятора</string>
+    <string name="push_ntfy_server">ntfy-сервер</string>
+    <string name="push_test">Проверить</string>
+    <string name="push_register_enable">Регистрация и включение</string>
+    <string name="push_send_test_alert">Отправить тестовое оповещение</string>
+    <string name="push_create_webhook">Создать вебхук на TrueNAS</string>
+    <string name="push_status_hint">Шаг 1: укажите TrueNAS ваш вебхук ретранслятора. Шаг 2: зарегистрируйте это устройство. Затем нажмите «Отправить тестовое оповещение».</string>
+    <string name="push_testing">Проверка соединения с ретранслятором…</string>
+    <string name="push_relay_reachable">Ретранслятор доступен</string>
+    <string name="push_relay_unreachable">Ретранслятор недоступен: %1$s</string>
+    <string name="push_registering">Регистрация устройства…</string>
+    <string name="push_registered">Устройство зарегистрировано — push работает.</string>
+    <string name="push_required">Требуются URL и токен ретранслятора.</string>
+    <string name="push_e2e_failed">Не удалось создать E2E-ключ: %1$s</string>
+    <string name="push_registered_id">Зарегистрировано (id=%1$s)</string>
+    <string name="push_registration_failed">Не удалось зарегистрироваться: %1$s</string>
+    <string name="push_sending_test">Отправка тестового оповещения…</string>
+    <string name="push_delivered">Доставлено на %1$d устройств(а). Следите за уведомлением.</string>
+    <string name="push_test_failed">Тестовое оповещение не отправлено: %1$s</string>
+    <string name="push_not_connected">Нет подключения к TrueNAS. Сначала откройте инстанс.</string>
+    <string name="push_creating_webhook">Создание вебхука на TrueNAS…</string>
+    <string name="push_webhook_created">Вебхук «%1$s» создан на TrueNAS.</string>
+    <string name="push_webhook_failed">Не удалось создать вебхук: %1$s</string>
+    <string name="push_webhook_unexpected">Создание вебхука вернуло неожиданный результат.</string>
+    <string name="push_test_alert_title">Тестовое оповещение TrueNasMobile</string>
+    <string name="push_test_alert_text">Это push подтверждает, что весь путь ретрансляции работает.</string>
+    <string name="push_service_name">TrueNasMobile Push</string>
+    <string name="logging_share_text">Внутренний журнал TrueNasMobile (%1$s)</string>
+    <string name="logging_share_intent_title">Поделиться журналом</string>
+    <string name="licenses_loading">Загрузка…</string>
+    <string name="about_developer_year">Разработчик • %1$s</string>
 </resources>

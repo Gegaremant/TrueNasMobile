@@ -54,6 +54,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -94,8 +95,8 @@ fun AboutScreen(
                 .statusBarsPadding()
         ) {
             UnifiedScreenHeader(
-                title = "About",
-                subtitle = "About",
+                title = stringResource(R.string.about_title),
+                subtitle = stringResource(R.string.about_subtitle),
                 isLoading = false,
                 isRefreshing = false,
                 error = null,
@@ -125,7 +126,7 @@ fun AboutScreen(
 
                         Icon(
                             painter = painterResource(id = R.drawable.ic_server_rack),
-                            contentDescription = "App Logo",
+                            contentDescription = stringResource(R.string.about_app_logo_cd),
                             modifier = Modifier
                                 .size(96.dp)
                                 .rotate(rotation)
@@ -145,7 +146,7 @@ fun AboutScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = "TrueNasMobile",
+                            text = stringResource(R.string.about_app_name),
                             style = MaterialTheme.typography.headlineLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -153,14 +154,14 @@ fun AboutScreen(
 
                         if (showEasterEgg) {
                             Text(
-                                text = "You have unlocked the secret easter egg!",
+                                text = stringResource(R.string.about_easter_egg_unlocked),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f),
                                 modifier = Modifier.padding(top = 8.dp)
                             )
                         } else {
                             Text(
-                                text = "Your TrueNAS Companion",
+                                text = stringResource(R.string.about_companion),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
                                 modifier = Modifier.padding(top = 4.dp)
@@ -179,37 +180,37 @@ fun AboutScreen(
 
                 if (showEasterEgg) {
                     AboutInfoSection(
-                        title = "Secret Features",
+                        title = stringResource(R.string.about_secret_features),
                         icon = Icons.Default.Stars
                     ) {
                         FeatureCard(
                             icon = Icons.Default.Celebration,
-                            title = "Easter Egg Master",
-                            description = "You've unlocked the hidden achievement!"
+                            title = stringResource(R.string.about_easter_egg_master),
+                            description = stringResource(R.string.about_easter_egg_master_desc)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         FeatureCard(
                             icon = Icons.Default.Favorite,
-                            title = "Curious Explorer",
-                            description = "Thanks for being awesome! 🚀"
+                            title = stringResource(R.string.about_curious_explorer),
+                            description = stringResource(R.string.about_curious_explorer_desc)
                         )
                     }
                 } else {
                     AboutInfoSection(
-                        title = "Features",
+                        title = stringResource(R.string.about_features),
                         icon = Icons.Default.Dashboard
                     ) {
                         FeatureCard(
                             icon = Icons.Default.Storage,
-                            title = "System Monitoring",
-                            description = "Real-time monitoring of your TrueNAS system"
+                            title = stringResource(R.string.about_system_monitoring),
+                            description = stringResource(R.string.about_system_monitoring_desc)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         // 5 taps toggles the hidden App Logging entry (persisted, never auto-resets).
                         FeatureCard(
                             icon = Icons.Default.Speed,
-                            title = "Performance Tracking",
-                            description = "Track CPU, memory, and disk performance",
+                            title = stringResource(R.string.about_performance_tracking),
+                            description = stringResource(R.string.about_performance_tracking_desc),
                             onClick = {
                                 loggingTapCount++
                                 if (loggingTapCount >= 5) {
@@ -222,14 +223,14 @@ fun AboutScreen(
                         Spacer(modifier = Modifier.height(8.dp))
                         FeatureCard(
                             icon = Icons.Default.Security,
-                            title = "Secure Connection",
-                            description = "Encrypted communication with your server"
+                            title = stringResource(R.string.about_secure_connection),
+                            description = stringResource(R.string.about_secure_connection_desc)
                         )
                     }
                 }
 
                 AboutInfoSection(
-                    title = "Developer",
+                    title = stringResource(R.string.about_developer),
                     icon = Icons.Default.Code
                 ) {
                     DeveloperCard(
@@ -239,11 +240,11 @@ fun AboutScreen(
                 }
 
                 AboutInfoSection(
-                    title = "Legal",
+                    title = stringResource(R.string.about_legal),
                     icon = Icons.Default.Gavel
                 ) {
                     Text(
-                        text = "© 2025 Gegaremant Labs. All rights reserved.",
+                        text = stringResource(R.string.about_copyright),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -253,7 +254,7 @@ fun AboutScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "TrueNasMobile is not affiliated with iXsystems or TrueNAS.",
+                        text = stringResource(R.string.about_disclaimer),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                         textAlign = TextAlign.Center,
@@ -269,7 +270,7 @@ fun AboutScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Made with",
+                            text = stringResource(R.string.about_made_with),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -404,7 +405,7 @@ private fun DeveloperCard(
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
-                    text = "Developer • $year",
+                    text = stringResource(R.string.about_developer_year, year),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
                     modifier = Modifier.padding(top = 2.dp)
