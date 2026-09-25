@@ -1,7 +1,78 @@
+import java.util.Base64
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
+}
+
+// ── Secrets: root .env ─────────────────────────────────────────────────────
+// Every secret this build needs lives in the git-ignored .env at the repo
+// root, so there is exactly one place to rotate them. Resolution order for
+// each key (first hit wins):
+//   1. real environment variable  — what CI injects
+//   2. Gradle property            — ~/.gradle/gradle.properties (never committed)
+//   3. root .env                  — local development
+// A key that is still missing is simply absent; nothing is ever printed.
+val rootEnvFile = rootProject.file(".env")
+val rootEnv: Map<String, String> =
+    if (rootEnvFile.isFile) {
+        rootEnvFile.readLines()
+            .map { it.trim() }
+            .filter { it.isNotEmpty() && !it.startsWith("#") && '=' in it }
+            .associate { line ->
+                val idx = line.indexOf('=')
+                val key = line.substring(0, idx).trim()
+                val value = line.substring(idx + 1).trim()
+                    .removeSurrounding("\"")
+                    .removeSurrounding("'")
+                key to value
+            }
+    } else {
+        emptyMap()
+    }
+
+fun secret(name: String): String? =
+    System.getenv(name)
+        ?: providers.gradleProperty(name).orNull
+        ?: rootEnv[name]
+
+// ── Release signing ────────────────────────────────────────────────────────
+// Nothing here is hardcoded and nothing is committed: either point the build
+// at a keystore with KEYSTORE_PATH, or hand it over as KEYSTORE_BASE64
+// (the usual CI shape). KEYSTORE_ALIAS + KEYSTORE_PASSWORD are always needed.
+// When they are absent the release build still runs, but loudly warns and
+// produces an UNSIGNED artifact rather than silently signing with a debug key.
+// NOTE: these are deliberately NOT named keyAlias / storePassword /
+// keyPassword. Inside `signingConfigs { create("release") { … } }` the
+// unqualified names resolve to the SigningConfig's own properties, so
+// `keyAlias = keyAlias` would silently assign the (still null) property to
+// itself and the build would fail with "missing required property keyAlias".
+val releaseKeystorePath: String? = secret("KEYSTORE_PATH")
+val releaseKeystorePassword: String? = secret("KEYSTORE_PASSWORD")
+val releaseKeyAlias: String? = secret("KEYSTORE_ALIAS")
+val releaseKeystoreBase64: String? = secret("KEYSTORE_BASE64")
+
+val hasReleaseSigning = releaseKeystorePassword != null && releaseKeyAlias != null &&
+    (releaseKeystorePath != null || releaseKeystoreBase64 != null)
+
+// Target for a keystore handed to us as base64 (CI). Kept in the build dir,
+// which is git-ignored, so the keystore never lands in the repository.
+val decodedKeystoreFile: File =
+    rootProject.layout.buildDirectory.get().asFile.resolve("release-keystore.jks")
+
+if (hasReleaseSigning && releaseKeystoreBase64 != null) {
+    val decoded = decodedKeystoreFile
+    if (!decoded.exists() || decoded.length() == 0L) {
+        decoded.parentFile.mkdirs()
+        decoded.writeBytes(Base64.getMimeDecoder().decode(releaseKeystoreBase64.trim()))
+    }
+}
+
+val resolvedKeystoreFile: File? = when {
+    releaseKeystorePath != null -> file(releaseKeystorePath)
+    hasReleaseSigning && releaseKeystoreBase64 != null -> decodedKeystoreFile
+    else -> null
 }
 
 android {
@@ -11,8 +82,8 @@ android {
     defaultConfig {
         minSdk = 33
         targetSdk = 37
-        versionCode = 10001
-        versionName = "1.0.1"
+        versionCode = 10002
+        versionName = "1.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -32,6 +103,22 @@ android {
         }
     }
 
+    signingConfigs {
+        if (hasReleaseSigning && resolvedKeystoreFile != null) {
+            create("release") {
+                storeFile = resolvedKeystoreFile
+                storePassword = releaseKeystorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeystorePassword
+                // minSdk is 33, so AGP signs with v3 only and drops the
+                // legacy v1/v2 schemes on its own - nothing to pin here.
+                // v4 is off because it needs a separate .idsig sidecar file.
+                enableV3Signing = true
+                enableV4Signing = false
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -40,6 +127,15 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                logger.warn(
+                    "WARNING: no release keystore configured " +
+                        "(KEYSTORE_PATH or KEYSTORE_BASE64 + KEYSTORE_ALIAS + KEYSTORE_PASSWORD). " +
+                        "Release artifacts will be UNSIGNED - do not publish these."
+                )
+            }
         }
     }
     splits {

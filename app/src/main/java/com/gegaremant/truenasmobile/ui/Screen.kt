@@ -1,109 +1,119 @@
 package com.gegaremant.truenasmobile.ui
 
-sealed class Screen(val route:String, val title:String) {
-    object Home : Screen("home", "Home")
-    object Storage : Screen("storage", "Хранилище")
-    object Tasks : Screen("tasks", "Задачи")
-    object Apps : Screen("apps","Apps")
-    object ServicesScreen : Screen("services", "TrueNAS Services")
-    object ServicesDetailScreen: Screen("service_detail", "Details about TrueNAS services")
-    object Containers : Screen ("containers", "Containers")
-    object Vms : Screen("vms","VMs")
-    object Login : Screen("login","Login")
-    object Main: Screen("main","Main")
-    object Performance : Screen("performance", "Performance")
-    object Settings : Screen("settings","Settings")
-    object PushSettings : Screen("push_settings", "Push Notifications")
-    object Licenses : Screen("licenses","Licenses")
-    object ShareInfo : Screen ("share_info","Exposed shares details")
-    object About : Screen("about","About")
-    object AppLogging : Screen("app_logging","App Logging")
-    object Theme : Screen("theme","Theme")
-    object AccountSwitcher : Screen("account_switcher","account_switcher")
-    object PoolDetails : Screen("pool_details", "Pool Details")
-    object Files : Screen("file_explorer","file_explorer")
-    object Marketplace : Screen("marketplace", "Marketplace")
-    object MarketplaceAppDetails : Screen("marketplace_app_details", "Marketplace App Details")
-    object ContainerInfo : Screen("container_info", "Container Info")
-    object VmDetails : Screen("vm_details", "VM Details")
-    object ChangePassword : Screen("change_password", "Change Password")
-    object DiskInfo : Screen("disk_info", "Disk information")
-    object AppConfigScreen : Screen("app_config", "Application config")
-    object InstanceConfigScreen : Screen("instance_config", "TrueNAS Instance Configuration")
-    object AppDetailsScreen : Screen("app_details", "Application details page")
-    object AppAdvancedInfoScreen : Screen("app_advanced_info/{appId}", "Advanced Application Information") {
+/**
+ * Navigation destinations.
+ *
+ * Only `route` is meaningful: it is the NavHost key and must stay stable.
+ * Screen titles are NOT stored here - they live in the locale dictionaries
+ * (`res/values/strings.xml` + `res/values-ru/strings.xml`) and are looked
+ * up with `stringResource(R.string.…)` at the point of display. An earlier
+ * revision carried a `title` field, but it was never read and drifted into
+ * hardcoded Russian, which is exactly what the dictionaries exist to prevent.
+ */
+sealed class Screen(val route: String) {
+    object Home : Screen("home")
+    object Storage : Screen("storage")
+    object Tasks : Screen("tasks")
+    object Apps : Screen("apps")
+    object ServicesScreen : Screen("services")
+    object ServicesDetailScreen: Screen("service_detail")
+    object Containers : Screen ("containers")
+    object Vms : Screen("vms")
+    object Login : Screen("login")
+    object Main: Screen("main")
+    object Performance : Screen("performance")
+    object Settings : Screen("settings")
+    object PushSettings : Screen("push_settings")
+    object Licenses : Screen("licenses")
+    object ShareInfo : Screen ("share_info")
+    object About : Screen("about")
+    object AppLogging : Screen("app_logging")
+    object Theme : Screen("theme")
+    object AccountSwitcher : Screen("account_switcher")
+    object PoolDetails : Screen("pool_details")
+    object Files : Screen("file_explorer")
+    object Marketplace : Screen("marketplace")
+    object MarketplaceAppDetails : Screen("marketplace_app_details")
+    object ContainerInfo : Screen("container_info")
+    object VmDetails : Screen("vm_details")
+    object ChangePassword : Screen("change_password")
+    object DiskInfo : Screen("disk_info")
+    object AppConfigScreen : Screen("app_config")
+    object InstanceConfigScreen : Screen("instance_config")
+    object AppDetailsScreen : Screen("app_details")
+    object AppAdvancedInfoScreen : Screen("app_advanced_info/{appId}") {
         fun createRoute(appId: String): String {
             return "app_advanced_info/$appId"
         }
     }
-    object SystemUpdateScreen : Screen("system_update", "TrueNAS Version Update")
-    object MarketplaceCategory : Screen("marketplace?category={category}", "Marketplace Category") {
+    object SystemUpdateScreen : Screen("system_update")
+    object MarketplaceCategory : Screen("marketplace?category={category}") {
         fun createRoute(category: String): String {
             return "marketplace?category=$category"
         }
     }
 
-    object AppUpgrade : Screen("app_upgrade/{appName}", "App Upgrade") {
+    object AppUpgrade : Screen("app_upgrade/{appName}") {
         fun createRoute(appName: String): String {
             return "app_upgrade/$appName"
         }
     }
 
-    object CatalogInstall : Screen("catalog_install/{appName}/{train}", "Catalog Install") {
+    object CatalogInstall : Screen("catalog_install/{appName}/{train}") {
         fun createRoute(appName: String, train: String): String {
             return "catalog_install/$appName/$train"
         }
     }
 
-    object DatasetExplorer : Screen("${Files.route}/{poolName}", "Dataset Explorer") {
+    object DatasetExplorer : Screen("${Files.route}/{poolName}") {
         fun createRoute(poolName: String): String {
             return "${Files.route}/$poolName"
         }
     }
-    object RollbackVersion : Screen("rollback/{appName}", "Rollback App") {
+    object RollbackVersion : Screen("rollback/{appName}") {
         fun createRoute(appName: String): String {
             return "rollback/$appName"
         }
     }
-    object AlertServicesList : Screen("alert_services_list","alert_services_list")
-    object AlertServiceDetail : Screen("alert_service_detail/{serviceId}","alert_service_detail/{serviceId}") {
+    object AlertServicesList : Screen("alert_services_list")
+    object AlertServiceDetail : Screen("alert_service_detail/{serviceId}") {
         fun createRoute(serviceId: Int) = "alert_service_detail/$serviceId"
     }
 
-    object AlertServiceCreate : Screen("alert_service_create","alert_service_create")
-    object AlertClassesConfig : Screen("alert_classes_config","\"alert_classes_config\"")
-    object UserListScreen : Screen("user_list", "Users")
-    object UserDetailScreen : Screen("user_detail/{userId}", "User Details") {
+    object AlertServiceCreate : Screen("alert_service_create")
+    object AlertClassesConfig : Screen("alert_classes_config")
+    object UserListScreen : Screen("user_list")
+    object UserDetailScreen : Screen("user_detail/{userId}") {
         fun createRoute(userId: Int) = "user_detail/$userId"
     }
-    object UserCreateScreen : Screen("user_create", "Create User")
-    object LocalAdminSetupScreen : Screen("local_admin_setup", "Setup Local Administrator")
-    object ApiKeyListScreen : Screen("api_key_list", "API Keys")
-    object ApiKeyDetailScreen : Screen("api_key_detail/{keyId}", "API Key Details") {
+    object UserCreateScreen : Screen("user_create")
+    object LocalAdminSetupScreen : Screen("local_admin_setup")
+    object ApiKeyListScreen : Screen("api_key_list")
+    object ApiKeyDetailScreen : Screen("api_key_detail/{keyId}") {
         fun createRoute(keyId: Int) = "api_key_detail/$keyId"
     }
-    object ApiKeyCreateScreen : Screen("api_key_create", "Create API Key")
-    object GeneralSystemSettingsScreen : Screen("general_system_settings", "General System Settings")
-    object GeneralSystemSettingsEditScreen : Screen("general_system_settings_edit", "Edit General System Settings")
-    object AdvancedSystemSettingsScreen : Screen("advanced_system_settings", "Advanced System Settings")
-    object AdvancedSystemSettingsEditScreen : Screen("advanced_system_settings_edit", "Edit Advanced Settings")
-    object AuditConfigScreen : Screen("audit_config", "Audit Configuration")
-    object AuditLogsScreen : Screen("audit_logs", "Audit Logs")
-    object NetworkScreen : Screen("network", "Network")
-    object NetworkEditScreen : Screen("network_edit", "Edit Network Configuration")
-    object BootScreen : Screen("boot", "Boot")
-    object BootPoolScreen : Screen("boot_pool", "Boot Pool")
-    object BootEnvironmentsScreen : Screen("boot_environments", "Boot Environments")
-    object BootEnvironmentDetailScreen : Screen("boot_environment/{environmentId}", "Boot Environment") {
+    object ApiKeyCreateScreen : Screen("api_key_create")
+    object GeneralSystemSettingsScreen : Screen("general_system_settings")
+    object GeneralSystemSettingsEditScreen : Screen("general_system_settings_edit")
+    object AdvancedSystemSettingsScreen : Screen("advanced_system_settings")
+    object AdvancedSystemSettingsEditScreen : Screen("advanced_system_settings_edit")
+    object AuditConfigScreen : Screen("audit_config")
+    object AuditLogsScreen : Screen("audit_logs")
+    object NetworkScreen : Screen("network")
+    object NetworkEditScreen : Screen("network_edit")
+    object BootScreen : Screen("boot")
+    object BootPoolScreen : Screen("boot_pool")
+    object BootEnvironmentsScreen : Screen("boot_environments")
+    object BootEnvironmentDetailScreen : Screen("boot_environment/{environmentId}") {
         fun createRoute(environmentId: String) = "boot_environment/$environmentId"
     }
-    object SystemInformationScreen : Screen("system_information", "System Information")
-    object SoftwareInformationScreen : Screen("software_information", "Software Information")
-    object HardwareInformationScreen : Screen("hardware_information", "Hardware Information")
-    object TrueNasConnectScreen : Screen("truenas_connect", "TrueNAS Connect")
-    object TrueCommandScreen : Screen("truecommand", "TrueCommand")
-    object AppImageManagementScreen : Screen("app_image_management", "App Image Management")
-    object IxVolumeListScreen : Screen("ix_volume_list", "iX Volumes")
-    object DockerImageListScreen : Screen("docker_image_list", "Docker Images")
+    object SystemInformationScreen : Screen("system_information")
+    object SoftwareInformationScreen : Screen("software_information")
+    object HardwareInformationScreen : Screen("hardware_information")
+    object TrueNasConnectScreen : Screen("truenas_connect")
+    object TrueCommandScreen : Screen("truecommand")
+    object AppImageManagementScreen : Screen("app_image_management")
+    object IxVolumeListScreen : Screen("ix_volume_list")
+    object DockerImageListScreen : Screen("docker_image_list")
 
 }

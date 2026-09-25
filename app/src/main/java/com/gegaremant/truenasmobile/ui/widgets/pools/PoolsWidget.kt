@@ -1,5 +1,6 @@
 package com.gegaremant.truenasmobile.ui.widgets.pools
 
+import com.gegaremant.truenasmobile.R
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable

@@ -290,7 +290,7 @@ fun AboutScreen(
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "{Под'Московье City «Retuzovo Grad» © 2026}",
+                        text = stringResource(R.string.about_credit_line),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                     )

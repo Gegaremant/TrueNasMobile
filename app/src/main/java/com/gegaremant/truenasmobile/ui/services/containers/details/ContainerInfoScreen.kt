@@ -1,5 +1,7 @@
 package com.gegaremant.truenasmobile.ui.services.containers.details
 
+import com.gegaremant.truenasmobile.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring

@@ -80,7 +80,7 @@ fun TrueCommandScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             UnifiedScreenHeader(
-                title = stringResource(R.string.push_title),
+                title = stringResource(R.string.truecmd_title),
                 subtitle = stringResource(R.string.truecmd_subtitle),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,

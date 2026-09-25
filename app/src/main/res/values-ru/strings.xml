@@ -1933,7 +1933,7 @@
     <string name="smart_transfer_mode">Режим передачи</string>
     <string name="smart_standby_mode">Режим ожидания</string>
     <string name="smart_apm_level">Уровень APM</string>
-    <string name="push_title">TrueCommand</string>
+    <string name="truecmd_title">TrueCommand</string>
     <string name="tnc_title">TrueNAS Connect</string>
     <string name="widget_no_apps_configured">Приложения не настроены</string>
     <string name="widget_no_pools_configured">Пулы не настроены</string>
@@ -1941,4 +1941,5 @@
     <string name="search_container_word">Контейнер</string>
     <string name="search_vm_word">ВМ</string>
     <string name="common_load_failed">Не удалось загрузить данные</string>
+    <string name="about_credit_line">{Под\'Московье City «Retuzovo Grad» © 2026}</string>
 </resources>

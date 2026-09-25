@@ -1,5 +1,7 @@
 package com.gegaremant.truenasmobile.ui.services.system.services
 
+import com.gegaremant.truenasmobile.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

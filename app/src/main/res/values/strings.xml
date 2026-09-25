@@ -1870,15 +1870,15 @@
     <string name="search_unknown_value">?</string>
     <string name="search_app_fallback">App</string>
     <string name="vm_delete_title">Delete Virtual Machine</string>
-    <string name="vm_delete_message">Are you sure you want to delete '%1$s'? This action cannot be undone.</string>
+    <string name="vm_delete_message">Are you sure you want to delete \'%1$s\'? This action cannot be undone.</string>
     <string name="vm_delete_zvols">Delete Zvols</string>
     <string name="vm_force_delete">Force Delete</string>
     <string name="vm_stop_title">Stop Virtual Machine</string>
-    <string name="vm_stop_message">Are you sure you want to stop '%1$s'?</string>
+    <string name="vm_stop_message">Are you sure you want to stop \'%1$s\'?</string>
     <string name="vm_force_shutoff">Force shutoff</string>
     <string name="vm_force_shutoff_timeout">Force shutoff after timeout</string>
     <string name="vm_start_title">Start Virtual Machine</string>
-    <string name="vm_start_message">Are you sure you want to start '%1$s'?</string>
+    <string name="vm_start_message">Are you sure you want to start \'%1$s\'?</string>
     <string name="vm_overcommit">Overcommit</string>
     <string name="vm_vcpus_label">vCPUs</string>
     <string name="vm_deleted_toast">Deleted Virtual Machine</string>
@@ -1921,7 +1921,7 @@
     <string name="smart_transfer_mode">Transfer Mode</string>
     <string name="smart_standby_mode">Standby Mode</string>
     <string name="smart_apm_level">APM Level</string>
-    <string name="push_title">TrueCommand</string>
+    <string name="truecmd_title">TrueCommand</string>
     <string name="tnc_title">TrueNAS Connect</string>
     <string name="widget_no_apps_configured">No apps configured</string>
     <string name="widget_no_pools_configured">No pools configured</string>
@@ -1929,4 +1929,5 @@
     <string name="search_container_word">Container</string>
     <string name="search_vm_word">VM</string>
     <string name="common_load_failed">Failed to load data</string>
+    <string name="about_credit_line">{Podmoskovye City «Retuzovo Grad» © 2026</string>
 </resources>

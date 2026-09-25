@@ -6,14 +6,23 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 import com.gegaremant.truenasmobile.R
 
-enum class AppTheme(@StringRes val displayNameRes: Int, val description: String) {
-    DYNAMIC(R.string.apptheme_dynamic, "Adapts to your system colors"),
-    TRUENASMOBILE(R.string.apptheme_truenasmobile, "Классические синие и бирюзовые тона"),
-    OCEAN(R.string.apptheme_ocean, "Deep blue waters"),
-    FOREST(R.string.apptheme_forest, "Natural greens"),
-    SUNSET(R.string.apptheme_sunset, "Warm orange and pink"),
-    LAVENDER(R.string.apptheme_lavender, "Soft purple tones"),
-    MONOCHROME(R.string.apptheme_monochrome, "Elegant grayscale")
+/**
+ * Available themes.
+ *
+ * Only the display name is kept here, as a string resource id. Per-theme
+ * descriptions used to be plain strings in this enum; nothing ever read them
+ * and one of them was left in Russian, so the field is gone. If descriptions
+ * come back, put them in the locale dictionaries as
+ * `@StringRes descriptionRes` instead.
+ */
+enum class AppTheme(@StringRes val displayNameRes: Int) {
+    DYNAMIC(R.string.apptheme_dynamic),
+    TRUENASMOBILE(R.string.apptheme_truenasmobile),
+    OCEAN(R.string.apptheme_ocean),
+    FOREST(R.string.apptheme_forest),
+    SUNSET(R.string.apptheme_sunset),
+    LAVENDER(R.string.apptheme_lavender),
+    MONOCHROME(R.string.apptheme_monochrome)
 }
 
 // TrueNasMobile Theme (Blue/Teal)
