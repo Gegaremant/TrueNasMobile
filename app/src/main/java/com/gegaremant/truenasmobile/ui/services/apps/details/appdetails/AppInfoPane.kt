@@ -52,6 +52,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -63,6 +64,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.models.Apps
 import com.gegaremant.truenasmobile.ui.background.WavyGradientBackground
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -88,33 +90,33 @@ fun AppInfoPane(
             ) {
                 AppInfoPaneHeader(app = app, onClose = onClose, onOpenAdvanced = onOpenAdvanced)
 
-                ServiceInfoSection(title = "Basic Information", icon = Icons.Default.Info) {
-                    ServiceInfoRow("App Name", app.metadata?.title ?: app.name)
+                ServiceInfoSection(title = stringResource(R.string.appinfo_section_basic), icon = Icons.Default.Info) {
+                    ServiceInfoRow(stringResource(R.string.appinfo_app_name), app.metadata?.title ?: app.name)
                     ServiceInfoRow("ID", app.id)
-                    ServiceInfoRow("Version", app.humanVersion ?: app.version ?: "Unknown")
-                    ServiceInfoRow("Status", app.state.replaceFirstChar { it.uppercase() })
-                    ServiceInfoRow("Catalog", app.metadata?.train ?: "Unknown")
+                    ServiceInfoRow(stringResource(R.string.appinfo_version), app.humanVersion ?: app.version ?: stringResource(R.string.common_unknown))
+                    ServiceInfoRow(stringResource(R.string.appinfo_status), app.state.replaceFirstChar { it.uppercase() })
+                    ServiceInfoRow(stringResource(R.string.appinfo_catalog), app.metadata?.train ?: stringResource(R.string.common_unknown))
                     if (app.upgrade_available) {
-                        ServiceInfoRow("Latest Version", app.latestVersion ?: "Available")
+                        ServiceInfoRow(stringResource(R.string.appinfo_latest_version), app.latestVersion ?: stringResource(R.string.appinfo_available))
                     }
                     if (app.customApp) {
-                        ServiceInfoRow("Type", "Custom Application")
+                        ServiceInfoRow(stringResource(R.string.attr_type), stringResource(R.string.appinfo_custom_app))
                     }
                     if (app.migrated) {
-                        ServiceInfoRow("Migrated", "Yes")
+                        ServiceInfoRow(stringResource(R.string.appinfo_migrated), stringResource(R.string.common_yes))
                     }
                     if (app.migratedFromKubernetes) {
-                        ServiceInfoRow("From Kubernetes", "Yes")
+                        ServiceInfoRow(stringResource(R.string.appinfo_from_kubernetes), stringResource(R.string.common_yes))
                     }
                     app.metadata?.libVersion?.let {
-                        ServiceInfoRow("Lib Version", it)
+                        ServiceInfoRow(stringResource(R.string.appinfo_lib_version), it)
                     }
                 }
 
                 app.versionInfo?.let { versionInfo ->
                     val hasContent = !versionInfo.changelog.isNullOrBlank() || !versionInfo.upgradeNotes.isNullOrBlank()
                     if (hasContent) {
-                        ServiceInfoSection(title = "Version Info", icon = Icons.Default.Update) {
+                        ServiceInfoSection(title = stringResource(R.string.appinfo_section_version_info), icon = Icons.Default.Update) {
                             versionInfo.changelog?.let { changelog ->
                                 if (changelog.isNotBlank()) {
                                     Card(
@@ -124,7 +126,7 @@ fun AppInfoPane(
                                     ) {
                                         Column(modifier = Modifier.padding(14.dp)) {
                                             Text(
-                                                text = "Changelog",
+                                                text = stringResource(R.string.appinfo_changelog),
                                                 style = MaterialTheme.typography.labelLarge,
                                                 fontWeight = FontWeight.SemiBold,
                                                 color = MaterialTheme.colorScheme.primary,
@@ -149,7 +151,7 @@ fun AppInfoPane(
                                     ) {
                                         Column(modifier = Modifier.padding(14.dp)) {
                                             Text(
-                                                text = "Upgrade Notes",
+                                                text = stringResource(R.string.appinfo_upgrade_notes),
                                                 style = MaterialTheme.typography.labelLarge,
                                                 fontWeight = FontWeight.SemiBold,
                                                 color = MaterialTheme.colorScheme.tertiary,
@@ -169,7 +171,7 @@ fun AppInfoPane(
                 }
 
                 app.metadata?.description?.let { description ->
-                    ServiceInfoSection(title = "Description", icon = Icons.Default.Description) {
+                    ServiceInfoSection(title = stringResource(R.string.appinfo_section_description), icon = Icons.Default.Description) {
                         Text(
                             text = description,
                             style = MaterialTheme.typography.bodyMedium,
@@ -180,10 +182,10 @@ fun AppInfoPane(
                 }
 
                 if (!app.metadata?.categories.isNullOrEmpty() || !app.metadata?.keywords.isNullOrEmpty()) {
-                    ServiceInfoSection(title = "Categories & Tags", icon = Icons.Default.Tag) {
+                    ServiceInfoSection(title = stringResource(R.string.appinfo_section_categories_tags), icon = Icons.Default.Tag) {
                         app.metadata.categories?.let { categories ->
                             ServiceInfoChipGroup(
-                                title = "Categories",
+                                title = stringResource(R.string.appinfo_categories),
                                 items = categories,
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -193,7 +195,7 @@ fun AppInfoPane(
                             if (keywords.isNotEmpty()) {
                                 Spacer(modifier = Modifier.height(12.dp))
                                 ServiceInfoChipGroup(
-                                    title = "Keywords",
+                                    title = stringResource(R.string.appinfo_keywords),
                                     items = keywords,
                                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -205,7 +207,7 @@ fun AppInfoPane(
 
                 app.portals?.let { portals ->
                     if (portals.isNotEmpty()) {
-                        ServiceInfoSection(title = "Web Portals", icon = Icons.AutoMirrored.Filled.Launch) {
+                        ServiceInfoSection(title = stringResource(R.string.appinfo_web_portals), icon = Icons.AutoMirrored.Filled.Launch) {
                             portals.forEach { (name, url) ->
                                 ServicePortalCard(name = name, url = url)
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -218,10 +220,10 @@ fun AppInfoPane(
                     val hasPorts = !workloads.usedPorts.isNullOrEmpty()
                     val hasNetworks = !workloads.networks.isNullOrEmpty()
                     if (hasPorts || hasNetworks) {
-                        ServiceInfoSection(title = "Network & Ports", icon = Icons.Default.NetworkCheck) {
+                        ServiceInfoSection(title = stringResource(R.string.appinfo_network_ports), icon = Icons.Default.NetworkCheck) {
                             if (hasPorts) {
                                 Text(
-                                    text = "Exposed Ports",
+                                    text = stringResource(R.string.appinfo_exposed_ports),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                     modifier = Modifier.padding(bottom = 6.dp, start = 2.dp)
@@ -234,7 +236,7 @@ fun AppInfoPane(
                             if (hasNetworks) {
                                 if (hasPorts) Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Docker Networks",
+                                    text = stringResource(R.string.appinfo_docker_networks),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                     modifier = Modifier.padding(bottom = 6.dp, start = 2.dp)
@@ -250,7 +252,7 @@ fun AppInfoPane(
 
                 app.activeWorkloads?.containerDetails?.let { containers ->
                     if (containers.isNotEmpty()) {
-                        ServiceInfoSection(title = "Containers", icon = Icons.Default.Apps) {
+                        ServiceInfoSection(title = stringResource(R.string.appinfo_section_containers), icon = Icons.Default.Apps) {
                             containers.forEach { container ->
                                 PaneContainerCard(container = container)
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -261,7 +263,7 @@ fun AppInfoPane(
 
                 app.activeWorkloads?.images?.let { images ->
                     if (images.isNotEmpty()) {
-                        ServiceInfoSection(title = "Container Images", icon = Icons.Default.Image) {
+                        ServiceInfoSection(title = stringResource(R.string.appinfo_section_images), icon = Icons.Default.Image) {
                             ServiceImagesCard(images = images)
                         }
                     }
@@ -270,7 +272,7 @@ fun AppInfoPane(
                 val volumes = app.activeWorkloads?.volumes
                 val hostMounts = app.metadata?.hostMounts
                 if (!volumes.isNullOrEmpty() || !hostMounts.isNullOrEmpty()) {
-                    ServiceInfoSection(title = "Storage & Mounts", icon = Icons.Default.Storage) {
+                    ServiceInfoSection(title = stringResource(R.string.appinfo_storage_mounts), icon = Icons.Default.Storage) {
                         volumes?.forEach { volume ->
                             ServiceVolumeCard(volume = volume)
                             Spacer(modifier = Modifier.height(8.dp))
@@ -284,7 +286,7 @@ fun AppInfoPane(
 
                 app.metadata?.runAsContext?.let { contexts ->
                     if (contexts.isNotEmpty()) {
-                        ServiceInfoSection(title = "Security Context", icon = Icons.Default.AccountBox) {
+                        ServiceInfoSection(title = stringResource(R.string.appinfo_security_context), icon = Icons.Default.AccountBox) {
                             contexts.forEach { ctx ->
                                 PaneRunAsContextCard(context = ctx)
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -295,7 +297,7 @@ fun AppInfoPane(
 
                 app.metadata?.capabilities?.let { capabilities ->
                     if (capabilities.isNotEmpty()) {
-                        ServiceInfoSection(title = "Capabilities", icon = Icons.Default.Build) {
+                        ServiceInfoSection(title = stringResource(R.string.advancedinfo_capabilities), icon = Icons.Default.Build) {
                             capabilities.forEach { capability ->
                                 PaneCapabilityCard(capability = capability)
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -306,7 +308,7 @@ fun AppInfoPane(
 
                 app.metadata?.maintainers?.let { maintainers ->
                     if (maintainers.isNotEmpty()) {
-                        ServiceInfoSection(title = "Maintainers", icon = Icons.Default.Person) {
+                        ServiceInfoSection(title = stringResource(R.string.appinfo_maintainers), icon = Icons.Default.Person) {
                             maintainers.forEach { maintainer ->
                                 PaneMaintainerCard(maintainer = maintainer)
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -316,17 +318,17 @@ fun AppInfoPane(
                 }
 
                 if (app.metadata?.home != null || !app.metadata?.sources.isNullOrEmpty()) {
-                    ServiceInfoSection(title = "Links", icon = Icons.Default.Link) {
+                    ServiceInfoSection(title = stringResource(R.string.advancedinfo_links), icon = Icons.Default.Link) {
                         app.metadata.home?.let { home ->
-                            ServiceLinkCard(name = "Homepage", url = home, icon = Icons.Default.Home)
+                            ServiceLinkCard(name = stringResource(R.string.appinfo_homepage), url = home, icon = Icons.Default.Home)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                         app.metadata.sources?.forEach { source ->
-                            ServiceLinkCard(name = "Source Code", url = source, icon = Icons.Default.Code)
+                            ServiceLinkCard(name = stringResource(R.string.appinfo_source_code), url = source, icon = Icons.Default.Code)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                         app.metadata.changelogUrl?.let { changelog ->
-                            ServiceLinkCard(name = "Changelog", url = changelog, icon = Icons.Default.Description)
+                            ServiceLinkCard(name = stringResource(R.string.appinfo_changelog), url = changelog, icon = Icons.Default.Description)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
@@ -365,7 +367,7 @@ private fun AppInfoPaneHeader(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "Advanced",
+                        text = stringResource(R.string.appinfo_advanced_short),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -373,7 +375,7 @@ private fun AppInfoPaneHeader(
                 IconButton(onClick = onClose) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.common_close),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
@@ -405,7 +407,7 @@ private fun AppInfoPaneHeader(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Version ${app.humanVersion ?: app.version ?: "Unknown"}",
+                        text = stringResource(R.string.appinfo_version_label_fmt, app.humanVersion ?: app.version ?: stringResource(R.string.common_unknown)),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                     )
@@ -415,7 +417,7 @@ private fun AppInfoPaneHeader(
                             shape = RoundedCornerShape(6.dp)
                         ) {
                             Text(
-                                text = "Custom",
+                                text = stringResource(R.string.appinfo_custom_badge),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -526,13 +528,13 @@ private fun ServicePortCard(port: Apps.UsedPort) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Port ${port.containerPort} (${port.protocol.uppercase()})",
+                text = stringResource(R.string.appinfo_port_fmt, port.containerPort, port.protocol.uppercase()),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Medium
             )
             port.hostPorts.forEach { hostPort ->
                 Text(
-                    text = "→ ${hostPort.hostIp}:${hostPort.hostPort}",
+                    text = stringResource(R.string.appinfo_port_arrow_fmt, hostPort.hostIp, hostPort.hostPort),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 4.dp)
@@ -590,7 +592,7 @@ private fun PaneNetworkCard(network: Apps.Network) {
             }
             network.driver?.let {
                 Text(
-                    text = "Driver: $it",
+                    text = stringResource(R.string.appinfo_driver_fmt, it),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -600,14 +602,14 @@ private fun PaneNetworkCard(network: Apps.Network) {
                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         config.subnet?.let {
                             Text(
-                                text = "Subnet: $it",
+                                text = stringResource(R.string.appinfo_subnet_fmt, it),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         config.gateway?.let {
                             Text(
-                                text = "GW: $it",
+                                text = stringResource(R.string.appinfo_gw_fmt, it),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -662,7 +664,7 @@ private fun PaneContainerCard(container: Apps.ContainerDetail) {
                 }
             }
             Text(
-                text = "Image: ${container.image}",
+                text = stringResource(R.string.appinfo_image_fmt, container.image),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 2.dp),
@@ -673,13 +675,19 @@ private fun PaneContainerCard(container: Apps.ContainerDetail) {
                 if (ports.isNotEmpty()) {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
                     Text(
-                        text = "Ports",
+                        text = stringResource(R.string.appinfo_ports),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                     ports.forEach { port ->
                         Text(
-                            text = "${port.containerPort}/${port.protocol.uppercase()} → ${port.hostPorts.firstOrNull()?.let { "${it.hostIp}:${it.hostPort}" } ?: "unbound"}",
+                            text = stringResource(
+                                R.string.appinfo_port_mapping_fmt,
+                                port.containerPort,
+                                port.protocol.uppercase(),
+                                port.hostPorts.firstOrNull()?.let { "${it.hostIp}:${it.hostPort}" }
+                                    ?: stringResource(R.string.appinfo_unbound)
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -690,7 +698,7 @@ private fun PaneContainerCard(container: Apps.ContainerDetail) {
                 if (mounts.isNotEmpty()) {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
                     Text(
-                        text = "Mounts",
+                        text = stringResource(R.string.appinfo_mounts),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
@@ -751,7 +759,7 @@ private fun ServiceVolumeCard(volume: Apps.Volume) {
             )
             volume.mode?.let {
                 Text(
-                    text = "Mode: $it",
+                    text = stringResource(R.string.appinfo_mode_fmt, it),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
@@ -769,7 +777,7 @@ private fun ServiceHostMountCard(mount: Apps.HostMount) {
     ) {
         Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = "Host Mount",
+                text = stringResource(R.string.appinfo_host_mount),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.primary
@@ -941,7 +949,7 @@ private fun PaneMaintainerCard(maintainer: Apps.Maintainer) {
                 IconButton(onClick = { uriHandler.openUri(url) }, modifier = Modifier.size(32.dp)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                        contentDescription = "Open URL",
+                        contentDescription = stringResource(R.string.appinfo_open_url_cd),
                         modifier = Modifier.size(16.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )

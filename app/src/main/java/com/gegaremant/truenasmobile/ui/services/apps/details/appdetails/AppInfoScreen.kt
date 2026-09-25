@@ -72,6 +72,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -150,7 +151,7 @@ fun AppInfoScreen(
         topBar = {
             UnifiedScreenHeader(
                 title = app.metadata?.title ?: app.name,
-                subtitle = "App Details",
+                subtitle = stringResource(R.string.appinfo_subtitle),
                 isLoading = false,
                 isRefreshing = false,
                 error = null,
@@ -197,7 +198,7 @@ fun AppInfoScreen(
                                     .decoderFactory(SvgDecoder.Factory())
                                     .crossfade(true)
                                     .build(),
-                                contentDescription = "${app.metadata.title ?: app.name} icon",
+                                contentDescription = stringResource(R.string.apps_icon_cd, app.metadata.title ?: app.name),
                                 modifier = Modifier
                                     .size(52.dp)
                                     .clip(RoundedCornerShape(12.dp)),
@@ -227,7 +228,7 @@ fun AppInfoScreen(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Version: ${app.humanVersion ?: app.version ?: "Unknown"}",
+                            text = stringResource(R.string.appinfo_version_fmt, app.humanVersion ?: app.version ?: stringResource(R.string.common_unknown)),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -235,21 +236,21 @@ fun AppInfoScreen(
                         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             if (app.customApp) {
                                 AppBadge(
-                                    label = "Custom",
+                                    label = stringResource(R.string.appinfo_custom_badge),
                                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                                     contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                                 )
                             }
                             if (app.migrated) {
                                 AppBadge(
-                                    label = "Migrated",
+                                    label = stringResource(R.string.appinfo_migrated),
                                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                             }
                             if (app.migratedFromKubernetes) {
                                 AppBadge(
-                                    label = "From K8s",
+                                    label = stringResource(R.string.appinfo_from_k8s),
                                     containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -263,7 +264,7 @@ fun AppInfoScreen(
                             onEditClick(app.name,app.metadata!!.train ?: "stable")
                         },
                         icon = Icons.Default.Edit,
-                        contentDescription = "Edit ${app.metadata?.title ?: app.name} Configuration",
+                        contentDescription = stringResource(R.string.appinfo_edit_config_cd, app.metadata?.title ?: app.name),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                     )
@@ -302,52 +303,52 @@ fun AppInfoScreen(
                     Spacer(modifier = Modifier.width(14.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Advanced Information",
+                            text = stringResource(R.string.appinfo_advanced),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "Workloads, ports, storage, notes and screenshots",
+                            text = stringResource(R.string.appinfo_advanced_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "Open advanced information",
+                        contentDescription = stringResource(R.string.appinfo_open_advanced_cd),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
 
-            ExpressiveSection(title = "Basic Information", icon = Icons.Default.Info) {
+            ExpressiveSection(title = stringResource(R.string.appinfo_section_basic), icon = Icons.Default.Info) {
                 ExpressiveInfoCard {
-                    InfoRow(label = "App Name", value = app.metadata?.title ?: app.name)
+                    InfoRow(label = stringResource(R.string.appinfo_app_name), value = app.metadata?.title ?: app.name)
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     InfoRow(label = "ID", value = app.id)
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    InfoRow(label = "Version", value = app.humanVersion ?: app.version ?: "Unknown")
+                    InfoRow(label = stringResource(R.string.appinfo_version), value = app.humanVersion ?: app.version ?: stringResource(R.string.common_unknown))
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    InfoRow(label = "Status", value = app.state.replaceFirstChar { it.uppercase() })
+                    InfoRow(label = stringResource(R.string.appinfo_status), value = app.state.replaceFirstChar { it.uppercase() })
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                    InfoRow(label = "Catalog", value = app.metadata?.train ?: "Unknown")
+                    InfoRow(label = stringResource(R.string.appinfo_catalog), value = app.metadata?.train ?: stringResource(R.string.common_unknown))
                     if (app.upgrade_available) {
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        InfoRow(label = "Latest Version", value = app.latestVersion ?: "Update Available")
+                        InfoRow(label = stringResource(R.string.appinfo_latest_version), value = app.latestVersion ?: stringResource(R.string.appinfo_update_available))
                     }
                     app.metadata?.dateAdded?.let {
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        InfoRow(label = "Date Added", value = it)
+                        InfoRow(label = stringResource(R.string.appinfo_date_added), value = it)
                     }
                     app.metadata?.lastUpdate?.let {
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        InfoRow(label = "Last Updated", value = it)
+                        InfoRow(label = stringResource(R.string.appinfo_last_updated), value = it)
                     }
                     app.metadata?.libVersion?.let {
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        InfoRow(label = "Lib Version", value = it)
+                        InfoRow(label = stringResource(R.string.appinfo_lib_version), value = it)
                     }
                 }
             }
@@ -355,7 +356,7 @@ fun AppInfoScreen(
             app.versionInfo?.let { versionInfo ->
                 val hasContent = !versionInfo.changelog.isNullOrBlank() || !versionInfo.upgradeNotes.isNullOrBlank()
                 if (hasContent) {
-                    ExpressiveSection(title = "Version Info", icon = Icons.Default.Update) {
+                    ExpressiveSection(title = stringResource(R.string.appinfo_section_version_info), icon = Icons.Default.Update) {
                         versionInfo.changelog?.let { changelog ->
                             if (changelog.isNotBlank()) {
                                 Card(
@@ -365,7 +366,7 @@ fun AppInfoScreen(
                                 ) {
                                     Column(modifier = Modifier.padding(16.dp)) {
                                         Text(
-                                            text = "Changelog",
+                                            text = stringResource(R.string.appinfo_changelog),
                                             style = MaterialTheme.typography.labelLarge,
                                             fontWeight = FontWeight.SemiBold,
                                             color = MaterialTheme.colorScheme.primary,
@@ -390,7 +391,7 @@ fun AppInfoScreen(
                                 ) {
                                     Column(modifier = Modifier.padding(16.dp)) {
                                         Text(
-                                            text = "Upgrade Notes",
+                                            text = stringResource(R.string.appinfo_upgrade_notes),
                                             style = MaterialTheme.typography.labelLarge,
                                             fontWeight = FontWeight.SemiBold,
                                             color = MaterialTheme.colorScheme.tertiary,
@@ -410,7 +411,7 @@ fun AppInfoScreen(
             }
 
             app.metadata?.description?.let { description ->
-                ExpressiveSection(title = "Description", icon = Icons.Default.Description) {
+                ExpressiveSection(title = stringResource(R.string.appinfo_section_description), icon = Icons.Default.Description) {
                     Card(
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
                         shape = RoundedCornerShape(20.dp),
@@ -448,10 +449,10 @@ fun AppInfoScreen(
             }
 
             if (!app.metadata?.categories.isNullOrEmpty() || !app.metadata?.keywords.isNullOrEmpty()) {
-                ExpressiveSection(title = "Categories & Tags", icon = Icons.Default.Tag) {
+                ExpressiveSection(title = stringResource(R.string.appinfo_section_categories_tags), icon = Icons.Default.Tag) {
                     app.metadata.categories?.let { categories ->
                         ServiceInfoChipGroup(
-                            title = "Categories",
+                            title = stringResource(R.string.appinfo_categories),
                             items = categories,
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -462,7 +463,7 @@ fun AppInfoScreen(
                         if (keywords.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(16.dp))
                             ServiceInfoChipGroup(
-                                title = "Keywords",
+                                title = stringResource(R.string.appinfo_keywords),
                                 items = keywords,
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -475,7 +476,7 @@ fun AppInfoScreen(
 
             app.metadata?.maintainers?.let { maintainers ->
                 if (maintainers.isNotEmpty()) {
-                    ExpressiveSection(title = "Maintainers", icon = Icons.Default.Person) {
+                    ExpressiveSection(title = stringResource(R.string.appinfo_maintainers), icon = Icons.Default.Person) {
                         maintainers.forEach { maintainer ->
                             ServiceMaintainerCard(maintainer = maintainer)
                             Spacer(modifier = Modifier.height(8.dp))
@@ -485,23 +486,23 @@ fun AppInfoScreen(
             }
 
             if (app.metadata?.home != null || !app.metadata?.sources.isNullOrEmpty() || app.metadata?.changelogUrl != null) {
-                ExpressiveSection(title = "Resources", icon = Icons.Default.Link) {
+                ExpressiveSection(title = stringResource(R.string.appinfo_section_resources), icon = Icons.Default.Link) {
                     app.metadata.home?.let { home ->
-                        LinkButton(name = "Homepage", url = home, icon = Icons.Default.Home)
+                        LinkButton(name = stringResource(R.string.appinfo_homepage), url = home, icon = Icons.Default.Home)
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                     app.metadata.sources?.forEach { source ->
-                        LinkButton(name = "Source Code", url = source, icon = Icons.Default.Code)
+                        LinkButton(name = stringResource(R.string.appinfo_source_code), url = source, icon = Icons.Default.Code)
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                     app.metadata.changelogUrl?.let { changelog ->
-                        LinkButton(name = "Changelog", url = changelog, icon = Icons.Default.Description)
+                        LinkButton(name = stringResource(R.string.appinfo_changelog), url = changelog, icon = Icons.Default.Description)
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
 
-            ExpressiveSection(title = "Danger Zone", icon = Icons.Default.Build) {
+            ExpressiveSection(title = stringResource(R.string.appinfo_section_danger_zone), icon = Icons.Default.Build) {
                 Card(
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.15f)
@@ -516,7 +517,7 @@ fun AppInfoScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
-                            text = "Removing this application will terminate active container containers and wipe local middleware workloads.",
+                            text = stringResource(R.string.appinfo_remove_warning),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onErrorContainer,
                             textAlign = TextAlign.Center
@@ -543,8 +544,8 @@ fun AppInfoScreen(
                                     )
                                     Spacer(modifier = Modifier.width(12.dp))
                                     val statusText = when (currentDeletionJob.state) {
-                                        "RUNNING" -> "Deleting... ${currentDeletionJob.progress}%"
-                                        "WAITING" -> "Queueing Uninstallation..."
+                                        "RUNNING" -> stringResource(R.string.appinfo_deleting_progress, currentDeletionJob.progress)
+                                        "WAITING" -> stringResource(R.string.appinfo_queueing_uninstall)
                                         else -> currentDeletionJob.state
                                     }
                                     Text(text = statusText, fontWeight = FontWeight.Bold)
@@ -555,7 +556,7 @@ fun AppInfoScreen(
                                         modifier = Modifier.size(18.dp)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text(text = "Uninstall Application", fontWeight = FontWeight.Bold)
+                                    Text(text = stringResource(R.string.appinfo_uninstall_app), fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
@@ -625,7 +626,7 @@ fun ServiceNetworkCard(network: Apps.Network) {
                     )
                     network.driver?.let {
                         Text(
-                            text = "Driver: $it",
+                            text = stringResource(R.string.appinfo_driver_fmt, it),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -656,10 +657,10 @@ fun ServiceNetworkCard(network: Apps.Network) {
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             config.subnet?.let {
-                                NetworkInfoChip(label = "Subnet", value = it)
+                                NetworkInfoChip(label = stringResource(R.string.appinfo_subnet), value = it)
                             }
                             config.gateway?.let {
-                                NetworkInfoChip(label = "Gateway", value = it)
+                                NetworkInfoChip(label = stringResource(R.string.appinfo_gateway), value = it)
                             }
                         }
                     }
@@ -673,7 +674,7 @@ fun ServiceNetworkCard(network: Apps.Network) {
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = "IPv6 Enabled",
+                            text = stringResource(R.string.appinfo_ipv6_enabled),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onTertiaryContainer,
                             fontWeight = FontWeight.Medium,
@@ -878,7 +879,7 @@ private fun ServicePortCard(port: Apps.UsedPort) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Port ${port.containerPort} (${port.protocol.uppercase()})",
+                    text = stringResource(R.string.appinfo_port_fmt, port.containerPort, port.protocol.uppercase()),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -886,7 +887,7 @@ private fun ServicePortCard(port: Apps.UsedPort) {
             Spacer(modifier = Modifier.height(8.dp))
             port.hostPorts.forEach { hostPort ->
                 Text(
-                    text = "→ Host: ${hostPort.hostIp}:${hostPort.hostPort}",
+                    text = stringResource(R.string.appinfo_host_port_fmt, hostPort.hostIp, hostPort.hostPort),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
@@ -994,7 +995,7 @@ private fun ServiceContainerCard(container: Apps.ContainerDetail) {
                 if (ports.isNotEmpty()) {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
                     Text(
-                        text = "Port Mappings",
+                        text = stringResource(R.string.appinfo_port_mappings),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
@@ -1011,7 +1012,7 @@ private fun ServiceContainerCard(container: Apps.ContainerDetail) {
                 if (mounts.isNotEmpty()) {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
                     Text(
-                        text = "Volume Mounts",
+                        text = stringResource(R.string.appinfo_volume_mounts),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
@@ -1072,7 +1073,7 @@ private fun ServiceVolumeCard(volume: Apps.Volume) {
             )
             volume.mode?.let { mode ->
                 Text(
-                    text = "Mode: $mode",
+                text = stringResource(R.string.appinfo_mode_fmt, mode),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
@@ -1090,7 +1091,7 @@ private fun ServiceHostMountCard(mount: Apps.HostMount) {
     ) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = "Host Mount",
+                text = stringResource(R.string.appinfo_host_mount),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary

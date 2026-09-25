@@ -54,14 +54,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Apps
@@ -88,11 +91,12 @@ fun AppAdvancedInfoScreen(
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
     var activeScreenshotIndex by remember { mutableStateOf<Int?>(null) }
+    val context = LocalContext.current
 
     LaunchedEffect(appId) {
         when (val result = manager.apps.getAppInstanceWithResult(appId)) {
             is ApiResult.Success -> instance = result.data
-            is ApiResult.Error -> error = result.message ?: "Failed to load instance"
+            is ApiResult.Error -> error = result.message ?: context.getString(R.string.advancedinfo_failed_load)
             is ApiResult.Loading -> {}
         }
         isLoading = false
@@ -102,7 +106,7 @@ fun AppAdvancedInfoScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             UnifiedScreenHeader(
-                title = "Advanced Info",
+                title = stringResource(R.string.advancedinfo_title),
                 subtitle = instance?.metadata?.title ?: appId,
                 isLoading = isLoading,
                 isRefreshing = false,
@@ -114,7 +118,7 @@ fun AppAdvancedInfoScreen(
         }
     ) { innerPadding ->
         when {
-            isLoading -> LoadingScreen("Loading application details…")
+            isLoading -> LoadingScreen(stringResource(R.string.advancedinfo_loading))
             error != null && instance == null -> NullContent()
             instance != null -> AdvancedInstanceContent(
                 instance = instance!!,
@@ -138,7 +142,7 @@ fun AppAdvancedInfoScreen(
 private fun NullContent() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(
-            text = "No application data returned.\nCheck that the app is installed and try again.",
+            text = stringResource(R.string.advancedinfo_empty),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -195,12 +199,12 @@ private fun AdvancedInstanceContent(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "ID: ${instance.id}",
+                        text = stringResource(R.string.appinfo_id_fmt, instance.id),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "Version: ${instance.humanVersion ?: instance.version ?: "Unknown"}",
+                        text = stringResource(R.string.appinfo_version_fmt, instance.humanVersion ?: instance.version ?: stringResource(R.string.common_unknown)),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -222,26 +226,26 @@ private fun AdvancedInstanceContent(
 
         // Workloads overview — top-level get_instance summary (exhausts active_workloads).
         val workloads = instance.activeWorkloads
-        ExpressiveSection(title = "Workloads Overview", icon = Icons.Default.NetworkCheck) {
+        ExpressiveSection(title = stringResource(R.string.advancedinfo_section_workloads), icon = Icons.Default.NetworkCheck) {
             ExpressiveInfoCard {
-                InfoRow(label = "Containers", value = "${workloads?.containers ?: 0}")
+                InfoRow(label = stringResource(R.string.appinfo_section_containers), value = "${workloads?.containers ?: 0}")
                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 workloads?.usedHostIps?.let { ips ->
-                    InfoRow(label = "Host IPs", value = ips.size.toString())
+                    InfoRow(label = stringResource(R.string.advancedinfo_host_ips), value = ips.size.toString())
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 }
-                InfoRow(label = "Image Updates", value = if (instance.image_Updates_available) "Available" else "Up to date")
+                InfoRow(label = stringResource(R.string.advancedinfo_image_updates), value = if (instance.image_Updates_available) stringResource(R.string.appinfo_available) else stringResource(R.string.advancedinfo_up_to_date))
                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                InfoRow(label = "Type", value = if (instance.customApp) "Custom Application" else "Catalog")
+                InfoRow(label = stringResource(R.string.attr_type), value = if (instance.customApp) stringResource(R.string.appinfo_custom_app) else stringResource(R.string.appinfo_catalog))
                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                InfoRow(label = "Migrated", value = if (instance.migratedFromKubernetes) "From Kubernetes" else "No")
+                InfoRow(label = stringResource(R.string.appinfo_migrated), value = if (instance.migratedFromKubernetes) stringResource(R.string.appinfo_from_kubernetes) else stringResource(R.string.common_no))
             }
         }
 
         // Screenshots (moved here to declutter the main screen)
         instance.metadata?.screenshots?.let { screenshots ->
             if (screenshots.isNotEmpty()) {
-                ExpressiveSection(title = "Screenshots", icon = Icons.Default.Photo) {
+                ExpressiveSection(title = stringResource(R.string.advancedinfo_screenshots), icon = Icons.Default.Photo) {
                     LazyRow(
                         contentPadding = PaddingValues(horizontal = 4.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -257,7 +261,7 @@ private fun AdvancedInstanceContent(
                             ) {
                                 AsyncImage(
                                     model = url,
-                                    contentDescription = "Screenshot $index",
+                                    contentDescription = stringResource(R.string.advancedinfo_screenshot_cd, index + 1),
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier.fillMaxSize()
                                 )
@@ -274,10 +278,10 @@ private fun AdvancedInstanceContent(
             val hasNetworks = !workloads.networks.isNullOrEmpty()
             val hasHostIps = !workloads.usedHostIps.isNullOrEmpty()
             if (hasPorts || hasNetworks || hasHostIps) {
-                ExpressiveSection(title = "Network & Ports", icon = Icons.Default.NetworkCheck) {
+                ExpressiveSection(title = stringResource(R.string.appinfo_network_ports), icon = Icons.Default.NetworkCheck) {
                     if (hasPorts) {
                         Text(
-                            text = "Exposed Ports",
+                            text = stringResource(R.string.appinfo_exposed_ports),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
@@ -290,7 +294,7 @@ private fun AdvancedInstanceContent(
                     if (hasHostIps) {
                         if (hasPorts) Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Host IPs",
+                            text = stringResource(R.string.advancedinfo_host_ips),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
@@ -315,7 +319,7 @@ private fun AdvancedInstanceContent(
                     if (hasNetworks) {
                         if (hasPorts || hasHostIps) Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Docker Networks",
+                            text = stringResource(R.string.appinfo_docker_networks),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
@@ -332,7 +336,7 @@ private fun AdvancedInstanceContent(
         // Containers
         instance.activeWorkloads?.containerDetails?.let { containers ->
             if (containers.isNotEmpty()) {
-                ExpressiveSection(title = "Containers", icon = Icons.Default.Apps) {
+                ExpressiveSection(title = stringResource(R.string.appinfo_section_containers), icon = Icons.Default.Apps) {
                     containers.forEach { container ->
                         AdvancedContainerCard(container = container)
                         Spacer(modifier = Modifier.height(8.dp))
@@ -344,7 +348,7 @@ private fun AdvancedInstanceContent(
         // Container Images
         instance.activeWorkloads?.images?.let { images ->
             if (images.isNotEmpty()) {
-                ExpressiveSection(title = "Container Images", icon = Icons.Default.Image) {
+                ExpressiveSection(title = stringResource(R.string.appinfo_section_images), icon = Icons.Default.Image) {
                     Surface(
                         color = MaterialTheme.colorScheme.surfaceContainerLow,
                         shape = RoundedCornerShape(20.dp),
@@ -387,7 +391,7 @@ private fun AdvancedInstanceContent(
         val volumes = instance.activeWorkloads?.volumes
         val hostMounts = instance.metadata?.hostMounts
         if (!volumes.isNullOrEmpty() || !hostMounts.isNullOrEmpty()) {
-            ExpressiveSection(title = "Storage & Mounts", icon = Icons.Default.Storage) {
+            ExpressiveSection(title = stringResource(R.string.appinfo_storage_mounts), icon = Icons.Default.Storage) {
                 volumes?.forEach { volume ->
                     AdvancedVolumeCard(volume = volume)
                     Spacer(modifier = Modifier.height(8.dp))
@@ -402,7 +406,7 @@ private fun AdvancedInstanceContent(
         // Security Context
         instance.metadata?.runAsContext?.let { contexts ->
             if (contexts.isNotEmpty()) {
-                ExpressiveSection(title = "Security Context", icon = Icons.Default.AccountBox) {
+                ExpressiveSection(title = stringResource(R.string.appinfo_security_context), icon = Icons.Default.AccountBox) {
                     contexts.forEach { ctx ->
                         AdvancedRunAsContextCard(context = ctx)
                         Spacer(modifier = Modifier.height(8.dp))
@@ -414,7 +418,7 @@ private fun AdvancedInstanceContent(
         // Capabilities
         instance.metadata?.capabilities?.let { capabilities ->
             if (capabilities.isNotEmpty()) {
-                ExpressiveSection(title = "Capabilities", icon = Icons.Default.Build) {
+                ExpressiveSection(title = stringResource(R.string.advancedinfo_capabilities), icon = Icons.Default.Build) {
                     capabilities.forEach { capability ->
                         AdvancedCapabilityCard(capability = capability)
                         Spacer(modifier = Modifier.height(8.dp))
@@ -425,17 +429,17 @@ private fun AdvancedInstanceContent(
 
         // Links
         if (instance.metadata?.home != null || !instance.metadata?.sources.isNullOrEmpty() || instance.metadata?.changelogUrl != null) {
-            ExpressiveSection(title = "Links", icon = Icons.Default.Link) {
+            ExpressiveSection(title = stringResource(R.string.advancedinfo_links), icon = Icons.Default.Link) {
                 instance.metadata.home?.let { home ->
-                    AdvancedLinkCard(name = "Homepage", url = home, icon = Icons.Default.Home)
+                    AdvancedLinkCard(name = stringResource(R.string.appinfo_homepage), url = home, icon = Icons.Default.Home)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
                 instance.metadata.sources?.forEach { source ->
-                    AdvancedLinkCard(name = "Source Code", url = source, icon = Icons.Default.Code)
+                    AdvancedLinkCard(name = stringResource(R.string.appinfo_source_code), url = source, icon = Icons.Default.Code)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
                 instance.metadata.changelogUrl?.let { changelog ->
-                    AdvancedLinkCard(name = "Changelog", url = changelog, icon = Icons.Default.Description)
+                    AdvancedLinkCard(name = stringResource(R.string.appinfo_changelog), url = changelog, icon = Icons.Default.Description)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -444,7 +448,7 @@ private fun AdvancedInstanceContent(
         // Web Portals
         instance.portals?.let { portals ->
             if (portals.isNotEmpty()) {
-                ExpressiveSection(title = "Web Portals", icon = Icons.AutoMirrored.Filled.Launch) {
+                ExpressiveSection(title = stringResource(R.string.appinfo_web_portals), icon = Icons.AutoMirrored.Filled.Launch) {
                     portals.forEach { (name, url) ->
                         AdvancedPortalCard(name = name, url = url)
                         Spacer(modifier = Modifier.height(8.dp))
@@ -456,7 +460,7 @@ private fun AdvancedInstanceContent(
         // Notes (moved here to declutter the main screen)
         instance.notes?.let { notes ->
             if (notes.isNotBlank()) {
-                ExpressiveSection(title = "Notes", icon = Icons.AutoMirrored.Filled.Note) {
+                ExpressiveSection(title = stringResource(R.string.appinfo_notes), icon = Icons.AutoMirrored.Filled.Note) {
                     Card(
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -504,7 +508,7 @@ private fun AdvancedPortCard(port: Apps.UsedPort) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Port ${port.containerPort} (${port.protocol.uppercase()})",
+                    text = stringResource(R.string.appinfo_port_fmt, port.containerPort, port.protocol.uppercase()),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -512,7 +516,7 @@ private fun AdvancedPortCard(port: Apps.UsedPort) {
             Spacer(modifier = Modifier.height(8.dp))
             port.hostPorts.forEach { hostPort ->
                 Text(
-                    text = "→ ${hostPort.hostIp}:${hostPort.hostPort}",
+                    text = stringResource(R.string.appinfo_port_arrow_fmt, hostPort.hostIp, hostPort.hostPort),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -544,18 +548,18 @@ private fun AdvancedNetworkCard(network: Apps.Network) {
                     }
                 }
             }
-            network.driver?.let { DetailLine("Driver", it) }
-            network.scope?.let { DetailLine("Scope", it) }
-            network.created?.let { DetailLine("Created", it) }
+            network.driver?.let { DetailLine(stringResource(R.string.appinfo_detail_driver), it) }
+            network.scope?.let { DetailLine(stringResource(R.string.appinfo_detail_scope), it) }
+            network.created?.let { DetailLine(stringResource(R.string.attr_created), it) }
             network.id?.let { DetailLine("ID", it) }
-            network.enableIPv6?.let { DetailLine("IPv6", if (it) "Enabled" else "Disabled") }
-            network.ipam?.driver?.let { DetailLine("IPAM Driver", it) }
+            network.enableIPv6?.let { DetailLine(stringResource(R.string.appinfo_detail_ipv6), if (it) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled)) }
+            network.ipam?.driver?.let { DetailLine(stringResource(R.string.appinfo_detail_ipam_driver), it) }
             network.ipam?.config?.let { configs ->
                 configs.forEach { config ->
                     if (config.subnet != null || config.gateway != null) {
                         DetailLine(
-                            "Subnet",
-                            listOfNotNull(config.subnet, config.gateway?.let { "GW: $it" }).joinToString("  ·  ")
+                            stringResource(R.string.appinfo_subnet),
+                            listOfNotNull(config.subnet, config.gateway?.let { stringResource(R.string.appinfo_gw_fmt, it) }).joinToString("  ·  ")
                         )
                     }
                 }
@@ -564,7 +568,7 @@ private fun AdvancedNetworkCard(network: Apps.Network) {
             if (!labels.isNullOrEmpty()) {
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
                 Text(
-                    text = "Labels",
+                    text = stringResource(R.string.appinfo_labels),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
@@ -620,13 +624,19 @@ private fun AdvancedContainerCard(container: Apps.ContainerDetail) {
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp))
                 }
             }
-            Text("Image: ${container.image}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text(stringResource(R.string.appinfo_image_fmt, container.image), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
             container.portConfig?.let { ports ->
                 if (ports.isNotEmpty()) {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
                     ports.forEach { port ->
                         Text(
-                            text = "${port.containerPort}/${port.protocol.uppercase()} → ${port.hostPorts.firstOrNull()?.let { "${it.hostIp}:${it.hostPort}" } ?: "unbound"}",
+                            text = stringResource(
+                                R.string.appinfo_port_mapping_fmt,
+                                port.containerPort,
+                                port.protocol.uppercase(),
+                                port.hostPorts.firstOrNull()?.let { "${it.hostIp}:${it.hostPort}" }
+                                    ?: stringResource(R.string.appinfo_unbound)
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -662,7 +672,7 @@ private fun AdvancedVolumeCard(volume: Apps.Volume) {
                 }
             }
             Text("→ ${volume.destination}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            volume.mode?.let { Text("Mode: $it", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) }
+            volume.mode?.let { Text(stringResource(R.string.appinfo_mode_fmt, it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)) }
         }
     }
 }
@@ -675,7 +685,7 @@ private fun AdvancedHostMountCard(mount: Apps.HostMount) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("Host Mount", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.primary)
+            Text(stringResource(R.string.appinfo_host_mount), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.primary)
             mount.hostPath?.let { Text(it, style = MaterialTheme.typography.bodySmall, fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace, color = MaterialTheme.colorScheme.onSurface) }
             mount.description?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         }
