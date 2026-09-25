@@ -542,12 +542,13 @@ private fun PoolStatusSection(pool: Pool) {
         }
         Spacer(modifier = Modifier.height(12.dp))
         PoolInfoRow(stringResource(R.string.attr_fragmentation), pool.fragmentation!!)
-        PoolInfoRow(stringResource(R.string.pooldetails_autotrim), pool.autotrim?.value ?: stringResource(R.string.pooldetails_na))
+        PoolInfoRow(stringResource(R.string.pooldetails_autotrim), pool.autotrim?.value ?: stringResource(R.string.common_na))
     }
 }
 
 @Composable
 private fun PoolScanSection(scan: PoolScan) {
+    @Composable
     fun formatEpoch(timeMap: Map<String, Long>?): String {
         val epochSeconds = timeMap?.get("\$date")?.div(1000) ?: return stringResource(R.string.common_na)
         val dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.systemDefault())
