@@ -51,7 +51,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -69,6 +71,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.ToastManager
@@ -86,11 +89,11 @@ enum class MetricType {
     ALL
 }
 
-private enum class TimeRange(val title: String, val durationSeconds: Long) {
-    FIVE_MINS("5m", 5 * 60),
-    TEN_MINS("10m", 10 * 60),
-    THIRTY_MINS("30m", 30 * 60),
-    ALL("All", Long.MAX_VALUE)
+private enum class TimeRange(@StringRes val titleRes: Int, val durationSeconds: Long) {
+    FIVE_MINS(R.string.perf_range_5m, 5 * 60),
+    TEN_MINS(R.string.perf_range_10m, 10 * 60),
+    THIRTY_MINS(R.string.perf_range_30m, 30 * 60),
+    ALL(R.string.perf_range_all, Long.MAX_VALUE)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -139,32 +142,32 @@ fun PerformanceScreen(
             val value = currentCpu?.data?.lastOrNull()?.let { point ->
                 if (point.size > 1) point.drop(1).average() else 0.0
             } ?: 0.0
-            "${DecimalFormat("#.#").format(value)}% сейчас"
+            stringResource(R.string.perf_now_pct, DecimalFormat("#.#").format(value))
         }
         MetricType.MEMORY -> {
             val value = currentMemory?.data?.lastOrNull()?.getOrNull(1) ?: 0.0
-            "${DecimalFormat("#.#").format(value / (1024.0 * 1024.0 * 1024.0))} ГБ сейчас"
+            stringResource(R.string.perf_now_gb, DecimalFormat("#.#").format(value / (1024.0 * 1024.0 * 1024.0)))
         }
         MetricType.TEMPERATURE -> {
             val value = currentTemp?.data?.lastOrNull()?.getOrNull(1) ?: 0.0
-            "${DecimalFormat("#.#").format(value)}°C сейчас"
+            stringResource(R.string.perf_now_c, DecimalFormat("#.#").format(value))
         }
-        MetricType.ALL -> "Метрики системы"
+        MetricType.ALL -> stringResource(R.string.perf_title_metrics)
     }
     val headerTitle = when (initialMetricType) {
         MetricType.CPU -> {
-            "Графики процессора"
+            stringResource(R.string.perf_header_cpu)
         }
 
         MetricType.MEMORY ->{
-            "Графики памяти"
+            stringResource(R.string.perf_header_memory)
         }
         MetricType.TEMPERATURE -> {
-            "Графики температуры"
+            stringResource(R.string.perf_header_temp)
         }
 
         else -> {
-            "Графики"
+            stringResource(R.string.perf_header_graphs)
         }
     }
 
@@ -223,9 +226,9 @@ fun PerformanceScreen(
                                     listOf(timestamp, cpuValue)
                                 }
                             )
-                            PerformanceInfoSection(title = "Current Status", icon = Icons.Default.Info) {
+                            PerformanceInfoSection(title = stringResource(R.string.perf_current_status), icon = Icons.Default.Info) {
                                 MetricCurrentValueCard(
-                                    title = "CPU Usage",
+                                    title = stringResource(R.string.perf_cpu_usage),
                                     icon = Icons.Default.Memory,
                                     currentValue = formatDataValue(
                                         processedCpuData.data.lastOrNull()?.getOrNull(1) ?: 0.0, "%", false
@@ -237,9 +240,9 @@ fun PerformanceScreen(
                     }
                     MetricType.MEMORY -> {
                         currentMemory?.let { memory ->
-                            PerformanceInfoSection(title = "Current Status", icon = Icons.Default.Info) {
+                            PerformanceInfoSection(title = stringResource(R.string.perf_current_status), icon = Icons.Default.Info) {
                                 MetricCurrentValueCard(
-                                    title = "Memory Usage",
+                                    title = stringResource(R.string.perf_memory_usage),
                                     icon = Icons.Default.Storage,
                                     currentValue = formatDataValue(
                                         memory.data.lastOrNull()?.getOrNull(1) ?: 0.0, "GB", true
@@ -258,9 +261,9 @@ fun PerformanceScreen(
                                     listOf(timestamp, temperature)
                                 }
                             )
-                            PerformanceInfoSection(title = "Current Status", icon = Icons.Default.Info) {
+                            PerformanceInfoSection(title = stringResource(R.string.perf_current_status), icon = Icons.Default.Info) {
                                 MetricCurrentValueCard(
-                                    title = "CPU Temperature",
+                                    title = stringResource(R.string.perf_cpu_temp),
                                     icon = Icons.Default.DeviceThermostat,
                                     currentValue = formatDataValue(
                                         processedTempData.data.lastOrNull()?.getOrNull(1) ?: 0.0, "°C", false
@@ -285,7 +288,7 @@ fun PerformanceScreen(
                                     listOf(timestamp, cpuValue)
                                 }
                             )
-                            PerformanceInfoSection(title = "CPU Usage Over Time", icon = Icons.Default.Timeline) {
+                            PerformanceInfoSection(title = stringResource(R.string.perf_cpu_over_time), icon = Icons.Default.Timeline) {
                                 MetricChartCard(
                                     data = processedCpuData,
                                     color = MaterialTheme.colorScheme.primary,
@@ -296,7 +299,7 @@ fun PerformanceScreen(
                     }
                     MetricType.MEMORY -> {
                         currentMemory?.let { memory ->
-                            PerformanceInfoSection(title = "Memory Usage Over Time", icon = Icons.Default.Timeline) {
+                            PerformanceInfoSection(title = stringResource(R.string.perf_memory_over_time), icon = Icons.Default.Timeline) {
                                 MetricChartCard(
                                     data = memory,
                                     color = MaterialTheme.colorScheme.secondary,
@@ -315,7 +318,7 @@ fun PerformanceScreen(
                                     listOf(timestamp, temperature)
                                 }
                             )
-                            PerformanceInfoSection(title = "Temperature Over Time", icon = Icons.Default.Timeline) {
+                            PerformanceInfoSection(title = stringResource(R.string.perf_temp_over_time), icon = Icons.Default.Timeline) {
                                 MetricChartCard(
                                     data = processedTempData,
                                     color = MaterialTheme.colorScheme.error,
@@ -360,9 +363,9 @@ private fun MetricSelectorRow(
                     Text(
                         text = when (metric) {
                             MetricType.CPU -> "CPU"
-                            MetricType.MEMORY -> "Memory"
-                            MetricType.TEMPERATURE -> "Temperature"
-                            MetricType.ALL -> "All"
+                            MetricType.MEMORY -> stringResource(R.string.perf_metric_memory)
+                            MetricType.TEMPERATURE -> stringResource(R.string.perf_metric_temp)
+                            MetricType.ALL -> stringResource(R.string.perf_metric_all)
                         },
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -411,39 +414,39 @@ private fun MetricHeroCard(
         MetricType.CPU -> {
             val dataPoints = cpuData?.data?.size ?: 0
             HeroInfo(
-                title = "CPU Usage",
-                subtitle = cpuData?.name ?: "Processor",
+                title = stringResource(R.string.perf_cpu_usage),
+                subtitle = cpuData?.name ?: stringResource(R.string.perf_processor),
                 icon = Icons.Default.Memory,
-                badge1 = "Processor",
-                badge2 = "$dataPoints pts"
+                badge1 = stringResource(R.string.perf_processor),
+                badge2 = stringResource(R.string.perf_pts_fmt, dataPoints)
             )
         }
         MetricType.MEMORY -> {
             val dataPoints = memoryData?.data?.size ?: 0
             HeroInfo(
-                title = "Memory Usage",
-                subtitle = memoryData?.name ?: "System RAM",
+                title = stringResource(R.string.perf_memory_usage),
+                subtitle = memoryData?.name ?: stringResource(R.string.perf_system_ram),
                 icon = Icons.Default.Storage,
-                badge1 = "RAM",
-                badge2 = "$dataPoints pts"
+                badge1 = stringResource(R.string.perf_ram),
+                badge2 = stringResource(R.string.perf_pts_fmt, dataPoints)
             )
         }
         MetricType.TEMPERATURE -> {
             val dataPoints = temperatureData?.data?.size ?: 0
             HeroInfo(
-                title = "CPU Temperature",
-                subtitle = temperatureData?.name ?: "Thermal",
+                title = stringResource(R.string.perf_cpu_temp),
+                subtitle = temperatureData?.name ?: stringResource(R.string.perf_thermal),
                 icon = Icons.Default.DeviceThermostat,
-                badge1 = "Thermal",
-                badge2 = "$dataPoints pts"
+                badge1 = stringResource(R.string.perf_thermal),
+                badge2 = stringResource(R.string.perf_pts_fmt, dataPoints)
             )
         }
         MetricType.ALL -> HeroInfo(
-            title = "System Performance",
-            subtitle = "All metrics",
+            title = stringResource(R.string.perf_system_perf),
+            subtitle = stringResource(R.string.perf_all_metrics),
             icon = Icons.Default.Assessment,
-            badge1 = "Overview",
-            badge2 = "Live"
+            badge1 = stringResource(R.string.perf_overview),
+            badge2 = stringResource(R.string.perf_live)
         )
     }
 
@@ -609,14 +612,14 @@ private fun MetricHealthBanner(
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        text = "Metric Status",
+                        text = stringResource(R.string.perf_metric_status),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = contentColor
                     )
                 }
                 Text(
-                    text = if (thresholdOk) "Normal" else "High Load",
+                    text = if (thresholdOk) stringResource(R.string.perf_normal) else stringResource(R.string.perf_high_load),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = contentColor
@@ -677,7 +680,7 @@ private fun MetricCurrentValueCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Current Value",
+                    text = stringResource(R.string.perf_current_value),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                 )
@@ -722,7 +725,7 @@ private fun MetricChartCard(
                             baseShape = SegmentedButtonDefaults.baseShape
                         )
                     ) {
-                        Text(timeRange.title)
+                        Text(stringResource(timeRange.titleRes))
                     }
                 }
             }
@@ -896,7 +899,7 @@ private fun LineChartView(
                 }
                 chart.invalidate()
             } catch (_: Exception) {
-                ToastManager.showError("Api error in fetching graph data")
+                ToastManager.showError(ToastManager.resolveString(R.string.perf_graph_error))
             }
         },
         modifier = modifier

@@ -48,6 +48,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -57,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.R.drawable.ic_drive
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
@@ -74,7 +76,7 @@ fun DiskInfoScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         UnifiedScreenHeader(
-            title = "Disks",
+            title = stringResource(R.string.disk_title),
             subtitle = currentDisk.model ?: currentDisk.name,
             isLoading = false,
             isRefreshing = false,
@@ -107,49 +109,49 @@ fun DiskInfoScreen(
             }
 
             item {
-                DiskInfoSection(title = "Basic Information", icon = Icons.Default.Info) {
+                DiskInfoSection(title = stringResource(R.string.disk_section_basic), icon = Icons.Default.Info) {
                     ExpressiveInfoGrid(
                         items = listOf(
-                            "Name" to currentDisk.name,
-                            "Model" to (currentDisk.model ?: "Generic"),
-                            "Serial" to currentDisk.serial,
-                            "Bus" to currentDisk.bus,
+                            stringResource(R.string.disk_name) to currentDisk.name,
+                            stringResource(R.string.disk_model) to (currentDisk.model ?: stringResource(R.string.disk_generic)),
+                            stringResource(R.string.disk_serial) to currentDisk.serial,
+                            stringResource(R.string.disk_bus) to currentDisk.bus,
                             "Size" to "${currentDisk.size / (1024 * 1024 * 1024)} GB",
-                            "Type" to currentDisk.type
+                            stringResource(R.string.disk_type) to currentDisk.type
                         )
                     )
                 }
             }
 
             item {
-                DiskInfoSection(title = "Status & Health", icon = Icons.Default.HealthAndSafety) {
+                DiskInfoSection(title = stringResource(R.string.disk_section_health), icon = Icons.Default.HealthAndSafety) {
                     SmartStatusCard(disk = currentDisk)
                     currentDisk.supports_smart?.let {
                         Spacer(modifier = Modifier.height(8.dp))
-                        DiskInfoRow("Supports SMART", it.toString())
+                        DiskInfoRow(stringResource(R.string.disk_supports_smart), it.toString())
                     }
                     if (!currentDisk.smartoptions.isNullOrEmpty()) {
-                        DiskInfoRow("SMART Options", currentDisk.smartoptions)
+                        DiskInfoRow(stringResource(R.string.disk_smart_options), currentDisk.smartoptions)
                     }
                 }
             }
 
             item {
-                DiskInfoSection(title = "Power Management", icon = Icons.Default.Bolt) {
+                DiskInfoSection(title = stringResource(R.string.disk_section_power), icon = Icons.Default.Bolt) {
                     PowerManagementCard(disk = currentDisk)
                 }
             }
 
             currentDisk.pool?.let { pool ->
                 item {
-                    DiskInfoSection(title = "Pool Association", icon = Icons.Default.Storage) {
+                    DiskInfoSection(title = stringResource(R.string.disk_section_pool), icon = Icons.Default.Storage) {
                         DiskPoolCard(poolName = pool, zfsGuid = currentDisk.zfs_guid)
                     }
                 }
             }
 
             item {
-                DiskInfoSection(title = "Technical Details", icon = Icons.Default.Settings) {
+                DiskInfoSection(title = stringResource(R.string.disk_section_tech), icon = Icons.Default.Settings) {
                     DiskTechnicalCard(disk = currentDisk)
                 }
             }
@@ -246,7 +248,7 @@ private fun DiskHeroCard(disk: System.DiskDetails) {
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = disk.model ?: "Generic Drive",
+                    text = disk.model ?: stringResource(R.string.disk_generic_drive),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -347,14 +349,14 @@ private fun DiskHealthBanner(disk: System.DiskDetails) {
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        text = "Drive Health",
+                        text = stringResource(R.string.disk_drive_health),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = contentColor
                     )
                 }
                 Text(
-                    text = if (isHealthy) "Healthy" else "Attention Needed",
+                    text = if (isHealthy) stringResource(R.string.disk_healthy) else stringResource(R.string.disk_attention),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = contentColor
@@ -423,7 +425,7 @@ private fun SmartStatusCard(disk: System.DiskDetails) {
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "SMART Monitoring",
+                    text = stringResource(R.string.disk_smart_monitoring),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     color = when {
@@ -434,9 +436,9 @@ private fun SmartStatusCard(disk: System.DiskDetails) {
                 )
                 Text(
                     text = when {
-                        isUnknown -> "Status unavailable"
-                        isEnabled -> "Active and monitoring"
-                        else -> "Disabled — consider enabling"
+                        isUnknown -> stringResource(R.string.disk_status_unavailable)
+                        isEnabled -> stringResource(R.string.disk_active_monitoring)
+                        else -> stringResource(R.string.disk_disabled_consider)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = when {
@@ -734,7 +736,7 @@ private fun DiskTechnicalCard(disk: System.DiskDetails) {
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Technical Specifications",
+                    text = stringResource(R.string.disk_technical_specs),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant

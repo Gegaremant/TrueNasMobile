@@ -56,6 +56,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -69,6 +70,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.GlobalJobTracker
@@ -101,7 +103,7 @@ fun SystemUpdateScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         UnifiedScreenHeader(
-            title = "System Updates",
+            title = stringResource(R.string.sysupdate_title),
             subtitle = if (versions.isEmpty()) "No updates available" else "${versions.size} available",
             isLoading = false,
             isRefreshing = false,
@@ -193,12 +195,12 @@ private fun startSystemUpdateJob(
                     )
                 }
                 is ApiResult.Error -> {
-                    ToastManager.showWarning(result.message ?: "Failed to start update")
+                    ToastManager.showWarning(result.message ?: ToastManager.resolveString(R.string.sysupdate_start_failed))
                 }
                 ApiResult.Loading -> {}
             }
         } catch (_: Exception) {
-            ToastManager.showWarning("Failed to start update")
+            ToastManager.showWarning(ToastManager.resolveString(R.string.sysupdate_start_failed))
         }
     }
 }
@@ -229,14 +231,14 @@ private fun UpdateHeaderCard(currentVersion: String?) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        "Updates Available",
+                        stringResource(R.string.sysupdate_available),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     if (currentVersion != null) {
                         Text(
-                            "Currently running $currentVersion",
+                            stringResource(R.string.sysupdate_currently_running, currentVersion),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -262,7 +264,7 @@ private fun UpdateHeaderCard(currentVersion: String?) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        "Review release notes before updating",
+                        stringResource(R.string.sysupdate_review_notes),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium
@@ -346,7 +348,7 @@ private fun UpdateVersionCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = job.description ?: "Updating...",
+                                text = job.description ?: stringResource(R.string.sysupdate_updating),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold,
@@ -381,7 +383,7 @@ private fun UpdateVersionCard(
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Another update is running")
+                        Text(stringResource(R.string.sysupdate_another_running))
                     }
                 } else {
                     // Restart now (primary)
@@ -393,7 +395,7 @@ private fun UpdateVersionCard(
                     ) {
                         Icon(Icons.Default.CloudDownload, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Download & Restart Now", fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.sysupdate_restart_now), fontWeight = FontWeight.SemiBold)
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -406,7 +408,7 @@ private fun UpdateVersionCard(
                     ) {
                         Icon(Icons.Default.CloudDownload, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Download & Restart Later", fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.sysupdate_restart_later), fontWeight = FontWeight.SemiBold)
                     }
                 }
             }
@@ -429,12 +431,12 @@ private fun EmptyUpdatesState() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "System is up to date",
+            text = stringResource(R.string.sysupdate_up_to_date),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            text = "No new versions available right now",
+            text = stringResource(R.string.sysupdate_no_versions),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -473,7 +475,7 @@ private fun ReleaseNotesSheet(
             ) {
                 Column {
                     Text(
-                        "Release Notes",
+                        stringResource(R.string.sysupdate_release_notes),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -485,7 +487,7 @@ private fun ReleaseNotesSheet(
                     )
                 }
                 IconButton(onClick = onDismiss) {
-                    Icon(Icons.Default.Close, contentDescription = "Close")
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.common_close))
                 }
             }
 
@@ -504,7 +506,7 @@ private fun ReleaseNotesSheet(
                     MarkdownContent(markdown = notes)
                 } else {
                     Text(
-                        text = "No release notes were provided for this version.",
+                        text = stringResource(R.string.sysupdate_no_notes),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
@@ -523,7 +525,7 @@ private fun ReleaseNotesSheet(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("View Full Release Notes", fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.sysupdate_view_full_notes), fontWeight = FontWeight.SemiBold)
                     }
                 }
             }
@@ -538,7 +540,7 @@ private fun ReleaseNotesSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = activeJob.description ?: "Updating...",
+                            text = activeJob.description ?: stringResource(R.string.sysupdate_updating),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
@@ -570,7 +572,7 @@ private fun ReleaseNotesSheet(
                 ) {
                     Icon(Icons.Default.CloudDownload, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Download & Restart Now", fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.sysupdate_restart_now), fontWeight = FontWeight.SemiBold)
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -583,7 +585,7 @@ private fun ReleaseNotesSheet(
                 ) {
                     Icon(Icons.Default.CloudDownload, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Download & Restart Later", fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.sysupdate_restart_later), fontWeight = FontWeight.SemiBold)
                 }
             }
         }
