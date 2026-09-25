@@ -82,13 +82,14 @@ fun UnifiedScreenHeader(
     onNavigateToSettings: (() -> Unit)? = null,
     onShutdownInvoke: (() -> Unit)? = null,
     trailingActions: @Composable RowScope.() -> Unit = {},
-    onSearchClick: (() -> Unit)? = null
+    onSearchClick: (() -> Unit)? = null,
+    autoHideSubtitle: Boolean = false
 ) {
     var isSubtitleVisible by remember { mutableStateOf(true) }
 
-    LaunchedEffect(subtitle) {
+    LaunchedEffect(subtitle, autoHideSubtitle) {
         isSubtitleVisible = true
-        if (subtitle.contains("С возвращением", ignoreCase = true)) {
+        if (autoHideSubtitle) {
             delay(4000.milliseconds)
             isSubtitleVisible = false
         }

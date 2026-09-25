@@ -1841,4 +1841,23 @@
     <string name="localadmin_about_title">О настройке локального администратора</string>
     <string name="localadmin_about_desc">Используйте это, чтобы создать или сбросить локальную учётную запись администратора. Обычно это делается при первом входе, когда пароль администратора не задан. Укажите \'root\' или \'truenas_admin\' в качестве имени пользователя.</string>
     <string name="localadmin_account_section">Учётная запись администратора</string>
+    <string name="home_title">Статистика</string>
+    <string name="home_greeting">С возвращением!</string>
+    <string name="home_loading">Загрузка статистики</string>
+    <string name="home_connect_failed">Не удалось подключиться</string>
+    <string name="nav_statistics">Статистика</string>
+    <string name="nav_storage">Хранилище</string>
+    <string name="nav_tasks">Задачи</string>
+    <string name="nav_graphs">Графики</string>
+    <string name="upgrade_cancelling">Отмена обновления…</string>
+    <string name="upgrade_cancel">Отменить обновление</string>
+    <string name="upgrade_title_fmt">Обновление %1$s</string>
+    <string name="upgrade_review_changes">Просмотр изменений</string>
+    <string name="upgrade_current">Текущая</string>
+    <string name="upgrade_snapshot_toggle">Создать снимок перед обновлением</string>
+    <string name="upgrade_snapshot_desc">Создаёт снимок ZFS, который можно использовать для отката</string>
+    <string name="upgrade_changelog">История изменений</string>
+    <string name="upgrade_no_changelog">Для этого обновления нет истории изменений.</string>
+    <string name="upgrade_must_run">Приложение должно быть запущено, чтобы его можно было обновить.</string>
+    <string name="upgrade_state_blocked_fmt">Приложения в состоянии %1$s нельзя обновить. Сначала запустите приложение, затем обновите его.</string>
 </resources>

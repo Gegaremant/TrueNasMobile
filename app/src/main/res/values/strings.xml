@@ -1829,4 +1829,23 @@
     <string name="localadmin_about_title">About Local Administrator Setup</string>
     <string name="localadmin_about_desc">Use this to set up or reset the local administrator account. This is typically done on first login when no admin password is set. Choose \'root\' or \'truenas_admin\' as the username.</string>
     <string name="localadmin_account_section">Administrator Account</string>
+    <string name="home_title">Statistics</string>
+    <string name="home_greeting">Welcome back!</string>
+    <string name="home_loading">Loading statistics</string>
+    <string name="home_connect_failed">Failed to connect</string>
+    <string name="nav_statistics">Statistics</string>
+    <string name="nav_storage">Storage</string>
+    <string name="nav_tasks">Tasks</string>
+    <string name="nav_graphs">Graphs</string>
+    <string name="upgrade_cancelling">Cancelling...</string>
+    <string name="upgrade_cancel">Cancel Upgrade</string>
+    <string name="upgrade_title_fmt">Upgrade %1$s</string>
+    <string name="upgrade_review_changes">Review Changes</string>
+    <string name="upgrade_current">Current</string>
+    <string name="upgrade_snapshot_toggle">Take snapshot before upgrade</string>
+    <string name="upgrade_snapshot_desc">Creates a ZFS snapshot that can be used for rollback</string>
+    <string name="upgrade_changelog">Changelog</string>
+    <string name="upgrade_no_changelog">No changelog available for this update.</string>
+    <string name="upgrade_must_run">This app must be running before it can be updated.</string>
+    <string name="upgrade_state_blocked_fmt">%1$s apps cannot be updated. Start the app first, then you can upgrade it.</string>
 </resources>

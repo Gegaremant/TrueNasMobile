@@ -115,8 +115,8 @@ fun HomeScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         UnifiedScreenHeader(
-            title = "Статистика",
-            subtitle = "С возвращением!",
+            title = stringResource(R.string.home_title),
+            subtitle = stringResource(R.string.home_greeting),
             isLoading = uiState is HomeUiState.Loading,
             isRefreshing = false,
             error = null,
@@ -124,7 +124,8 @@ fun HomeScreen(
             manager = manager,
             onNavigateToSettings = onNavigateToSettings,
             onShutdownInvoke = { showShutdownDialog = true },
-            onSearchClick = onSearchClick
+            onSearchClick = onSearchClick,
+            autoHideSubtitle = true
         )
         PullToRefreshBox(
             isRefreshing = isRefreshing,
@@ -132,7 +133,7 @@ fun HomeScreen(
         ) {
             when (val state = uiState) {
                 is HomeUiState.Loading -> {
-                    LoadingScreen("Загрузка статистики")
+                    LoadingScreen(stringResource(R.string.home_loading))
                 }
                 is HomeUiState.Error -> ErrorScreen(
                     error = state.message,
@@ -208,7 +209,7 @@ private fun ErrorScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Не удалось подключиться",
+                    text = stringResource(R.string.home_connect_failed),
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onErrorContainer,
                     fontWeight = FontWeight.Bold
@@ -223,7 +224,7 @@ private fun ErrorScreen(
                 if (canRetry) {
                     Spacer(modifier = Modifier.height(24.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        TextButton(onClick = onDismiss) { Text("Закрыть") }
+                        TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_close)) }
                         Button(
                             onClick = onRetry,
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
@@ -231,7 +232,7 @@ private fun ErrorScreen(
                         ) {
                             Icon(Icons.Default.Refresh, null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Повторить")
+                            Text(stringResource(R.string.common_retry))
                         }
                     }
                 }

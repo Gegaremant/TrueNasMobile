@@ -290,7 +290,7 @@ private fun UpgradingView(
                     ) {
                         Icon(Icons.Default.Cancel, null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(if (isCancelling) "Cancelling..." else "Cancel Upgrade")
+                        Text(if (isCancelling) stringResource(R.string.upgrade_cancelling) else stringResource(R.string.upgrade_cancel))
                     }
                 }
             }
@@ -333,13 +333,13 @@ private fun ReviewView(
 
         Column(modifier = Modifier.padding(bottom = 12.dp)) {
             Text(
-                text = "Upgrade $appName",
+                text = stringResource(R.string.upgrade_title_fmt, appName),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = "Review Changes",
+                text = stringResource(R.string.upgrade_review_changes),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -370,7 +370,7 @@ private fun ReviewView(
                     ) {
                         Column(horizontalAlignment = Alignment.Start) {
                             Text(
-                                text = "Current",
+                                text = stringResource(R.string.upgrade_current),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                             )
@@ -462,12 +462,12 @@ private fun ReviewView(
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         Text(
-                            text = "Take snapshot before upgrade",
+                            text = stringResource(R.string.upgrade_snapshot_toggle),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium
                         )
                         Text(
-                            text = "Creates a ZFS snapshot that can be used for rollback",
+                            text = stringResource(R.string.upgrade_snapshot_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -486,7 +486,7 @@ private fun ReviewView(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Changelog",
+                    text = stringResource(R.string.upgrade_changelog),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -509,7 +509,7 @@ private fun ReviewView(
                         )
                     } else {
                         Text(
-                            text = "No changelog available for this update.",
+                            text = stringResource(R.string.upgrade_no_changelog),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -540,9 +540,9 @@ private fun ReviewView(
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = if (appState.isBlank()) {
-                            "This app must be running before it can be updated."
+                            stringResource(R.string.upgrade_must_run)
                         } else {
-                            "${appState.uppercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }} apps cannot be updated. Start the app first, then you can upgrade it."
+                            stringResource(R.string.upgrade_state_blocked_fmt, appState.uppercase())
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onErrorContainer
@@ -568,7 +568,7 @@ private fun ReviewView(
             ) {
                 Icon(Icons.Default.Close, null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Cancel")
+                Text(stringResource(R.string.common_cancel))
             }
             Button(
                 onClick = { if (canUpgrade) onConfirmUpgrade(selectedVersion, takeBackup) },
@@ -586,7 +586,7 @@ private fun ReviewView(
             ) {
                 Icon(Icons.Default.CloudUpload, null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Upgrade")
+                Text(stringResource(R.string.common_update))
             }
         }
     }

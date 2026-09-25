@@ -54,6 +54,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -70,6 +71,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.gegaremant.truenasmobile.MainViewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.data.models.canUpgradeNow
@@ -147,17 +149,17 @@ import com.gegaremant.truenasmobile.ui.utils.AppCache
 
 private data class NavItem(
     val screen: Screen,
-    val title: String,
+    @androidx.annotation.StringRes val titleRes: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 )
 
 private fun destinationToNavItem(destination: Screen): NavItem? {
     return when (destination) {
-        Screen.Home -> NavItem(Screen.Home, "Статистика", Icons.Filled.Home, Icons.Outlined.Home)
-        Screen.Storage -> NavItem(Screen.Storage, "Хранилище", Icons.Filled.Storage, Icons.Outlined.Storage)
-        Screen.Tasks -> NavItem(Screen.Tasks, "Задачи", Icons.Filled.Checklist, Icons.Outlined.Checklist)
-        Screen.Performance -> NavItem(Screen.Performance, "Графики", Icons.Filled.ShowChart, Icons.Outlined.ShowChart)
+        Screen.Home -> NavItem(Screen.Home, R.string.nav_statistics, Icons.Filled.Home, Icons.Outlined.Home)
+        Screen.Storage -> NavItem(Screen.Storage, R.string.nav_storage, Icons.Filled.Storage, Icons.Outlined.Storage)
+        Screen.Tasks -> NavItem(Screen.Tasks, R.string.nav_tasks, Icons.Filled.Checklist, Icons.Outlined.Checklist)
+        Screen.Performance -> NavItem(Screen.Performance, R.string.nav_graphs, Icons.Filled.ShowChart, Icons.Outlined.ShowChart)
         else -> null
     }
 }
@@ -221,13 +223,13 @@ fun MainScreen(
                             selected = selected,
                             onClick = { onNavClick(navController, item.screen.route) },
                             label = {
-                                Text(item.title, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
+                                Text(stringResource(item.titleRes), fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
                             },
                             icon = {
                                 Crossfade(targetState = selected, label = "iconFade") { isSelected ->
                                     Icon(
                                         if (isSelected) item.selectedIcon else item.unselectedIcon,
-                                        item.title
+                                        stringResource(item.titleRes)
                                     )
                                 }
                             },
@@ -262,7 +264,7 @@ fun MainScreen(
                                     onClick = { onNavClick(navController, item.screen.route) },
                                     label = {
                                         Text(
-                                            item.title,
+                                            stringResource(item.titleRes),
                                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
                                         )
                                     },
@@ -273,7 +275,7 @@ fun MainScreen(
                                         ) { isSelected ->
                                             Icon(
                                                 if (isSelected) item.selectedIcon else item.unselectedIcon,
-                                                item.title
+                                                stringResource(item.titleRes)
                                             )
                                         }
                                     },
