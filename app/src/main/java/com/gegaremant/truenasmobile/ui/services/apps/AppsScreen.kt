@@ -101,6 +101,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import com.gegaremant.truenasmobile.R
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -238,31 +241,29 @@ fun AppsScreen(
     if (showUpdateAllDialog) {
         AlertDialog(
             onDismissRequest = { showUpdateAllDialog = false },
-            title = { Text("Update All Applications") },
+            title = { Text(stringResource(R.string.apps_update_all_title)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
-                        "There ${
-                            if (upgradableAppsCount == 1) "is" else "are"
-                        } $upgradableAppsCount update(s) available in total."
+                        pluralStringResource(R.plurals.apps_updates_available, upgradableAppsCount, upgradableAppsCount)
                     )
 
                     if (updatableAppsCount > 0) {
                         Text(
-                            "• $updatableAppsCount running app(s) will be updated to their latest versions.",
+                            stringResource(R.string.apps_running_updates, updatableAppsCount),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
 
                     if (sleepingUpdatableAppsCount > 0) {
                         Text(
-                            "• $sleepingUpdatableAppsCount sleeping app(s) cannot be updated while powered off.",
+                            stringResource(R.string.apps_sleeping_updates, sleepingUpdatableAppsCount),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     } else {
                         Text(
-                            "All apps with updates are running, so none need to be started first.",
+                            stringResource(R.string.apps_all_running),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -284,12 +285,12 @@ fun AppsScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
                                 Text(
-                                    text = "Start sleeping apps before updating",
+                                    text = stringResource(R.string.apps_wake_before_update),
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Medium
                                 )
                                 Text(
-                                    text = "Wakes all powered-off apps with updates, waits for them to start, then updates them too.",
+                                    text = stringResource(R.string.apps_wake_before_update_desc),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -298,7 +299,7 @@ fun AppsScreen(
                     }
 
                     Text(
-                        "You can monitor progress in each app card.",
+                        stringResource(R.string.apps_monitor_progress),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -318,16 +319,16 @@ fun AppsScreen(
                 ) {
                     Text(
                         if (wakeStoppedBeforeUpdate && sleepingUpdatableAppsCount > 0) {
-                            "Start & Update All"
+                            stringResource(R.string.apps_start_update_all)
                         } else {
-                            "Update Running Apps"
+                            stringResource(R.string.apps_update_running)
                         }
                     )
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showUpdateAllDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
         )
@@ -352,8 +353,8 @@ fun AppsScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         UnifiedScreenHeader(
-            title = "Applications",
-            subtitle = if (isSelectionMode) "${selectedAppIds.size} Selected" else "${filteredApps.size} Applications",
+            title = stringResource(R.string.apps_title),
+            subtitle = if (isSelectionMode) stringResource(R.string.apps_subtitle_selected, selectedAppIds.size) else stringResource(R.string.apps_subtitle_count, filteredApps.size),
             isLoading = uiState.isLoading,
             isRefreshing = uiState.isRefreshing,
             error = uiState.error,
@@ -371,7 +372,7 @@ fun AppsScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Storefront,
-                        contentDescription = "Open App Marketplace"
+                        contentDescription = stringResource(R.string.apps_open_marketplace_cd)
                     )
                 }
             }
@@ -390,7 +391,7 @@ fun AppsScreen(
         ) {
             when {
                 uiState.apps.isEmpty() && uiState.isLoading && !uiState.isRefreshing -> {
-                    LoadingScreen("Loading Apps")
+                    LoadingScreen(stringResource(R.string.apps_loading))
                 }
                 uiState.apps.isEmpty() && !uiState.isLoading && uiState.error != null -> {
                     EmptyContent()
@@ -409,7 +410,7 @@ fun AppsScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "No apps in this category",
+                            text = stringResource(R.string.apps_empty_category),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -498,7 +499,7 @@ fun AppsScreen(
                                         ) {
                                             Icon(
                                                 imageVector = if (fabMenuExpanded) Icons.Default.Close else Icons.Default.Settings,
-                                                contentDescription = if (fabMenuExpanded) "Close menu" else "Selection Menu"
+                                                contentDescription = if (fabMenuExpanded) stringResource(R.string.apps_close_menu_cd) else stringResource(R.string.apps_selection_menu_cd)
                                             )
                                         }
                                     }
@@ -517,7 +518,7 @@ fun AppsScreen(
                                                 }
                                             },
                                             icon = { Icon(Icons.Default.SystemUpdate, contentDescription = null) },
-                                            text = { Text("Update (${selectedAppsForUpdate.size})") }
+                                            text = { Text(stringResource(R.string.apps_update_selected, selectedAppsForUpdate.size)) }
                                         )
                                     }
 
@@ -528,7 +529,7 @@ fun AppsScreen(
                                                 showDeleteSelectedDialog = true
                                             },
                                             icon = { Icon(Icons.Default.Delete, contentDescription = null) },
-                                            text = { Text("Delete (${selectedAppsForDeletion.size})") }
+                                            text = { Text(stringResource(R.string.apps_delete_selected, selectedAppsForDeletion.size)) }
                                         )
                                     }
 
@@ -539,7 +540,7 @@ fun AppsScreen(
                                                 selectedAppIds = filteredApps.map { it.id }.toSet()
                                             },
                                             icon = { Icon(Icons.Default.DoneAll, contentDescription = null) },
-                                            text = { Text("Select All") }
+                                            text = { Text(stringResource(R.string.apps_select_all)) }
                                         )
                                     }
 
@@ -550,7 +551,7 @@ fun AppsScreen(
                                                 selectedAppIds = emptySet()
                                             },
                                             icon = { Icon(Icons.Default.ClearAll, contentDescription = null) },
-                                            text = { Text("Clear Selection") }
+                                            text = { Text(stringResource(R.string.apps_clear_selection)) }
                                         )
                                     }
 
@@ -561,7 +562,7 @@ fun AppsScreen(
                                             selectedAppIds = emptySet()
                                         },
                                         icon = { Icon(Icons.Default.Close, contentDescription = null) },
-                                        text = { Text("Cancel") }
+                                        text = { Text(stringResource(R.string.common_cancel)) }
                                     )
                                 }
                             }
@@ -591,7 +592,7 @@ fun AppsScreen(
                                     Box {
                                         Icon(
                                             imageVector = Icons.Default.SystemUpdate,
-                                            contentDescription = "Update All Apps"
+                                            contentDescription = stringResource(R.string.apps_update_all_cd)
                                         )
                                         Badge(
                                             containerColor = MaterialTheme.colorScheme.error,
@@ -636,7 +637,7 @@ fun AppFilterBar(
             FilterChip(
                 selected = isSelected,
                 onClick = { onCategorySelected(category) },
-                label = { Text(category.label) },
+                label = { Text(stringResource(category.labelRes)) },
                 leadingIcon = if (isSelected) {
                     {
                         Icon(
@@ -742,12 +743,12 @@ private fun EmptyContent() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "No services found",
+            text = stringResource(R.string.apps_empty_title),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            text = "Install apps from the catalog to see them here",
+            text = stringResource(R.string.apps_empty_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -914,7 +915,7 @@ private fun ServiceCard(
                 ) {
                     Icon(
                         imageVector = if (isChecked) Icons.Default.Check else Icons.Default.Check,
-                        contentDescription = if (isChecked) "Selected" else "Not selected",
+                        contentDescription = if (isChecked) stringResource(R.string.apps_selected_cd) else stringResource(R.string.apps_not_selected_cd),
                         tint = if (isChecked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                         modifier = Modifier.size(24.dp)
                     )
@@ -934,7 +935,7 @@ private fun ServiceCard(
                                 .decoderFactory(SvgDecoder.Factory())
                                 .crossfade(true)
                                 .build(),
-                            contentDescription = "${app.appDisplayName()} icon",
+                            contentDescription = stringResource(R.string.apps_icon_cd, app.appDisplayName()),
                             modifier = Modifier
                                 .size(52.dp)
                                 .clip(RoundedCornerShape(16.dp)),
@@ -989,7 +990,7 @@ private fun ServiceCard(
                                         .decoderFactory(SvgDecoder.Factory())
                                         .crossfade(true)
                                         .build(),
-                                    contentDescription = "${app.appDisplayName()} icon",
+                                    contentDescription = stringResource(R.string.apps_icon_cd, app.appDisplayName()),
                                     modifier = Modifier
                                         .size(46.dp)
                                         .clip(RoundedCornerShape(14.dp)),
@@ -1042,7 +1043,7 @@ private fun ServiceCard(
                     ) {
                         Column(modifier = Modifier.weight(1f, fill = false)) {
                             Text(
-                                text = "Update available",
+                                text = stringResource(R.string.apps_update_available),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = if (canUpgrade) {
                                     MaterialTheme.colorScheme.primary
@@ -1053,7 +1054,7 @@ private fun ServiceCard(
                             )
                             if (!canUpgrade) {
                                 Text(
-                                    text = "Start the app to update",
+                                    text = stringResource(R.string.apps_start_to_update),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -1080,7 +1081,7 @@ private fun ServiceCard(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = job.description ?: "Upgrading...",
+                                    text = job.description ?: stringResource(R.string.apps_upgrading),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.Bold,
@@ -1116,7 +1117,7 @@ private fun ServiceCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 val isRunning = app.state.equals("running", ignoreCase = true)
-                val primaryActionLabel = if (isRunning) "Stop" else "Start"
+                val primaryActionLabel = if (isRunning) stringResource(R.string.common_stop) else stringResource(R.string.common_start)
                 val primaryActionIcon = if (isRunning) Icons.Default.Stop else Icons.Default.PlayArrow
 
                 if (isCompact) {
@@ -1129,7 +1130,7 @@ private fun ServiceCard(
                         enabled = true
                     )
                     ActionButton(
-                        text = "Details",
+                        text = stringResource(R.string.apps_details),
                         icon = Icons.Default.Info,
                         isPrimary = false,
                         onClick = { onAppInfoClick(app) },
@@ -1146,14 +1147,14 @@ private fun ServiceCard(
                     )
                     CompactActionButton(
                         icon = Icons.Default.Info,
-                        contentDescription = "View Info",
+                        contentDescription = stringResource(R.string.common_view_info_cd),
                         isPrimary = false,
                         onClick = { onAppInfoClick(app) },
                         modifier = Modifier.weight(1f)
                     )
                     CompactActionButton(
                         icon = Icons.Default.Settings,
-                        contentDescription = "More",
+                        contentDescription = stringResource(R.string.common_more),
                         isPrimary = false,
                         onClick = { showMoreOptions = !showMoreOptions },
                         modifier = Modifier.weight(1f)
@@ -1177,7 +1178,7 @@ private fun ServiceCard(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.Settings, null, Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("More Options", style = MaterialTheme.typography.labelLarge)
+                            Text(stringResource(R.string.common_more_options_cd), style = MaterialTheme.typography.labelLarge)
                         }
                         Icon(
                             imageVector = if (showMoreOptions) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -1195,7 +1196,7 @@ private fun ServiceCard(
                 val canRollback = app.canRollbackNow()
                 Column(modifier = Modifier.padding(top = 8.dp)) {
                     ActionButton(
-                        text = "Rollback Version",
+                        text = stringResource(R.string.apps_rollback_version),
                         icon = Icons.Default.Refresh,
                         isPrimary = false,
                         onClick = { onRollbackClick(app.name) },
@@ -1204,7 +1205,7 @@ private fun ServiceCard(
                     )
                     if (!canRollback) {
                         Text(
-                            text = "Start the app to rollback",
+                            text = stringResource(R.string.apps_start_to_rollback),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(top = 6.dp, start = 4.dp)
@@ -1299,7 +1300,7 @@ private fun UpgradeButton(
             }
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Update",
+                text = stringResource(R.string.common_update),
                 style = MaterialTheme.typography.labelMedium,
                 color = content,
                 fontWeight = FontWeight.Bold
@@ -1434,7 +1435,7 @@ fun MorphingRefreshIndicator(
                 } else {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = "Refresh",
+                        contentDescription = stringResource(R.string.common_refresh_cd),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.size(24.dp)
                     )
@@ -1459,7 +1460,7 @@ private fun DeleteAppsConfirmationDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Uninstall ${appNames.size} Application(s)",
+                text = pluralStringResource(R.plurals.apps_uninstall_title, appNames.size, appNames.size),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -1469,7 +1470,7 @@ private fun DeleteAppsConfirmationDialog(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "Are you sure you want to uninstall:",
+                    text = stringResource(R.string.apps_uninstall_confirm),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 appNames.take(5).forEach { name ->
@@ -1481,7 +1482,7 @@ private fun DeleteAppsConfirmationDialog(
                 }
                 if (appNames.size > 5) {
                     Text(
-                        text = "...and ${appNames.size - 5} more",
+                        text = stringResource(R.string.apps_and_more, appNames.size - 5),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1491,26 +1492,26 @@ private fun DeleteAppsConfirmationDialog(
                 HorizontalDivider()
 
                 DeleteOptionToggle(
-                    title = "Remove Docker/Container Images",
-                    description = "Wipes cached containers from the system storage pool if no other apps rely on them.",
+                    title = stringResource(R.string.apps_opt_remove_images),
+                    description = stringResource(R.string.apps_opt_remove_images_desc),
                     checked = removeImages,
                     onCheckedChange = { removeImages = it }
                 )
                 DeleteOptionToggle(
-                    title = "Delete ixVolumes Data",
-                    description = "Permanently deletes application persistent datasets.",
+                    title = stringResource(R.string.apps_opt_delete_ixvolumes),
+                    description = stringResource(R.string.apps_opt_delete_ixvolumes_desc),
                     checked = removeIxVolumes,
                     onCheckedChange = { removeIxVolumes = it }
                 )
                 DeleteOptionToggle(
-                    title = "Force Remove ixVolumes Data",
-                    description = "Forces data dataset destruction even if busy.",
+                    title = stringResource(R.string.apps_opt_force_ixvolumes),
+                    description = stringResource(R.string.apps_opt_force_ixvolumes_desc),
                     checked = forceRemoveIxVolumes,
                     onCheckedChange = { forceRemoveIxVolumes = it }
                 )
                 DeleteOptionToggle(
-                    title = "Force Remove Custom App Context",
-                    description = "Overrides safety validations for custom charts.",
+                    title = stringResource(R.string.apps_opt_force_custom_app),
+                    description = stringResource(R.string.apps_opt_force_custom_app_desc),
                     checked = forceRemoveCustomApp,
                     onCheckedChange = { forceRemoveCustomApp = it }
                 )
@@ -1533,12 +1534,12 @@ private fun DeleteAppsConfirmationDialog(
                     contentColor = MaterialTheme.colorScheme.onError
                 )
             ) {
-                Text("Uninstall Selected")
+                Text(stringResource(R.string.apps_uninstall_selected))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.common_cancel))
             }
         }
     )

@@ -51,12 +51,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Apps
@@ -87,6 +90,7 @@ fun DockerImageListScreen(
 
     val appScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
+    val context = LocalContext.current
 
     suspend fun loadImages(reset: Boolean) {
         val offset = if (reset) 0 else images.size
@@ -97,7 +101,7 @@ fun DockerImageListScreen(
                 hasMore = page.size >= pageSize
                 if (reset) total = page.size
             }
-            is ApiResult.Error -> error = result.message ?: "Failed to load images"
+            is ApiResult.Error -> error = result.message ?: context.getString(R.string.docker_failed_load)
             is ApiResult.Loading -> {}
         }
     }
@@ -109,7 +113,7 @@ fun DockerImageListScreen(
         loadImages(reset = true)
         when (val result = manager.apps.getDockerHubRateLimitWithResult()) {
             is ApiResult.Success -> rateLimit = result.data
-            is ApiResult.Error -> error = result.message ?: "Failed to load rate limit"
+            is ApiResult.Error -> error = result.message ?: context.getString(R.string.docker_failed_rate_limit)
             is ApiResult.Loading -> {}
         }
         isLoading = false
@@ -145,8 +149,8 @@ fun DockerImageListScreen(
             .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.surface, MaterialTheme.colorScheme.surfaceContainer)))
     ) {
         UnifiedScreenHeader(
-            title = "Docker Images",
-            subtitle = "${total ?: images.size} image(s) · ${images.size} loaded",
+            title = stringResource(R.string.docker_title),
+            subtitle = stringResource(R.string.docker_subtitle, total ?: images.size, images.size),
             isLoading = isLoading,
             isRefreshing = false,
             error = error,
@@ -157,7 +161,7 @@ fun DockerImageListScreen(
 
         Scaffold(containerColor = Color.Transparent, contentWindowInsets = WindowInsets(0, 0, 0, 0)) { innerPadding ->
             if (isLoading && images.isEmpty()) {
-                LoadingScreen("Loading images…")
+                LoadingScreen(stringResource(R.string.docker_loading))
             } else {
                 PullToRefreshBox(
                     isRefreshing = isLoading,
@@ -178,17 +182,17 @@ fun DockerImageListScreen(
                             ) {
                                 Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Pull Image")
+                                Text(stringResource(R.string.docker_pull_image))
                             }
                         }
                         item {
                             OutlinedTextField(
                                 value = searchQuery,
                                 onValueChange = { searchQuery = it },
-                                placeholder = { Text("Search images…") },
+                                placeholder = { Text(stringResource(R.string.docker_search_placeholder)) },
                                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                                 trailingIcon = {
-                                    if (searchQuery.isNotEmpty()) IconButton(onClick = { searchQuery = "" }) { Icon(Icons.Default.Clear, contentDescription = "Clear") }
+                                    if (searchQuery.isNotEmpty()) IconButton(onClick = { searchQuery = "" }) { Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.common_clear)) }
                                 },
                                 singleLine = true,
                                 modifier = Modifier.fillMaxWidth()
@@ -197,10 +201,10 @@ fun DockerImageListScreen(
                         rateLimit?.let { rl -> item { DockerHubRateLimitCard(rl) } }
 
                         item {
-                            Text("Docker Images (${filtered.size})", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
+                            Text(stringResource(R.string.docker_section_title, filtered.size), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
                         }
                         if (filtered.isEmpty()) {
-                            item { Text(if (searchQuery.isBlank()) "No images found. Pull one from a registry." else "No images match your search.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                            item { Text(if (searchQuery.isBlank()) stringResource(R.string.docker_empty_none) else stringResource(R.string.docker_empty_search), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                         } else {
                             itemsIndexed(filtered, key = { i, image -> image.id.ifBlank { "img_$i" } }) { _, image ->
                                 ImageRow(
@@ -214,7 +218,7 @@ fun DockerImageListScreen(
                             item {
                                 Box(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp), contentAlignment = Alignment.Center) {
                                     if (isLoadingMore) CircularProgressIndicator(modifier = Modifier.size(26.dp), strokeWidth = 2.dp)
-                                    else Text("Scroll for more image(s)…", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    else Text(stringResource(R.string.docker_scroll_more), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                             }
                         }
@@ -231,7 +235,7 @@ fun DockerImageListScreen(
                 if (ref.isNotBlank()) {
                     appScope.launch {
                         when (val result = manager.apps.pullImageWithResult(ref.trim())) {
-                            is ApiResult.Error -> error = result.message ?: "Pull failed"
+                            is ApiResult.Error -> error = result.message ?: context.getString(R.string.docker_pull_failed)
                             else -> {}
                         }
                         refresh()
@@ -259,14 +263,14 @@ private fun DockerHubRateLimitCard(rateLimit: Apps.ContainerImagesDockerhubRateL
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Docker Hub Rate Limit", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.docker_rate_limit_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             }
             if (rateLimit.error != null) Text(rateLimit.error.orEmpty(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
             else {
-                rateLimit.totalPullLimit?.let { RateLimitRow("Total Pull Limit", it) }
-                rateLimit.remainingPullLimit?.let { RateLimitRow("Remaining Pull Limit", it) }
-                rateLimit.totalTimeLimitInSecs?.let { RateLimitRow("Resets in (secs)", it) }
-                rateLimit.remainingTimeLimitInSecs?.let { RateLimitRow("Remaining time (secs)", it) }
+                rateLimit.totalPullLimit?.let { RateLimitRow(stringResource(R.string.docker_rate_total), it) }
+                rateLimit.remainingPullLimit?.let { RateLimitRow(stringResource(R.string.docker_rate_remaining), it) }
+                rateLimit.totalTimeLimitInSecs?.let { RateLimitRow(stringResource(R.string.docker_rate_resets), it) }
+                rateLimit.remainingTimeLimitInSecs?.let { RateLimitRow(stringResource(R.string.docker_rate_remaining_time), it) }
             }
         }
     }
@@ -298,7 +302,7 @@ private fun ImageRow(image: Apps.AppImageQueryResultItem, onDetail: () -> Unit, 
                 Text(label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                 Text("${formatSize(image.size)}  ·  ${image.id.take(19)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, fontFamily = FontFamily.Monospace)
             }
-            IconButton(onClick = onDelete) { Icon(Icons.Default.DeleteOutline, contentDescription = "Delete image", tint = MaterialTheme.colorScheme.error) }
+            IconButton(onClick = onDelete) { Icon(Icons.Default.DeleteOutline, contentDescription = stringResource(R.string.docker_delete_image_cd), tint = MaterialTheme.colorScheme.error) }
         }
     }
 }
@@ -308,15 +312,15 @@ private fun PullImageDialog(onSubmit: (String) -> Unit, onDismiss: () -> Unit) {
     var ref by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Pull Image") },
+        title = { Text(stringResource(R.string.docker_pull_image)) },
         text = {
             Column {
-                Text("Enter the image reference, e.g. nginx:latest or ghcr.io/owner/repo:tag.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.docker_pull_desc), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.height(12.dp))
-                OutlinedTextField(value = ref, onValueChange = { ref = it }, label = { Text("Image reference") }, placeholder = { Text("nginx:latest") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = ref, onValueChange = { ref = it }, label = { Text(stringResource(R.string.docker_image_ref)) }, placeholder = { Text("nginx:latest") }, singleLine = true, modifier = Modifier.fillMaxWidth())
             }
         },
-        confirmButton = { Button(onClick = { onSubmit(ref) }, enabled = ref.isNotBlank()) { Text("Pull") } },
+        confirmButton = { Button(onClick = { onSubmit(ref) }, enabled = ref.isNotBlank()) { Text(stringResource(R.string.docker_pull)) } },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
     )
 }

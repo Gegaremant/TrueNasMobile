@@ -2,9 +2,11 @@ package com.gegaremant.truenasmobile.ui.services.apps
 
 import android.content.Context
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.helpers.GlobalJobTracker
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
@@ -22,11 +24,11 @@ import kotlinx.coroutines.launch
 import kotlin.collections.plus
 import kotlin.time.Duration.Companion.milliseconds
 
-enum class AppCategory(val label: String) {
-    ALL("All Apps"),
-    RUNNING("Running"),
-    STOPPED("Stopped"),
-    UPDATES("Has Updates")
+enum class AppCategory(@StringRes val labelRes: Int) {
+    ALL(R.string.apps_category_all),
+    RUNNING(R.string.apps_category_running),
+    STOPPED(R.string.apps_category_stopped),
+    UPDATES(R.string.apps_category_updates)
 }
 private val _isInstalling = MutableStateFlow(false)
 private val _installError = MutableStateFlow<String?>(null)
