@@ -75,6 +75,13 @@ val resolvedKeystoreFile: File? = when {
     else -> null
 }
 
+// True when this invocation asks for an Android App Bundle rather than APKs.
+// An AAB must not be combined with a manual ABI split - see `splits` below.
+val buildingBundle: Boolean = gradle.startParameter.taskNames.any { task ->
+    task.substringAfterLast(':').startsWith("bundle", ignoreCase = true) ||
+        task.contains("Bundle", ignoreCase = true)
+}
+
 android {
     namespace = "com.gegaremant.truenasmobile"
     compileSdk = 37
@@ -140,7 +147,14 @@ android {
     }
     splits {
         abi {
-            isEnable = true
+            // The Play Store delivers an AAB and splits ABIs itself. AGP
+            // refuses to build a bundle while a manual ABI split is active
+            // ("Multiple shrunk-resources files found"), so the split is only
+            // switched on for APK builds. Because of that, build the two
+            // artifacts with separate commands:
+            //     ./gradlew assembleGithubRelease     -> per-ABI APKs
+            //     ./gradlew bundlePlaystoreRelease    -> one AAB
+            isEnable = !buildingBundle
             reset()
             include("armeabi-v7a", "arm64-v8a", "x86_64")
             isUniversalApk = false

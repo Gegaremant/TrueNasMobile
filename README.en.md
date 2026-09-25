@@ -60,10 +60,26 @@ Build:
 ```bash
 git clone https://github.com/Gegaremant/TrueNasMobile.git
 cd TrueNasMobile
+./gradlew assembleGithubDebug      # for development, no signing key needed
+```
+
+A release build needs a signing key. Every secret lives in `.env` at the
+repository root (git-ignored):
+
+```bash
+cp .env.example .env && chmod 600 .env   # fill in KEYSTORE_*
 ./gradlew assembleGithubRelease
 ```
 
-APKs will be placed in `app/build/outputs/apk/github/release/`.
+The APKs land in `app/build/outputs/apk/github/release/` — one per ABI. Full
+release process: [`docs/RELEASE.md`](docs/RELEASE.md).
+
+## Localization
+
+The app follows the system language: English and Russian. All user-facing text
+lives in the locale dictionaries (`res/values/strings.xml` and
+`res/values-ru/strings.xml`), none of it in code. Rules and checks:
+[`docs/LOCALIZATION.md`](docs/LOCALIZATION.md).
 
 ## Author
 

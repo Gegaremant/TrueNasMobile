@@ -58,7 +58,7 @@ Fastlane metadata (descriptions + icon + screenshots) are present in the repo at
 fastlane/metadata/android/en-US/.
 
 Link to latest release APKs:
-https://github.com/Gegaremant/TrueNasMobile/releases/tag/v1.0.0
+https://github.com/Gegaremant/TrueNasMobile/releases/tag/v1.0.2
 ```
 
 Инструменты Izzy подтянут APK с тегов GitHub и fastlane-метаданные, проверят и
@@ -68,7 +68,10 @@ https://github.com/Gegaremant/TrueNasMobile/releases/tag/v1.0.0
 ## Советы
 - Держите `versionName`/`versionCode` статичными в `app/build.gradle.kts` и
   вручную повышайте их в каждом релизе; тег должен совпадать (например
-  `v1.0.1` -> `1.0.1`/`10001`).
-- Прикрепляйте подписанные релизные APK к соответствующему GitHub-релизу (это делает CI).
+  `v1.0.2` -> `1.0.2`/`10002`).
+- Прикрепляйте подписанные релизные APK к соответствующему GitHub-релизу.
+  Сборка: `./gradlew assembleGithubRelease`, ключ берётся из `.env`
+  (`KEYSTORE_PATH`/`KEYSTORE_BASE64` + `KEYSTORE_ALIAS` + `KEYSTORE_PASSWORD`),
+  подробности в `docs/RELEASE.md`.
 - Добавляйте changelog в `fastlane/metadata/android/en-US/changelogs/<versionCode>.txt`
   для каждого релиза — так лучше отображается в каталоге.

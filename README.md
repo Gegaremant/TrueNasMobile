@@ -60,10 +60,26 @@ TrueNAS — это отличная система для хранения да�
 ```bash
 git clone https://github.com/Gegaremant/TrueNasMobile.git
 cd TrueNasMobile
+./gradlew assembleGithubDebug      # для разработки, подпись не нужна
+```
+
+Релизная сборка требует ключа подписи. Все секреты лежат в `.env` в корне
+репозитория (он в `.gitignore`):
+
+```bash
+cp .env.example .env && chmod 600 .env   # заполнить KEYSTORE_* 
 ./gradlew assembleGithubRelease
 ```
 
-Готовые APK появятся в `app/build/outputs/apk/github/release/`.
+Готовые APK появятся в `app/build/outputs/apk/github/release/` — по одному на
+каждую архитектуру. Полный процесс релиза: [`docs/RELEASE.md`](docs/RELEASE.md).
+
+## Локализация
+
+Приложение следует системному языку: английский и русский. Весь пользовательский
+текст лежит в файлах-словарях локалей
+(`res/values/strings.xml` и `res/values-ru/strings.xml`) — в коде его нет.
+Правила и проверки: [`docs/LOCALIZATION.md`](docs/LOCALIZATION.md).
 
 ## Автор
 
