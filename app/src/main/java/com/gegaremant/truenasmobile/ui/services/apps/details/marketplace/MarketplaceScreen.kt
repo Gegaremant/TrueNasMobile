@@ -80,6 +80,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -182,8 +184,8 @@ fun MarketplaceScreen(
                 exit = fadeOut() + shrinkVertically()
             ) {
                 UnifiedScreenHeader(
-                    title = selectedCategory ?: "Marketplace",
-                    subtitle = if (selectedCategory != null) "Discover $selectedCategory apps" else "Discover chart applications",
+                    title = selectedCategory ?: stringResource(R.string.marketplace_title),
+                    subtitle = selectedCategory?.let { stringResource(R.string.marketplace_subtitle_category, it) } ?: stringResource(R.string.marketplace_subtitle),
                     isLoading = uiState.isLoading,
                     isRefreshing = uiState.isRefreshing,
                     error = uiState.error,
@@ -222,14 +224,14 @@ fun MarketplaceScreen(
                             isSearchFocused = false
                             searchQuery = ""
                         }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.marketplace_back_cd))
                         }
                     }
 
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
-                        placeholder = { Text("Search apps, utilities, tools...") },
+                        placeholder = { Text(stringResource(R.string.marketplace_search_placeholder)) },
                         leadingIcon = {
                             Icon(
                                 Icons.Default.Search,
@@ -240,7 +242,7 @@ fun MarketplaceScreen(
                         trailingIcon = {
                             if (searchQuery.isNotEmpty()) {
                                 IconButton(onClick = { searchQuery = "" }) {
-                                    Icon(Icons.Default.Close, contentDescription = "Clear")
+                                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.common_clear))
                                 }
                             }
                         },
@@ -292,7 +294,7 @@ fun MarketplaceScreen(
                             if (searchQuery.isNotBlank()) {
                                 item {
                                     Text(
-                                        text = "${searchFilteredApps.size} result${if (searchFilteredApps.size != 1) "s" else ""}",
+                                        text = pluralStringResource(R.plurals.marketplace_results, searchFilteredApps.size, searchFilteredApps.size),
                                         style = MaterialTheme.typography.labelLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.padding(
@@ -318,7 +320,7 @@ fun MarketplaceScreen(
                                     // Home – show featured carousel and categories
                                     if (recommendedApps.isNotEmpty()) {
                                         item {
-                                            SectionHeader(title = "Featured")
+                                            SectionHeader(title = stringResource(R.string.marketplace_featured))
                                             Spacer(Modifier.height(10.dp))
                                             RecommendedCarousel(
                                                 apps = recommendedApps,
@@ -369,7 +371,7 @@ fun MarketplaceScreen(
 
                                     if (categoryRecommended.isNotEmpty()) {
                                         item {
-                                            SectionHeader(title = "Featured in $selectedCategory")
+                                            SectionHeader(title = stringResource(R.string.marketplace_featured_in, selectedCategory ?: ""))
                                             Spacer(Modifier.height(10.dp))
                                             RecommendedCarousel(
                                                 apps = categoryRecommended,
@@ -381,7 +383,7 @@ fun MarketplaceScreen(
 
                                     item {
                                         Text(
-                                            text = "All ${selectedCategory?.replaceFirstChar { it.uppercase() }} Apps (${categoryApps.size})",
+                                            text = stringResource(R.string.marketplace_all_category_apps, selectedCategory?.replaceFirstChar { it.uppercase() } ?: "", categoryApps.size),
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             modifier = Modifier.padding(start = 20.dp, top = 8.dp, bottom = 12.dp)
@@ -430,7 +432,7 @@ private fun SectionHeaderWithAction(title: String, onShowMoreClick: () -> Unit) 
             fontWeight = FontWeight.ExtraBold
         )
         TextButton(onClick = onShowMoreClick) {
-            Text("Show More", fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.marketplace_show_more), fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -452,13 +454,13 @@ fun ShowMoreGridItem(onClick: () -> Unit) {
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                contentDescription = "Show More",
+                contentDescription = stringResource(R.string.marketplace_show_more),
                 tint = MaterialTheme.colorScheme.primary
             )
         }
         Spacer(Modifier.height(6.dp))
         Text(
-            text = "See All",
+            text = stringResource(R.string.marketplace_see_all),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -565,7 +567,7 @@ fun HeroCarouselCard(
                 onClick = {},
                 label = {
                     Text(
-                        "Featured",
+                        stringResource(R.string.marketplace_featured),
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -612,7 +614,7 @@ fun HeroCarouselCard(
                                     )
                                     Spacer(Modifier.width(3.dp))
                                     Text(
-                                        "Installed",
+                                        stringResource(R.string.marketplace_installed),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = Color(0xFF69F0AE)
                                     )
@@ -660,7 +662,7 @@ fun AppGridItem(app: Apps.AppAvailableItem, onClick: () -> Unit) {
                 ) {
                     Icon(
                         Icons.Default.CheckCircle,
-                        contentDescription = "Installed",
+                        contentDescription = stringResource(R.string.marketplace_installed),
                         tint = Color(0xFF2E7D32),
                         modifier = Modifier.size(16.dp)
                     )
@@ -713,7 +715,7 @@ fun SearchResultRow(
                 if (app.installed) {
                     Icon(
                         Icons.Default.CheckCircle,
-                        contentDescription = "Installed",
+                        contentDescription = stringResource(R.string.marketplace_installed),
                         tint = Color(0xFF2E7D32),
                         modifier = Modifier.size(15.dp)
                     )
@@ -758,7 +760,7 @@ fun SearchResultRow(
                 )
                 Spacer(Modifier.width(4.dp))
                 Text(
-                    text = if (app.installed) "Install again" else "Install",
+                    text = if (app.installed) stringResource(R.string.marketplace_install_again) else stringResource(R.string.marketplace_install),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1
@@ -787,7 +789,7 @@ fun AppIcon(iconUrl: String?, title: String, size: Int) {
                 .decoderFactory(SvgDecoder.Factory())
                 .crossfade(true)
                 .build(),
-            contentDescription = "$title icon",
+            contentDescription = stringResource(R.string.marketplace_icon_cd, title),
             contentScale = ContentScale.Fit,
             placeholder = painterResource(id = R.drawable.missing_app_icon),
             error = painterResource(id = R.drawable.missing_app_icon),

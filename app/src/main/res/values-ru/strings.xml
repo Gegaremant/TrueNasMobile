@@ -1216,4 +1216,70 @@
     <string name="container_section_vnc">Удалённый доступ (VNC)</string>
     <string name="container_vnc_status">Состояние VNC</string>
     <string name="container_section_env">Переменные окружения</string>
+
+    <!-- Marketplace -->
+    <string name="marketplace_title">Маркетплейс</string>
+    <string name="marketplace_subtitle">Открывайте приложения из каталога</string>
+    <string name="marketplace_subtitle_category">Приложения категории %1$s</string>
+    <string name="marketplace_back_cd">Назад</string>
+    <string name="marketplace_search_placeholder">Поиск приложений, утилит, инструментов…</string>
+    <plurals name="marketplace_results">
+        <item quantity="one">%1$d результат</item>
+        <item quantity="few">%1$d результата</item>
+        <item quantity="many">%1$d результатов</item>
+        <item quantity="other">%1$d результата</item>
+    </plurals>
+    <string name="marketplace_featured">Рекомендуемые</string>
+    <string name="marketplace_featured_in">Рекомендуемые в %1$s</string>
+    <string name="marketplace_all_category_apps">Все приложения «%1$s» (%2$d)</string>
+    <string name="marketplace_show_more">Показать ещё</string>
+    <string name="marketplace_see_all">Смотреть все</string>
+    <string name="marketplace_installed">Установлено</string>
+    <string name="marketplace_install_again">Установить снова</string>
+    <string name="marketplace_install">Установить</string>
+    <string name="marketplace_icon_cd">Значок %1$s</string>
+
+    <!-- Marketplace app details -->
+    <string name="mkdetails_about">Об этом приложении</string>
+    <string name="mkdetails_screenshots">Снимки экрана</string>
+    <string name="mkdetails_screenshot_cd">Снимок экрана приложения</string>
+    <string name="mkdetails_technical">Технические сведения</string>
+    <string name="mkdetails_catalog_train">Канал каталога</string>
+    <string name="mkdetails_tags">Теги</string>
+    <string name="mkdetails_documentation">Документация приложения</string>
+    <string name="mkdetails_default_icon_cd">Значок по умолчанию %1$s</string>
+    <string name="mkdetails_healthy">Приложение работает стабильно</string>
+    <string name="mkdetails_unhealthy">Проблемы со здоровьем системы</string>
+    <string name="mkdetails_storage_title">Доступное хранилище для приложений</string>
+    <string name="mkdetails_storage_desc">Свободное место в пуле приложений, доступное приложениям</string>
+    <string name="mkdetails_storage_checking">Проверка свободного места…</string>
+    <string name="mkdetails_storage_unavailable">Не удалось получить данные о свободном месте</string>
+    <string name="mkdetails_available">доступно</string>
+    <string name="mkdetails_low">Мало</string>
+    <string name="mkdetails_high">Много</string>
+
+    <!-- Marketplace install wizard -->
+    <string name="mkinstall_loading">Загрузка конфигураций…</string>
+    <string name="mkinstall_schema_failed">Не удалось загрузить схему</string>
+    <string name="mkinstall_wizard_subtitle">Мастер развёртывания</string>
+    <string name="mkinstall_instance_name">Имя экземпляра приложения</string>
+    <string name="mkinstall_name_hint">например, wireguard</string>
+    <string name="mkinstall_target_version">Целевая версия приложения</string>
+    <string name="mkinstall_build_config_version">Версия конфигурации сборки: %1$s</string>
+    <string name="mkinstall_config_setup">Настройка конфигурации</string>
+    <string name="mkinstall_toggle_cd">Развернуть/свернуть</string>
+    <string name="mkinstall_token_hint">Введите параметр токена…</string>
+    <string name="mkinstall_toggle_visibility_cd">Показать или скрыть значение</string>
+    <string name="mkinstall_select_option">Выберите вариант</string>
+    <string name="mkinstall_search_hint">Поиск…</string>
+    <string name="mkinstall_bounds">Диапазон: %1$s – %2$s</string>
+    <string name="mkinstall_minimum">Минимум: %1$s</string>
+    <string name="mkinstall_maximum">Максимум: %1$s</string>
+    <string name="mkinstall_int_hint">Введите целое число для порта или объёма…</string>
+    <string name="mkinstall_optional_active">Активно</string>
+    <string name="mkinstall_optional_inactive">Неактивно</string>
+    <string name="mkinstall_collection_config">Настройка параметров коллекции</string>
+    <string name="mkinstall_collection_desc">Добавляется напрямую через блоки backend</string>
+    <string name="mkinstall_raw_hint">(%1$s) запись в raw-синтаксисе…</string>
+    <string name="mkinstall_deploy">Развернуть экземпляр: %1$s</string>
 </resources>

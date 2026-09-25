@@ -93,6 +93,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
@@ -107,6 +108,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.JobRepository
 import com.gegaremant.truenasmobile.data.models.Apps
@@ -172,7 +174,7 @@ fun MarketplaceAppInstallScreen(
                     ) {
                         CircularProgressIndicator()
                         Text(
-                            "Loading configurations…",
+                            stringResource(R.string.mkinstall_loading),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -193,9 +195,9 @@ fun MarketplaceAppInstallScreen(
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(48.dp)
                         )
-                        Text("Failed to load schema", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.mkinstall_schema_failed), style = MaterialTheme.typography.titleMedium)
                         Button(onClick = { viewModel.loadCatalogAppDetails(appName, train) }) {
-                            Text("Retry")
+                            Text(stringResource(R.string.common_retry))
                         }
                     }
                 }
@@ -280,7 +282,7 @@ private fun InstallOptionsContent(
                 onBackPressed = {
                     onBack()
                 },
-                subtitle = "Deployment Wizard",
+                subtitle = stringResource(R.string.mkinstall_wizard_subtitle),
                 isLoading = false,
                 isRefreshing = false,
                 onDismissError = {},
@@ -292,7 +294,7 @@ private fun InstallOptionsContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Application Instance Name",
+                    text = stringResource(R.string.mkinstall_instance_name),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -305,7 +307,7 @@ private fun InstallOptionsContent(
                     shape = RoundedCornerShape(14.dp),
                     singleLine = true,
                     leadingIcon = { Icon(Icons.AutoMirrored.Filled.Label, null, modifier = Modifier.size(18.dp)) },
-                    placeholder = { Text("e.g. wireguard") }
+                    placeholder = { Text(stringResource(R.string.mkinstall_name_hint)) }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -335,7 +337,7 @@ private fun InstallOptionsContent(
 
                 if (versionsMap.isNotEmpty()) {
                     Text(
-                        text = "App Target Version",
+                        text = stringResource(R.string.mkinstall_target_version),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
@@ -362,7 +364,7 @@ private fun InstallOptionsContent(
                             shape = RoundedCornerShape(14.dp),
                             singleLine = true,
                             supportingText = versionData?.humanVersion?.let {
-                                { Text("Build Config Version: $it") }
+                                { Text(stringResource(R.string.mkinstall_build_config_version, it)) }
                             }
                         )
                         ExposedDropdownMenu(
@@ -396,7 +398,7 @@ private fun InstallOptionsContent(
         if (schema?.groups != null && schema.questions != null) {
             item {
                 Text(
-                    text = "Configuration Setup",
+                    text = stringResource(R.string.mkinstall_config_setup),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
@@ -448,7 +450,7 @@ private fun InstallHeroHeader(title: String, onBack: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.marketplace_back_cd),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -463,7 +465,7 @@ private fun InstallHeroHeader(title: String, onBack: () -> Unit) {
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "Deployment Wizard",
+                    text = stringResource(R.string.mkinstall_wizard_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold
@@ -548,7 +550,7 @@ internal fun SchemaGroupSection(
             IconButton(onClick = { expanded = !expanded }) {
                 Icon(
                     if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = "Toggle"
+                    contentDescription = stringResource(R.string.mkinstall_toggle_cd)
                 )
             }
         }
@@ -661,7 +663,7 @@ private fun StringField(schema: Apps.SchemaDefinition, path: String, formState: 
             value = text,
             onValueChange = { text = it; formState[path] = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Enter token parameter...") },
+            placeholder = { Text(stringResource(R.string.mkinstall_token_hint)) },
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
             visualTransformation = if (isPrivate && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
@@ -670,7 +672,7 @@ private fun StringField(schema: Apps.SchemaDefinition, path: String, formState: 
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
                             if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = "Toggle Visibility"
+                            contentDescription = stringResource(R.string.mkinstall_toggle_visibility_cd)
                         )
                     }
                 }
@@ -726,7 +728,7 @@ private fun EnumPickerField(
         ModalBottomSheet(onDismissRequest = { showSheet = false; search = "" }) {
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Text(
-                    "Select Option",
+                    stringResource(R.string.mkinstall_select_option),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 12.dp)
@@ -734,7 +736,7 @@ private fun EnumPickerField(
                 OutlinedTextField(
                     value = search,
                     onValueChange = { search = it },
-                    placeholder = { Text("Search...") },
+                    placeholder = { Text(stringResource(R.string.mkinstall_search_hint)) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     singleLine = true,
@@ -773,9 +775,9 @@ private fun EnumPickerField(
 private fun IntField(schema: Apps.SchemaDefinition, path: String, formState: MutableMap<String, Any?>) {
     var text by remember(path) { mutableStateOf((formState[path] ?: schema.default)?.toString()?.takeIf { it != "null" } ?: "") }
     val supportText = when {
-        schema.min != null && schema.max != null -> "Bounds: ${schema.min} – ${schema.max}"
-        schema.min != null -> "Minimum required: ${schema.min}"
-        schema.max != null -> "Maximum allocation: ${schema.max}"
+        schema.min != null && schema.max != null -> stringResource(R.string.mkinstall_bounds, schema.min.toString(), schema.max.toString())
+        schema.min != null -> stringResource(R.string.mkinstall_minimum, schema.min.toString())
+        schema.max != null -> stringResource(R.string.mkinstall_maximum, schema.max.toString())
         else -> null
     }
     OutlinedTextField(
@@ -784,7 +786,7 @@ private fun IntField(schema: Apps.SchemaDefinition, path: String, formState: Mut
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         shape = RoundedCornerShape(12.dp),
-        placeholder = { Text("Enter dynamic port or capacity integer...") },
+        placeholder = { Text(stringResource(R.string.mkinstall_int_hint)) },
         supportingText = supportText?.let { msg -> { Text(msg, style = MaterialTheme.typography.labelSmall) } },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
@@ -799,7 +801,7 @@ private fun BooleanField(schema: Apps.SchemaDefinition, path: String, formState:
         modifier = Modifier.fillMaxWidth()
     ) {
         Switch(checked = checked, onCheckedChange = { checked = it; formState[path] = it })
-        Text(if (checked) "Active" else "Inactive", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(if (checked) stringResource(R.string.mkinstall_optional_active) else stringResource(R.string.mkinstall_optional_inactive), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
@@ -829,8 +831,8 @@ private fun ListFieldInfo() {
     ) {
         Icon(Icons.AutoMirrored.Filled.List, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
         Column {
-            Text("Collection Parameters Configuration", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text("Appends natively via backend blocks", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
+            Text(stringResource(R.string.mkinstall_collection_config), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.mkinstall_collection_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
         }
     }
 }
@@ -844,7 +846,7 @@ private fun DefaultField(type: String?, path: String, formState: MutableMap<Stri
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         shape = RoundedCornerShape(12.dp),
-        placeholder = { Text("($type) raw syntax entry...") }
+        placeholder = { Text(stringResource(R.string.mkinstall_raw_hint, type ?: "")) }
     )
 }
 
@@ -860,7 +862,7 @@ private fun InstallBottomAction(title: String, onInstall: () -> Unit) {
     ) {
         Icon(Icons.Default.Download, null)
         Spacer(Modifier.width(8.dp))
-        Text("Deploy instance: $title", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.mkinstall_deploy, title), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
     }
 }
 

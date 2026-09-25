@@ -69,6 +69,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -191,7 +192,7 @@ fun MarketplaceAppDetailsScreen(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Text(
-                            text = "About this application",
+                            text = stringResource(R.string.mkdetails_about),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground
@@ -211,7 +212,7 @@ fun MarketplaceAppDetailsScreen(
                 if (!app.screenshots.isNullOrEmpty()) {
                     item {
                         Text(
-                            text = "Screenshots",
+                            text = stringResource(R.string.mkdetails_screenshots),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
@@ -227,7 +228,7 @@ fun MarketplaceAppDetailsScreen(
                             app.screenshots.forEachIndexed { index, screenshotUrl ->
                                 AsyncImage(
                                     model = screenshotUrl,
-                                    contentDescription = "App Screenshot",
+                                    contentDescription = stringResource(R.string.mkdetails_screenshot_cd),
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
                                         .width(280.dp)
@@ -247,7 +248,7 @@ fun MarketplaceAppDetailsScreen(
                 item {
                     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                         Text(
-                            text = "Technical Details",
+                            text = stringResource(R.string.mkdetails_technical),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(bottom = 12.dp)
@@ -272,7 +273,7 @@ fun MarketplaceAppDetailsScreen(
                             Column(modifier = Modifier.padding(16.dp)) {
                                 InfoRowItem(
                                     icon = Icons.Default.Info,
-                                    label = "Latest Version",
+                                    label = stringResource(R.string.appinfo_latest_version),
                                     value = app.latest_human_version ?: app.latest_version ?: "N/A"
                                 )
                                 HorizontalDivider(
@@ -281,7 +282,7 @@ fun MarketplaceAppDetailsScreen(
                                 )
                                 InfoRowItem(
                                     icon = Icons.Default.Folder,
-                                    label = "Catalog Train",
+                                    label = stringResource(R.string.mkdetails_catalog_train),
                                     value = "${app.catalog ?: "Unknown"} / ${app.train}"
                                 )
                                 HorizontalDivider(
@@ -290,7 +291,7 @@ fun MarketplaceAppDetailsScreen(
                                 )
                                 InfoRowItem(
                                     icon = Icons.Default.Update,
-                                    label = "Last Updated",
+                                    label = stringResource(R.string.appinfo_last_updated),
                                     value = app.lastUpdateString
                                 )
                                 if (app.tagsString.isNotBlank()) {
@@ -300,7 +301,7 @@ fun MarketplaceAppDetailsScreen(
                                     )
                                     InfoRowItem(
                                         icon = Icons.Default.LocalOffer,
-                                        label = "Tags",
+                                        label = stringResource(R.string.mkdetails_tags),
                                         value = app.tagsString
                                     )
                                 }
@@ -311,7 +312,7 @@ fun MarketplaceAppDetailsScreen(
 
                         if (app.maintainers.isNotEmpty()) {
                             Text(
-                                text = "Maintainers",
+                                text = stringResource(R.string.appinfo_maintainers),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(bottom = 12.dp)
@@ -376,7 +377,7 @@ fun MarketplaceAppDetailsScreen(
                                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                             )
                             Text(
-                                text = "Application Documentation",
+                                text = stringResource(R.string.mkdetails_documentation),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onBackground
@@ -512,7 +513,7 @@ private fun HeroHeaderSection(
                                 .decoderFactory(SvgDecoder.Factory())
                                 .crossfade(true)
                                 .build(),
-                            contentDescription = "${app.title} icon",
+                            contentDescription = stringResource(R.string.apps_icon_cd, app.title),
                             contentScale = ContentScale.Fit,
                             alignment = Alignment.Center,
                             placeholder = painterResource(id = R.drawable.missing_app_icon),
@@ -531,7 +532,7 @@ private fun HeroHeaderSection(
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.missing_app_icon),
-                                contentDescription = "${app.title} default icon",
+                                contentDescription = stringResource(R.string.mkdetails_default_icon_cd, app.title),
                                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer),
                                 modifier = Modifier.size((44 * 0.7f).dp)
                             )
@@ -582,7 +583,7 @@ private fun HealthStatusCard(healthy: Boolean?, errorMsg: String?) {
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
-                    text = if (isHealthy) "Application Stable & Healthy" else "System Health Alert",
+                    text = if (isHealthy) stringResource(R.string.mkdetails_healthy) else stringResource(R.string.mkdetails_unhealthy),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -624,13 +625,13 @@ private fun AvailableAppStorageCard(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Available App Storage",
+                        text = stringResource(R.string.mkdetails_storage_title),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Space in the apps pool consumable by applications",
+                        text = stringResource(R.string.mkdetails_storage_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -651,14 +652,14 @@ private fun AvailableAppStorageCard(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "Checking available space…",
+                        text = stringResource(R.string.mkdetails_storage_checking),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             } else if (availableBytes == null) {
                 Text(
-                    text = "Unable to retrieve available space",
+                    text = stringResource(R.string.mkdetails_storage_unavailable),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -679,7 +680,7 @@ private fun AvailableAppStorageCard(
                         color = barColor
                     )
                     Text(
-                        text = "available",
+                        text = stringResource(R.string.mkdetails_available),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -700,12 +701,12 @@ private fun AvailableAppStorageCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Low",
+                        text = stringResource(R.string.mkdetails_low),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )
                     Text(
-                        text = "High",
+                        text = stringResource(R.string.mkdetails_high),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )

@@ -1206,4 +1206,68 @@
     <string name="container_section_vnc">Remote Access (VNC)</string>
     <string name="container_vnc_status">VNC Status</string>
     <string name="container_section_env">Environment Variables</string>
+
+    <!-- Marketplace -->
+    <string name="marketplace_title">Marketplace</string>
+    <string name="marketplace_subtitle">Discover chart applications</string>
+    <string name="marketplace_subtitle_category">Discover %1$s apps</string>
+    <string name="marketplace_back_cd">Back</string>
+    <string name="marketplace_search_placeholder">Search apps, utilities, tools…</string>
+    <plurals name="marketplace_results">
+        <item quantity="one">%1$d result</item>
+        <item quantity="other">%1$d results</item>
+    </plurals>
+    <string name="marketplace_featured">Featured</string>
+    <string name="marketplace_featured_in">Featured in %1$s</string>
+    <string name="marketplace_all_category_apps">All %1$s Apps (%2$d)</string>
+    <string name="marketplace_show_more">Show More</string>
+    <string name="marketplace_see_all">See All</string>
+    <string name="marketplace_installed">Installed</string>
+    <string name="marketplace_install_again">Install again</string>
+    <string name="marketplace_install">Install</string>
+    <string name="marketplace_icon_cd">%1$s icon</string>
+
+    <!-- Marketplace app details -->
+    <string name="mkdetails_about">About this application</string>
+    <string name="mkdetails_screenshots">Screenshots</string>
+    <string name="mkdetails_screenshot_cd">App Screenshot</string>
+    <string name="mkdetails_technical">Technical Details</string>
+    <string name="mkdetails_catalog_train">Catalog Train</string>
+    <string name="mkdetails_tags">Tags</string>
+    <string name="mkdetails_documentation">Application Documentation</string>
+    <string name="mkdetails_default_icon_cd">%1$s default icon</string>
+    <string name="mkdetails_healthy">Application Stable &amp; Healthy</string>
+    <string name="mkdetails_unhealthy">System Health Alert</string>
+    <string name="mkdetails_storage_title">Available App Storage</string>
+    <string name="mkdetails_storage_desc">Space in the apps pool consumable by applications</string>
+    <string name="mkdetails_storage_checking">Checking available space…</string>
+    <string name="mkdetails_storage_unavailable">Unable to retrieve available space</string>
+    <string name="mkdetails_available">available</string>
+    <string name="mkdetails_low">Low</string>
+    <string name="mkdetails_high">High</string>
+
+    <!-- Marketplace install wizard -->
+    <string name="mkinstall_loading">Loading configurations…</string>
+    <string name="mkinstall_schema_failed">Failed to load schema</string>
+    <string name="mkinstall_wizard_subtitle">Deployment Wizard</string>
+    <string name="mkinstall_instance_name">Application Instance Name</string>
+    <string name="mkinstall_name_hint">e.g. wireguard</string>
+    <string name="mkinstall_target_version">App Target Version</string>
+    <string name="mkinstall_build_config_version">Build Config Version: %1$s</string>
+    <string name="mkinstall_config_setup">Configuration Setup</string>
+    <string name="mkinstall_toggle_cd">Toggle</string>
+    <string name="mkinstall_token_hint">Enter token parameter…</string>
+    <string name="mkinstall_toggle_visibility_cd">Toggle Visibility</string>
+    <string name="mkinstall_select_option">Select Option</string>
+    <string name="mkinstall_search_hint">Search…</string>
+    <string name="mkinstall_bounds">Bounds: %1$s – %2$s</string>
+    <string name="mkinstall_minimum">Minimum required: %1$s</string>
+    <string name="mkinstall_maximum">Maximum allocation: %1$s</string>
+    <string name="mkinstall_int_hint">Enter dynamic port or capacity integer…</string>
+    <string name="mkinstall_optional_active">Active</string>
+    <string name="mkinstall_optional_inactive">Inactive</string>
+    <string name="mkinstall_collection_config">Collection Parameters Configuration</string>
+    <string name="mkinstall_collection_desc">Appends natively via backend blocks</string>
+    <string name="mkinstall_raw_hint">(%1$s) raw syntax entry…</string>
+    <string name="mkinstall_deploy">Deploy instance: %1$s</string>
 </resources>
