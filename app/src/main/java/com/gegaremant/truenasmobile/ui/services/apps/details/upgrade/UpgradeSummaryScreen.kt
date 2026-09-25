@@ -61,11 +61,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.JobRepository
 import com.gegaremant.truenasmobile.data.models.Apps
@@ -207,9 +209,9 @@ private fun UpgradingView(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = when (state) {
-                            "done" -> "Upgrade Complete"
-                            "failed" -> "Upgrade Failed"
-                            else -> "Upgrading $appName"
+                            "done" -> stringResource(R.string.upgrade_complete)
+                            "failed" -> stringResource(R.string.upgrade_failed)
+                            else -> stringResource(R.string.upgrade_in_progress, appName)
                         },
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
@@ -222,9 +224,9 @@ private fun UpgradingView(
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = when (state) {
-                            "done" -> "All done! Taking you back..."
-                            "failed" -> "Something went wrong during the upgrade"
-                            else -> description ?: "Please wait, this may take a moment"
+                            "done" -> stringResource(R.string.upgrade_all_done)
+                            "failed" -> stringResource(R.string.upgrade_wrong)
+                            else -> description ?: stringResource(R.string.upgrade_wait)
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

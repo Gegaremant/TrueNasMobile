@@ -60,6 +60,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -69,6 +70,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.helpers.JobRepository
 import com.gegaremant.truenasmobile.ui.components.MinimalBackHeader
 import com.gegaremant.truenasmobile.ui.components.ServerRackAnimation
@@ -175,13 +177,13 @@ private fun VersionSelectionView(
 
         Column(modifier = Modifier.padding(bottom = 12.dp)) {
             Text(
-                text = "Rollback $appName",
+                text = stringResource(R.string.rollback_title_fmt, appName),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = "Select Previous Version",
+                text = stringResource(R.string.rollback_select_version),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -195,7 +197,7 @@ private fun VersionSelectionView(
             error != null -> {
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     Text(
-                        text = "Failed to load versions:\n$error",
+                        text = stringResource(R.string.rollback_load_failed, error),
                         color = MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyLarge
@@ -205,7 +207,7 @@ private fun VersionSelectionView(
             versions.isEmpty() -> {
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     Text(
-                        text = "No previous versions available to rollback to.",
+                        text = stringResource(R.string.rollback_no_versions),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -287,13 +289,13 @@ private fun VersionSelectionView(
                                 .padding(vertical = 12.dp)
                         ) {
                             Text(
-                                text = "Rollback Snapshot",
+                                text = stringResource(R.string.rollback_snapshot),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "Restore the dataset snapshot taken at the time of upgrade",
+                                text = stringResource(R.string.rollback_snapshot_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -324,7 +326,7 @@ private fun VersionSelectionView(
             ) {
                 Icon(Icons.Default.Close, null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Cancel")
+                Text(stringResource(R.string.common_cancel))
             }
             Button(
                 onClick = onConfirm,
@@ -340,7 +342,7 @@ private fun VersionSelectionView(
             ) {
                 Icon(Icons.Default.Restore, null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Rollback")
+                Text(stringResource(R.string.rollback_snapshot))
             }
         }
     }
@@ -393,9 +395,9 @@ private fun RollingBackView(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = when (state) {
-                        "done" -> "Rollback Complete"
-                        "failed" -> "Rollback Failed"
-                        else -> "Rolling back $appName"
+                        "done" -> stringResource(R.string.rollback_complete)
+                        "failed" -> stringResource(R.string.rollback_wrong)
+                        else -> stringResource(R.string.rollback_in_progress, appName)
                     },
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
@@ -408,9 +410,9 @@ private fun RollingBackView(
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = when (state) {
-                        "done" -> "Successfully restored to $targetVersion"
-                        "failed" -> "Something went wrong during the rollback."
-                        else -> description ?: "Restoring to $targetVersion..."
+                        "done" -> stringResource(R.string.rollback_restored, targetVersion)
+                        "failed" -> stringResource(R.string.rollback_wrong)
+                        else -> description ?: stringResource(R.string.rollback_restoring, targetVersion)
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

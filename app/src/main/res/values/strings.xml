@@ -1270,4 +1270,24 @@
     <string name="mkinstall_collection_desc">Appends natively via backend blocks</string>
     <string name="mkinstall_raw_hint">(%1$s) raw syntax entry…</string>
     <string name="mkinstall_deploy">Deploy instance: %1$s</string>
+
+    <!-- Upgrade / rollback -->
+    <string name="upgrade_complete">Upgrade Complete</string>
+    <string name="upgrade_failed">Upgrade Failed</string>
+    <string name="upgrade_in_progress">Upgrading %1$s</string>
+    <string name="upgrade_all_done">All done! Taking you back…</string>
+    <string name="upgrade_wrong">Something went wrong during the upgrade</string>
+    <string name="upgrade_wait">Please wait, this may take a moment</string>
+    <string name="rollback_title_fmt">Rollback %1$s</string>
+    <string name="rollback_select_version">Select Previous Version</string>
+    <string name="rollback_load_failed">Failed to load versions:\n%1$s</string>
+    <string name="rollback_no_versions">No previous versions available to rollback to.</string>
+    <string name="rollback_snapshot">Rollback Snapshot</string>
+    <string name="rollback_snapshot_desc">Restore the dataset snapshot taken at the time of upgrade</string>
+    <string name="rollback_complete">Rollback Complete</string>
+    <string name="rollback_in_progress">Rolling back %1$s</string>
+    <string name="rollback_all_done">All done! Taking you back…</string>
+    <string name="rollback_wrong">Something went wrong during the rollback</string>
+    <string name="rollback_restored">Successfully restored to %1$s</string>
+    <string name="rollback_restoring">Restoring to %1$s…</string>
 </resources>

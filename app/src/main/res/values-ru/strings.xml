@@ -1282,4 +1282,24 @@
     <string name="mkinstall_collection_desc">Добавляется напрямую через блоки backend</string>
     <string name="mkinstall_raw_hint">(%1$s) запись в raw-синтаксисе…</string>
     <string name="mkinstall_deploy">Развернуть экземпляр: %1$s</string>
+
+    <!-- Upgrade / rollback -->
+    <string name="upgrade_complete">Обновление завершено</string>
+    <string name="upgrade_failed">Ошибка обновления</string>
+    <string name="upgrade_in_progress">Обновление %1$s</string>
+    <string name="upgrade_all_done">Готово! Возвращаемся…</string>
+    <string name="upgrade_wrong">Во время обновления произошла ошибка</string>
+    <string name="upgrade_wait">Пожалуйста, подождите, это может занять время</string>
+    <string name="rollback_title_fmt">Откат %1$s</string>
+    <string name="rollback_select_version">Выберите предыдущую версию</string>
+    <string name="rollback_load_failed">Не удалось загрузить версии:\n%1$s</string>
+    <string name="rollback_no_versions">Нет предыдущих версий для отката.</string>
+    <string name="rollback_snapshot">Откат к снимку</string>
+    <string name="rollback_snapshot_desc">Восстановить снимок набора данных, созданный при обновлении</string>
+    <string name="rollback_complete">Откат завершён</string>
+    <string name="rollback_in_progress">Откат %1$s</string>
+    <string name="rollback_all_done">Готово! Возвращаемся…</string>
+    <string name="rollback_wrong">Во время отката произошла ошибка</string>
+    <string name="rollback_restored">Восстановление на %1$s выполнено</string>
+    <string name="rollback_restoring">Восстановление на %1$s…</string>
 </resources>
