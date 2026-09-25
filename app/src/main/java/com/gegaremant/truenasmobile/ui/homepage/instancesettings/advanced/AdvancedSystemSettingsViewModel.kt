@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
+import com.gegaremant.truenasmobile.ui.components.ToastManager
+import com.gegaremant.truenasmobile.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -121,7 +123,7 @@ class AdvancedSystemSettingsViewModel(
                     )
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, isRefreshing = false, error = e.message ?: "Unknown error") }
+                _uiState.update { it.copy(isLoading = false, isRefreshing = false, error = e.message ?: ToastManager.resolveString(R.string.common_unknown_error)) }
             }
         }
     }

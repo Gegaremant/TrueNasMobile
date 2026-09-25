@@ -41,10 +41,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.components.ExpressiveFAB
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -63,14 +65,22 @@ fun AdvancedSystemSettingsScreen(
     val uiState by vm.uiState.collectAsState()
     val scrollState = rememberScrollState()
     val isFabVisible = !scrollState.isScrollInProgress
+    val enabled = stringResource(R.string.common_enabled)
+    val disabled = stringResource(R.string.common_disabled)
+    val yes = stringResource(R.string.common_yes)
+    val no = stringResource(R.string.common_no)
+    val noneVal = stringResource(R.string.common_none)
+    val dash = stringResource(R.string.common_dash)
+    val notConfigured = stringResource(R.string.generalsettings_not_configured)
+    val notSet = stringResource(R.string.network_not_set)
 
     LaunchedEffect(Unit) { vm.loadAll() }
 
     Scaffold(
         topBar = {
             UnifiedScreenHeader(
-                title = "Advanced Settings",
-                subtitle = "System advanced configuration",
+                title = stringResource(R.string.advancedsettings_title),
+                subtitle = stringResource(R.string.advancedsettings_subtitle),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = uiState.error,
@@ -90,7 +100,7 @@ fun AdvancedSystemSettingsScreen(
         }
     ) { innerPadding ->
         when {
-            uiState.isLoading -> LoadingScreen("Loading advanced settings...")
+            uiState.isLoading -> LoadingScreen(stringResource(R.string.advancedsettings_loading))
             uiState.config != null -> {
                 val config = uiState.config!!
                 PullToRefreshContent(
@@ -108,96 +118,96 @@ fun AdvancedSystemSettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
                     if (config.login_banner.isNotBlank() || config.motd.isNotBlank()) {
-                        ExpressiveSection(title = "Messaging", icon = Icons.Default.Mail) {
+                        ExpressiveSection(title = stringResource(R.string.advancedsettings_section_messaging), icon = Icons.Default.Mail) {
                             MessageBannerCard(loginBanner = config.login_banner, motd = config.motd)
                         }
                     }
 
-                    ExpressiveSection(title = "Console & Serial", icon = Icons.Default.Menu) {
+                    ExpressiveSection(title = stringResource(R.string.advancedsettings_section_console_serial), icon = Icons.Default.Menu) {
                         ExpressiveInfoCard {
-                            InfoRow(label = "Console Menu", value = if (config.consolemenu) "Enabled" else "Disabled")
+                            InfoRow(label = stringResource(R.string.attr_console_menu), value = if (config.consolemenu) enabled else disabled)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "Console Messages", value = if (config.consolemsg) "Enabled" else "Disabled")
+                            InfoRow(label = stringResource(R.string.attr_console_messages), value = if (config.consolemsg) enabled else disabled)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "Serial Console", value = if (config.serialconsole) "Enabled" else "Disabled")
+                            InfoRow(label = stringResource(R.string.attr_serial_console), value = if (config.serialconsole) enabled else disabled)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "Serial Port", value = config.serialport.ifEmpty { "—" })
+                            InfoRow(label = stringResource(R.string.attr_serial_port), value = config.serialport.ifEmpty { dash })
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "Serial Speed", value = config.serialspeed.ifEmpty { "—" })
+                            InfoRow(label = stringResource(R.string.attr_serial_speed), value = config.serialspeed.ifEmpty { dash })
                         }
                         // ❌ SectionEditButton removed
                     }
 
-                    ExpressiveSection(title = "Kernel & Debug", icon = Icons.Default.BugReport) {
+                    ExpressiveSection(title = stringResource(R.string.advancedsettings_section_kernel_debug), icon = Icons.Default.BugReport) {
                         ExpressiveInfoCard {
-                            InfoRow(label = "Debug Kernel", value = if (config.debugkernel) "Enabled" else "Disabled")
+                            InfoRow(label = stringResource(R.string.attr_debug_kernel), value = if (config.debugkernel) enabled else disabled)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "Kdump", value = if (config.kdump_enabled) "Enabled" else "Disabled")
+                            InfoRow(label = stringResource(R.string.attr_kdump), value = if (config.kdump_enabled) enabled else disabled)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "Autotune", value = if (config.autotune) "Enabled" else "Disabled")
+                            InfoRow(label = stringResource(R.string.attr_autotune), value = if (config.autotune) enabled else disabled)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "Advanced Mode", value = if (config.advancedmode) "Enabled" else "Disabled")
+                            InfoRow(label = stringResource(R.string.attr_advanced_mode), value = if (config.advancedmode) enabled else disabled)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "Extra Kernel Options", value = config.kernel_extra_options.ifEmpty { "None" })
+                            InfoRow(label = stringResource(R.string.attr_extra_kernel_options), value = config.kernel_extra_options.ifEmpty { noneVal })
                         }
                     }
 
-                    ExpressiveSection(title = "Syslog", icon = Icons.Default.Dns) {
+                    ExpressiveSection(title = stringResource(R.string.advancedsettings_section_syslog), icon = Icons.Default.Dns) {
                         ExpressiveInfoCard {
-                            InfoRow(label = "Syslog Level", value = config.sysloglevel.ifEmpty { "—" })
+                            InfoRow(label = stringResource(R.string.attr_syslog_level), value = config.sysloglevel.ifEmpty { dash })
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "FQDN in Syslog", value = if (config.fqdn_syslog) "Yes" else "No")
+                            InfoRow(label = stringResource(R.string.attr_fqdn_syslog), value = if (config.fqdn_syslog) yes else no)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                             InfoRow(
-                                label = "Syslog Audit",
+                                label = stringResource(R.string.attr_syslog_audit),
                                 value = when (config.syslog_audit) {
-                                    true -> "Enabled"
-                                    false -> "Disabled"
-                                    null -> "Not configured"
+                                    true -> enabled
+                                    false -> disabled
+                                    null -> notConfigured
                                 }
                             )
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                             val serverCount = config.syslogservers?.size ?: 0
-                            InfoRow(label = "Syslog Servers", value = if (serverCount > 0) "$serverCount configured" else "None")
+                            InfoRow(label = stringResource(R.string.attr_syslog_servers), value = if (serverCount > 0) stringResource(R.string.advancedsettings_servers_configured, serverCount) else noneVal)
                         }
                     }
 
-                    ExpressiveSection(title = "Crash Reporting", icon = Icons.Default.Report) {
+                    ExpressiveSection(title = stringResource(R.string.advancedsettings_section_crash_reporting), icon = Icons.Default.Report) {
                         ExpressiveInfoCard {
-                            InfoRow(label = "Traceback", value = if (config.traceback) "Enabled" else "Disabled")
+                            InfoRow(label = stringResource(R.string.attr_traceback), value = if (config.traceback) enabled else disabled)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "Upload Crashes", value = if (config.uploadcrash) "Enabled" else "Disabled")
+                            InfoRow(label = stringResource(R.string.attr_upload_crashes), value = if (config.uploadcrash) enabled else disabled)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "Anonymous Stats", value = if (config.anonstats) "Enabled" else "Disabled")
+                            InfoRow(label = stringResource(R.string.attr_anon_stats), value = if (config.anonstats) enabled else disabled)
                         }
                     }
 
-                    ExpressiveSection(title = "GPU Isolation", icon = Icons.Default.DeveloperBoard) {
+                    ExpressiveSection(title = stringResource(R.string.advancedsettings_section_gpu_isolation), icon = Icons.Default.DeveloperBoard) {
                         ExpressiveInfoCard {
                             val gpuCount = config.isolated_gpu_pci_ids.size
-                            InfoRow(label = "Isolated GPUs", value = if (gpuCount > 0) "$gpuCount GPU(s) isolated" else "None")
+                            InfoRow(label = stringResource(R.string.attr_isolated_gpus), value = if (gpuCount > 0) stringResource(R.string.advancedsettings_gpu_isolated, gpuCount) else noneVal)
                         }
                     }
 
-                    ExpressiveSection(title = "Power", icon = Icons.Default.PowerSettingsNew) {
+                    ExpressiveSection(title = stringResource(R.string.advancedsettings_section_power), icon = Icons.Default.PowerSettingsNew) {
                         ExpressiveInfoCard {
-                            InfoRow(label = "Power Daemon", value = if (config.powerdaemon) "Enabled" else "Disabled")
+                            InfoRow(label = stringResource(R.string.attr_power_daemon), value = if (config.powerdaemon) enabled else disabled)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "Boot Scrub", value = "${config.boot_scrub}")
+                            InfoRow(label = stringResource(R.string.attr_boot_scrub), value = "${config.boot_scrub}")
                         }
                     }
 
-                    ExpressiveSection(title = "SED", icon = Icons.Default.Key) {
+                    ExpressiveSection(title = stringResource(R.string.advancedsettings_section_sed), icon = Icons.Default.Key) {
                         ExpressiveInfoCard {
-                            InfoRow(label = "SED User", value = config.sed_user.ifEmpty { "—" })
+                            InfoRow(label = stringResource(R.string.attr_sed_user), value = config.sed_user.ifEmpty { dash })
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow(label = "SED Password Set", value = if (uiState.sedPasswordIsSet) "Yes" else "No")
+                            InfoRow(label = stringResource(R.string.attr_sed_password_set), value = if (uiState.sedPasswordIsSet) yes else no)
                         }
                     }
 
-                    ExpressiveSection(title = "Storage", icon = Icons.Default.SdStorage) {
+                    ExpressiveSection(title = stringResource(R.string.advancedsettings_section_storage), icon = Icons.Default.SdStorage) {
                         ExpressiveInfoCard {
-                            InfoRow(label = "Overprovision", value = config.overprovision?.toString() ?: "Not set")
+                            InfoRow(label = stringResource(R.string.attr_overprovision), value = config.overprovision?.toString() ?: notSet)
                         }
                     }
                     Spacer(modifier = Modifier.height(64.dp))
@@ -230,7 +240,7 @@ private fun MessageBannerCard(loginBanner: String, motd: String) {
                     )
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            "Login Banner",
+                            stringResource(R.string.attr_login_banner),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -252,7 +262,7 @@ private fun MessageBannerCard(loginBanner: String, motd: String) {
                     )
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            "Message of the Day",
+                            stringResource(R.string.attr_message_of_the_day),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer

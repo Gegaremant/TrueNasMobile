@@ -54,10 +54,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -74,12 +77,13 @@ fun AdvancedSystemSettingsEditScreen(
     )
     val uiState by vm.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) { vm.loadAll() }
 
     LaunchedEffect(uiState.saveSuccess) {
         if (uiState.saveSuccess) {
-            snackbarHostState.showSnackbar("Settings saved successfully")
+            snackbarHostState.showSnackbar(context.getString(R.string.toast_settings_saved))
             onNavigateBack()
         }
     }
@@ -156,7 +160,7 @@ fun AdvancedSystemSettingsEditScreen(
                         ) {
                             Icon(Icons.Default.Cancel, contentDescription = null, modifier = Modifier.size(20.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Discard", fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.common_discard), fontWeight = FontWeight.SemiBold)
                         }
                         Button(
                             onClick = {
@@ -199,7 +203,7 @@ fun AdvancedSystemSettingsEditScreen(
                             } else {
                                 Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(20.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Save Changes", fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.common_save_changes), fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -209,8 +213,8 @@ fun AdvancedSystemSettingsEditScreen(
     ) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(bottom = innerPadding.calculateBottomPadding())) {
             UnifiedScreenHeader(
-                title = "Edit Advanced Settings",
-                subtitle = "Modify system advanced configuration",
+                title = stringResource(R.string.advancedsettings_edit_title),
+                subtitle = stringResource(R.string.advancedsettings_edit_subtitle),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = null,
@@ -219,7 +223,7 @@ fun AdvancedSystemSettingsEditScreen(
                 onBackPressed = onNavigateBack
             )
             when {
-                uiState.isLoading -> LoadingScreen("Loading advanced settings...")
+                uiState.isLoading -> LoadingScreen(stringResource(R.string.advancedsettings_loading))
                 config != null -> {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -227,16 +231,16 @@ fun AdvancedSystemSettingsEditScreen(
                         verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
                         item {
-                            ExpressiveSection(title = "Console & Serial", icon = Icons.Default.Menu) {
+                            ExpressiveSection(title = stringResource(R.string.advancedsettings_section_console_serial), icon = Icons.Default.Menu) {
                                 ExpressiveInfoCard {
-                                    ToggleRow("Console Menu", "Show console menu on boot", consolemenu) { consolemenu = it }
+                                    ToggleRow(stringResource(R.string.attr_console_menu), stringResource(R.string.advancedsettings_console_menu_desc), consolemenu) { consolemenu = it }
                                     Spacer(Modifier.height(12.dp))
-                                    ToggleRow("Console Messages", "Show console messages on display", consolemsg) { consolemsg = it }
+                                    ToggleRow(stringResource(R.string.attr_console_messages), stringResource(R.string.advancedsettings_console_msg_display_desc), consolemsg) { consolemsg = it }
                                     Spacer(Modifier.height(12.dp))
-                                    ToggleRow("Serial Console", "Enable serial console access", serialconsole) { serialconsole = it }
+                                    ToggleRow(stringResource(R.string.attr_serial_console), stringResource(R.string.advancedsettings_serial_console_desc), serialconsole) { serialconsole = it }
                                     Spacer(Modifier.height(12.dp))
                                     SearchableDropdown(
-                                        label = "Serial Port",
+                                        label = stringResource(R.string.attr_serial_port),
                                         selectedKey = selectedSerialPort,
                                         choices = uiState.serialPortChoices,
                                         isLoading = uiState.serialPortChoices.isEmpty() && uiState.isLoading,
@@ -244,7 +248,7 @@ fun AdvancedSystemSettingsEditScreen(
                                     )
                                     Spacer(Modifier.height(12.dp))
                                     SearchableDropdown(
-                                        label = "Serial Speed",
+                                        label = stringResource(R.string.attr_serial_speed),
                                         selectedKey = selectedSerialSpeed,
                                         choices = serialSpeedOptions,
                                         isLoading = false,
@@ -255,20 +259,20 @@ fun AdvancedSystemSettingsEditScreen(
                         }
 
                         item {
-                            ExpressiveSection(title = "Kernel & Debug", icon = Icons.Default.BugReport) {
+                            ExpressiveSection(title = stringResource(R.string.advancedsettings_section_kernel_debug), icon = Icons.Default.BugReport) {
                                 ExpressiveInfoCard {
-                                    ToggleRow("Debug Kernel", "Enable debug kernel settings", debugkernel) { debugkernel = it }
+                                    ToggleRow(stringResource(R.string.attr_debug_kernel), stringResource(R.string.advancedsettings_debug_kernel_desc), debugkernel) { debugkernel = it }
                                     Spacer(Modifier.height(12.dp))
-                                    ToggleRow("Kdump", "Enable kernel crash dumps", kdumpEnabled) { kdumpEnabled = it }
+                                    ToggleRow(stringResource(R.string.attr_kdump), stringResource(R.string.advancedsettings_kdump_desc), kdumpEnabled) { kdumpEnabled = it }
                                     Spacer(Modifier.height(12.dp))
-                                    ToggleRow("Autotune", "Automatically tune system settings", autotune) { autotune = it }
+                                    ToggleRow(stringResource(R.string.attr_autotune), stringResource(R.string.advancedsettings_autotune_desc), autotune) { autotune = it }
                                     Spacer(Modifier.height(12.dp))
-                                    ToggleRow("Advanced Mode", "Show advanced options in UI", advancedmode) { advancedmode = it }
+                                    ToggleRow(stringResource(R.string.attr_advanced_mode), stringResource(R.string.advancedsettings_advanced_mode_desc), advancedmode) { advancedmode = it }
                                     Spacer(Modifier.height(12.dp))
                                     OutlinedTextField(
                                         value = kernelExtraOptions,
                                         onValueChange = { kernelExtraOptions = it },
-                                        label = { Text("Extra Kernel Options") },
+                                        label = { Text(stringResource(R.string.attr_extra_kernel_options)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = false,
                                         minLines = 2,
@@ -279,14 +283,14 @@ fun AdvancedSystemSettingsEditScreen(
                         }
 
                         item {
-                            ExpressiveSection(title = "Syslog", icon = Icons.Default.Dns) {
+                            ExpressiveSection(title = stringResource(R.string.advancedsettings_section_syslog), icon = Icons.Default.Dns) {
                                 ExpressiveInfoCard {
-                                    ToggleRow("FQDN in Syslog", "Include fully-qualified domain name", fqdnSyslog) { fqdnSyslog = it }
+                                    ToggleRow(stringResource(R.string.attr_fqdn_syslog), stringResource(R.string.advancedsettings_fqdn_desc), fqdnSyslog) { fqdnSyslog = it }
                                     Spacer(Modifier.height(12.dp))
-                                    ToggleRow("Syslog Audit", "Enable audit logging to syslog", syslogAudit) { syslogAudit = it }
+                                    ToggleRow(stringResource(R.string.attr_syslog_audit), stringResource(R.string.advancedsettings_syslog_audit_desc), syslogAudit) { syslogAudit = it }
                                     Spacer(Modifier.height(12.dp))
                                     SearchableDropdown(
-                                        label = "Syslog Level",
+                                        label = stringResource(R.string.attr_syslog_level),
                                         selectedKey = selectedSyslogLevel,
                                         choices = syslogLevelOptions,
                                         isLoading = false,
@@ -294,7 +298,7 @@ fun AdvancedSystemSettingsEditScreen(
                                     )
                                     Spacer(Modifier.height(16.dp))
                                     Text(
-                                        "Syslog Servers",
+                                        stringResource(R.string.attr_syslog_servers),
                                         style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Medium,
                                         color = MaterialTheme.colorScheme.onSurface
@@ -309,17 +313,17 @@ fun AdvancedSystemSettingsEditScreen(
                                             OutlinedTextField(
                                                 value = server.host,
                                                 onValueChange = { newHost -> syslogServers[index] = server.copy(host = newHost) },
-                                                label = { Text("Host:Port") },
+                                                label = { Text(stringResource(R.string.advancedsettings_host_port)) },
                                                 modifier = Modifier.weight(1f),
                                                 singleLine = true,
                                                 shape = RoundedCornerShape(12.dp),
-                                                placeholder = { Text("syslog.example.com:514") }
+                                                placeholder = { Text(stringResource(R.string.advancedsettings_syslog_placeholder)) }
                                             )
                                             IconButton(
                                                 onClick = { syslogServers.removeAt(index) },
                                                 enabled = syslogServers.size > 1
                                             ) {
-                                                Icon(Icons.Default.Close, "Remove", tint = MaterialTheme.colorScheme.error)
+                                                Icon(Icons.Default.Close, stringResource(R.string.common_remove), tint = MaterialTheme.colorScheme.error)
                                             }
                                         }
                                     }
@@ -330,61 +334,61 @@ fun AdvancedSystemSettingsEditScreen(
                                     ) {
                                         Icon(Icons.Default.Add, null, modifier = Modifier.size(18.dp))
                                         Spacer(Modifier.width(8.dp))
-                                        Text("Add Server")
+                                        Text(stringResource(R.string.advancedsettings_add_server))
                                     }
                                 }
                             }
                         }
 
                         item {
-                            ExpressiveSection(title = "Messaging", icon = Icons.Default.Mail) {
+                            ExpressiveSection(title = stringResource(R.string.advancedsettings_section_messaging), icon = Icons.Default.Mail) {
                                 ExpressiveInfoCard {
                                     OutlinedTextField(
                                         value = loginBanner,
                                         onValueChange = { loginBanner = it },
-                                        label = { Text("Login Banner") },
+                                        label = { Text(stringResource(R.string.attr_login_banner)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = false,
                                         minLines = 2,
                                         shape = RoundedCornerShape(12.dp),
-                                        supportingText = { Text("Shown before login") }
+                                        supportingText = { Text(stringResource(R.string.advancedsettings_login_banner_desc)) }
                                     )
                                     Spacer(Modifier.height(12.dp))
                                     OutlinedTextField(
                                         value = motd,
                                         onValueChange = { motd = it },
-                                        label = { Text("Message of the Day") },
+                                        label = { Text(stringResource(R.string.attr_message_of_the_day)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = false,
                                         minLines = 2,
                                         shape = RoundedCornerShape(12.dp),
-                                        supportingText = { Text("Shown after login") }
+                                        supportingText = { Text(stringResource(R.string.advancedsettings_motd_desc)) }
                                     )
                                 }
                             }
                         }
 
                         item {
-                            ExpressiveSection(title = "Crash Reporting", icon = Icons.Default.Report) {
+                            ExpressiveSection(title = stringResource(R.string.advancedsettings_section_crash_reporting), icon = Icons.Default.Report) {
                                 ExpressiveInfoCard {
-                                    ToggleRow("Traceback", "Show traceback on errors", traceback) { traceback = it }
+                                    ToggleRow(stringResource(R.string.attr_traceback), stringResource(R.string.advancedsettings_traceback_desc), traceback) { traceback = it }
                                     Spacer(Modifier.height(12.dp))
-                                    ToggleRow("Upload Crashes", "Automatically upload crash reports", uploadcrash) { uploadcrash = it }
+                                    ToggleRow(stringResource(R.string.attr_upload_crashes), stringResource(R.string.advancedsettings_upload_desc), uploadcrash) { uploadcrash = it }
                                     Spacer(Modifier.height(12.dp))
-                                    ToggleRow("Anonymous Stats", "Collect anonymous usage statistics", anonstats) { anonstats = it }
+                                    ToggleRow(stringResource(R.string.attr_anon_stats), stringResource(R.string.advancedsettings_anon_stats_desc), anonstats) { anonstats = it }
                                 }
                             }
                         }
 
                         item {
-                            ExpressiveSection(title = "Power", icon = Icons.Default.PowerSettingsNew) {
+                            ExpressiveSection(title = stringResource(R.string.advancedsettings_section_power), icon = Icons.Default.PowerSettingsNew) {
                                 ExpressiveInfoCard {
-                                    ToggleRow("Power Daemon", "Enable power management daemon", powerdaemon) { powerdaemon = it }
+                                    ToggleRow(stringResource(R.string.attr_power_daemon), stringResource(R.string.advancedsettings_power_daemon_desc), powerdaemon) { powerdaemon = it }
                                     Spacer(Modifier.height(12.dp))
                                     OutlinedTextField(
                                         value = bootScrub,
                                         onValueChange = { bootScrub = it },
-                                        label = { Text("Boot Scrub Interval (days)") },
+                                        label = { Text(stringResource(R.string.advancedsettings_boot_scrub_interval)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -395,17 +399,17 @@ fun AdvancedSystemSettingsEditScreen(
                         }
 
                         item {
-                            ExpressiveSection(title = "Storage", icon = Icons.Default.SdStorage) {
+                            ExpressiveSection(title = stringResource(R.string.advancedsettings_section_storage), icon = Icons.Default.SdStorage) {
                                 ExpressiveInfoCard {
                                     OutlinedTextField(
                                         value = overprovision,
                                         onValueChange = { overprovision = it },
-                                        label = { Text("Overprovision (GB)") },
+                                        label = { Text(stringResource(R.string.advancedsettings_overprovision_gb)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                         shape = RoundedCornerShape(12.dp),
-                                        supportingText = { Text("Leave empty for default") }
+                                        supportingText = { Text(stringResource(R.string.advancedsettings_leave_empty_default)) }
                                     )
                                 }
                             }
@@ -449,7 +453,7 @@ private fun SearchableDropdown(
             onValueChange = { query = it; if (!expanded) expanded = true },
             readOnly = !expanded,
             label = { Text(label) },
-            placeholder = { Text("Search $label…") },
+            placeholder = { Text(stringResource(R.string.generalsettings_search_placeholder, label)) },
             leadingIcon = if (expanded) {
                 { Icon(Icons.Default.Search, contentDescription = null, modifier = Modifier.size(18.dp)) }
             } else null,
@@ -471,7 +475,7 @@ private fun SearchableDropdown(
             onDismissRequest = { expanded = false; query = "" }
         ) {
             if (filtered.isEmpty()) {
-                DropdownMenuItem(text = { Text("No matches") }, onClick = {}, enabled = false)
+                DropdownMenuItem(text = { Text(stringResource(R.string.generalsettings_no_matches)) }, onClick = {}, enabled = false)
             }
             filtered.take(200).forEach { (key, name) ->
                 DropdownMenuItem(

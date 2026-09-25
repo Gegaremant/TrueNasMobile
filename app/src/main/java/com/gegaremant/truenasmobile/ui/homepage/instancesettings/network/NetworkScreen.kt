@@ -40,9 +40,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.ExpressiveFAB
@@ -65,14 +67,18 @@ fun NetworkScreen(
     val uiState by vm.uiState.collectAsState()
     val scrollState = rememberScrollState()
     val isFabVisible = !scrollState.isScrollInProgress
+    val notConfigured = stringResource(R.string.network_not_configured)
+    val notSet = stringResource(R.string.network_not_set)
+    val enabled = stringResource(R.string.common_enabled)
+    val disabled = stringResource(R.string.common_disabled)
 
     LaunchedEffect(Unit) { vm.loadAll() }
 
     Scaffold(
         topBar = {
             UnifiedScreenHeader(
-                title = "Network",
-                subtitle = "Configuration and status",
+                title = stringResource(R.string.instconfig_network),
+                subtitle = stringResource(R.string.network_subtitle),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = uiState.error,
@@ -93,7 +99,7 @@ fun NetworkScreen(
         }
     ) { innerPadding ->
         when {
-            uiState.isLoading -> LoadingScreen("Loading network...")
+            uiState.isLoading -> LoadingScreen(stringResource(R.string.network_loading))
             uiState.summary != null && uiState.config != null -> {
                 PullToRefreshContent(
                     isRefreshing = uiState.isRefreshing,
@@ -111,7 +117,7 @@ fun NetworkScreen(
                 ) {
 
                     if (uiState.summary!!.ips.isNotEmpty()) {
-                        ExpressiveSection("Interfaces", Icons.Default.SettingsEthernet) {
+                        ExpressiveSection(stringResource(R.string.network_interfaces), Icons.Default.SettingsEthernet) {
                             uiState.summary!!.ips.forEach { (iface, ipInfo) ->
                                 InterfaceCard(iface, ipInfo)
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -121,10 +127,10 @@ fun NetworkScreen(
 
 
                     if (uiState.summary!!.defaultRoutes!!.isNotEmpty()) {
-                        ExpressiveSection("Default Routes", Icons.Default.Router) {
+                        ExpressiveSection(stringResource(R.string.network_default_routes), Icons.Default.Router) {
                             ExpressiveInfoCard {
                                 uiState.summary!!.defaultRoutes?.forEachIndexed { idx, route ->
-                                    InfoRow("Route $idx", route)
+                                    InfoRow(stringResource(R.string.network_route, idx), route)
                                     if (idx < uiState.summary!!.defaultRoutes!!.size - 1) {
                                         HorizontalDivider(
                                             modifier = Modifier.padding(vertical = 12.dp),
@@ -138,10 +144,10 @@ fun NetworkScreen(
 
 
                     if (uiState.summary!!.nameservers.isNotEmpty()) {
-                        ExpressiveSection("Nameservers", Icons.Default.Dns) {
+                        ExpressiveSection(stringResource(R.string.network_nameservers), Icons.Default.Dns) {
                             ExpressiveInfoCard {
                                 uiState.summary!!.nameservers.forEachIndexed { idx, ns ->
-                                    InfoRow("Server ${idx + 1}", ns)
+                                    InfoRow(stringResource(R.string.network_server_n, idx + 1), ns)
                                     if (idx < uiState.summary!!.nameservers.size - 1) {
                                         HorizontalDivider(
                                             modifier = Modifier.padding(vertical = 12.dp),
@@ -154,51 +160,51 @@ fun NetworkScreen(
                     }
 
 
-                    ExpressiveSection("Identity", Icons.Default.Public) {
+                    ExpressiveSection(stringResource(R.string.network_identity), Icons.Default.Public) {
                         ExpressiveInfoCard {
-                            InfoRow("Hostname", uiState.config!!.hostname)
+                            InfoRow(stringResource(R.string.network_hostname), uiState.config!!.hostname)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow("Hostname (local)", uiState.config!!.hostnameLocal?.ifEmpty { "Not configured" } ?: "Not configured")
+                            InfoRow(stringResource(R.string.network_hostname_local), uiState.config!!.hostnameLocal?.ifEmpty { notConfigured } ?: notConfigured)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow("Domain", uiState.config!!.domain)
+                            InfoRow(stringResource(R.string.network_domain), uiState.config!!.domain)
                         }
                     }
 
 
-                    ExpressiveSection("Gateways", Icons.Default.Router) {
+                    ExpressiveSection(stringResource(R.string.network_gateways), Icons.Default.Router) {
                         ExpressiveInfoCard {
-                            InfoRow("IPv4 Gateway", uiState.config!!.ipv4Gateway ?: "Not set")
+                            InfoRow(stringResource(R.string.network_ipv4_gateway), uiState.config!!.ipv4Gateway ?: notSet)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow("IPv6 Gateway", uiState.config!!.ipv6Gateway ?: "Not set")
+                            InfoRow(stringResource(R.string.network_ipv6_gateway), uiState.config!!.ipv6Gateway ?: notSet)
                         }
                     }
 
 
-                    ExpressiveSection("DNS Servers", Icons.Default.Language) {
+                    ExpressiveSection(stringResource(R.string.network_dns_servers), Icons.Default.Language) {
                         ExpressiveInfoCard {
-                            InfoRow("Nameserver 1", uiState.config!!.nameserver1 ?: "Not set")
+                            InfoRow(stringResource(R.string.network_nameserver_n, 1), uiState.config!!.nameserver1 ?: notSet)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow("Nameserver 2", uiState.config!!.nameserver2 ?: "Not set")
+                            InfoRow(stringResource(R.string.network_nameserver_n, 2), uiState.config!!.nameserver2 ?: notSet)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow("Nameserver 3", uiState.config!!.nameserver3 ?: "Not set")
+                            InfoRow(stringResource(R.string.network_nameserver_n, 3), uiState.config!!.nameserver3 ?: notSet)
                         }
                     }
 
 
                     if (!uiState.config!!.httpProxy.isNullOrBlank()) {
-                        ExpressiveSection("HTTP Proxy", Icons.Default.Visibility) {
+                        ExpressiveSection(stringResource(R.string.network_http_proxy), Icons.Default.Visibility) {
                             ExpressiveInfoCard {
-                                InfoRow("Proxy URL", uiState.config!!.httpProxy ?: "")
+                                InfoRow(stringResource(R.string.network_proxy_url), uiState.config!!.httpProxy ?: "")
                             }
                         }
                     }
 
 
                     if (uiState.config!!.domains.isNotEmpty()) {
-                        ExpressiveSection("Search Domains", Icons.Default.Language) {
+                        ExpressiveSection(stringResource(R.string.network_search_domains), Icons.Default.Language) {
                             ExpressiveInfoCard {
                                 uiState.config!!.domains.forEachIndexed { idx, domain ->
-                                    InfoRow("Domain", domain)
+                                    InfoRow(stringResource(R.string.network_domain), domain)
                                     if (idx < uiState.config!!.domains.size - 1) {
                                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                                     }
@@ -209,10 +215,10 @@ fun NetworkScreen(
 
 
                     if (uiState.config!!.hosts.isNotEmpty()) {
-                        ExpressiveSection("Static Hosts", Icons.Default.Shield) {
+                        ExpressiveSection(stringResource(R.string.network_static_hosts), Icons.Default.Shield) {
                             ExpressiveInfoCard {
                                 uiState.config!!.hosts.forEachIndexed { idx, host ->
-                                    InfoRow("Entry", host)
+                                    InfoRow(stringResource(R.string.network_entry), host)
                                     if (idx < uiState.config!!.hosts.size - 1) {
                                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                                     }
@@ -221,56 +227,56 @@ fun NetworkScreen(
                         }
                     }
 
-                    ExpressiveSection("Service Announcement", Icons.Default.Visibility) {
+                    ExpressiveSection(stringResource(R.string.network_service_announcement), Icons.Default.Visibility) {
                         ExpressiveInfoCard {
                             val sa = uiState.config!!.serviceAnnouncement
                             if (sa != null) {
-                                InfoRow("NetBIOS", if (sa.netbios == true) "Enabled" else "Disabled")
+                                InfoRow(stringResource(R.string.network_netbios), if (sa.netbios == true) enabled else disabled)
                                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                InfoRow("mDNS", if (sa.mdns == true) "Enabled" else "Disabled")
+                                InfoRow(stringResource(R.string.network_mdns), if (sa.mdns == true) enabled else disabled)
                                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                InfoRow("WSD", if (sa.wsd == true) "Enabled" else "Disabled")
+                                InfoRow(stringResource(R.string.network_wsd), if (sa.wsd == true) enabled else disabled)
                             } else {
-                                InfoRow("Status", "Not available")
+                                InfoRow(stringResource(R.string.network_status), stringResource(R.string.network_not_available))
                             }
                         }
                     }
 
-                    ExpressiveSection("Activity Filtering", Icons.Default.Shield) {
+                    ExpressiveSection(stringResource(R.string.network_activity_filtering), Icons.Default.Shield) {
                         ExpressiveInfoCard {
-                            InfoRow("Type", uiState.config!!.activity.type)
+                            InfoRow(stringResource(R.string.attr_type), uiState.config!!.activity.type)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow("Activities", if (uiState.config!!.activity.activities.isEmpty()) "None" else uiState.config!!.activity.activities.joinToString(", "))
+                            InfoRow(stringResource(R.string.network_activities), if (uiState.config!!.activity.activities.isEmpty()) stringResource(R.string.common_none) else uiState.config!!.activity.activities.joinToString(", "))
                         }
                     }
 
                     if (uiState.config!!.hostnameB != null || uiState.config!!.hostnameVirtual != null) {
-                        ExpressiveSection("HA Hostnames", Icons.Default.Public) {
+                        ExpressiveSection(stringResource(R.string.network_ha_hostnames), Icons.Default.Public) {
                             ExpressiveInfoCard {
-                                uiState.config!!.hostnameB?.let { InfoRow("Hostname B", it) }
+                                uiState.config!!.hostnameB?.let { InfoRow(stringResource(R.string.network_hostname_b), it) }
                                 if (uiState.config!!.hostnameB != null && uiState.config!!.hostnameVirtual != null) {
                                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                                 }
-                                uiState.config!!.hostnameVirtual?.let { InfoRow("Virtual Hostname", it) }
+                                uiState.config!!.hostnameVirtual?.let { InfoRow(stringResource(R.string.network_virtual_hostname), it) }
                             }
                         }
                     }
 
-                    ExpressiveSection("Current State", Icons.Default.CheckCircle) {
+                    ExpressiveSection(stringResource(R.string.network_current_state), Icons.Default.CheckCircle) {
                         ExpressiveInfoCard {
                             val st = uiState.config!!.state
-                            InfoRow("IPv4 Gateway", st.ipv4Gateway ?: "Not set")
+                            InfoRow(stringResource(R.string.network_ipv4_gateway), st.ipv4Gateway ?: notSet)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow("IPv6 Gateway", st.ipv6Gateway ?: "Not set")
+                            InfoRow(stringResource(R.string.network_ipv6_gateway), st.ipv6Gateway ?: notSet)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow("Nameserver 1", st.nameserver1 ?: "Not set")
+                            InfoRow(stringResource(R.string.network_nameserver_n, 1), st.nameserver1 ?: notSet)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow("Nameserver 2", st.nameserver2 ?: "Not set")
+                            InfoRow(stringResource(R.string.network_nameserver_n, 2), st.nameserver2 ?: notSet)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            InfoRow("Nameserver 3", st.nameserver3 ?: "Not set")
+                            InfoRow(stringResource(R.string.network_nameserver_n, 3), st.nameserver3 ?: notSet)
                             if (st.hosts.isNotEmpty()) {
                                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                InfoRow("Hosts", "${st.hosts.size} entries")
+                                InfoRow(stringResource(R.string.network_hosts), stringResource(R.string.network_hosts_entries, st.hosts.size))
                             }
                         }
                     }
@@ -322,7 +328,7 @@ private fun InterfaceCard(iface: String, ipInfo: System.NetworkGeneralSummaryIP)
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        "IPv4",
+                        stringResource(R.string.protocol_ipv4),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.SemiBold
@@ -340,7 +346,7 @@ private fun InterfaceCard(iface: String, ipInfo: System.NetworkGeneralSummaryIP)
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        "IPv6",
+                        stringResource(R.string.protocol_ipv6),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.SemiBold

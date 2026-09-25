@@ -41,8 +41,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -61,12 +64,13 @@ fun NetworkEditScreen(
     )
     val uiState by vm.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) { vm.loadAll() }
 
     LaunchedEffect(uiState.saveSuccess) {
         if (uiState.saveSuccess) {
-            snackbarHostState.showSnackbar("Network configuration saved")
+            snackbarHostState.showSnackbar(context.getString(R.string.toast_network_saved))
             onNavigateBack()
         }
     }
@@ -113,7 +117,7 @@ fun NetworkEditScreen(
                         ) {
                             Icon(Icons.Default.Cancel, contentDescription = null, modifier = Modifier.size(20.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Discard", fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
+                            Text(stringResource(R.string.common_discard), fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
                         }
                         Button(
                             onClick = {
@@ -143,7 +147,7 @@ fun NetworkEditScreen(
                             } else {
                                 Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(20.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Save Changes", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                                Text(stringResource(R.string.common_save_changes), fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
                             }
                         }
                     }
@@ -153,8 +157,8 @@ fun NetworkEditScreen(
     ) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(bottom = innerPadding.calculateBottomPadding())) {
             UnifiedScreenHeader(
-                title = "Edit Network",
-                subtitle = "Modify network configuration",
+                title = stringResource(R.string.network_edit_title),
+                subtitle = stringResource(R.string.network_edit_subtitle),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = null,
@@ -163,7 +167,7 @@ fun NetworkEditScreen(
                 onBackPressed = onNavigateBack
             )
             when {
-                uiState.isLoading -> LoadingScreen("Loading network...")
+                uiState.isLoading -> LoadingScreen(stringResource(R.string.network_loading))
                 config != null -> {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -171,12 +175,12 @@ fun NetworkEditScreen(
                         verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
                         item {
-                            ExpressiveSection("Identity", Icons.Default.Public) {
+                            ExpressiveSection(stringResource(R.string.network_identity), Icons.Default.Public) {
                                 ExpressiveInfoCard {
                                     OutlinedTextField(
                                         value = hostname,
                                         onValueChange = { hostname = it },
-                                        label = { Text("Hostname") },
+                                        label = { Text(stringResource(R.string.network_hostname)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp)
@@ -185,7 +189,7 @@ fun NetworkEditScreen(
                                     OutlinedTextField(
                                         value = domain,
                                         onValueChange = { domain = it },
-                                        label = { Text("Domain") },
+                                        label = { Text(stringResource(R.string.network_domain)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp)
@@ -195,12 +199,12 @@ fun NetworkEditScreen(
                         }
 
                         item {
-                            ExpressiveSection("Gateways", Icons.Default.Router) {
+                            ExpressiveSection(stringResource(R.string.network_gateways), Icons.Default.Router) {
                                 ExpressiveInfoCard {
                                     OutlinedTextField(
                                         value = ipv4Gateway,
                                         onValueChange = { ipv4Gateway = it },
-                                        label = { Text("IPv4 Gateway") },
+                                        label = { Text(stringResource(R.string.network_ipv4_gateway)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp)
@@ -209,7 +213,7 @@ fun NetworkEditScreen(
                                     OutlinedTextField(
                                         value = ipv6Gateway,
                                         onValueChange = { ipv6Gateway = it },
-                                        label = { Text("IPv6 Gateway") },
+                                        label = { Text(stringResource(R.string.network_ipv6_gateway)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp)
@@ -219,12 +223,12 @@ fun NetworkEditScreen(
                         }
 
                         item {
-                            ExpressiveSection("DNS Servers", Icons.Default.Language) {
+                            ExpressiveSection(stringResource(R.string.network_dns_servers), Icons.Default.Language) {
                                 ExpressiveInfoCard {
                                     OutlinedTextField(
                                         value = nameserver1,
                                         onValueChange = { nameserver1 = it },
-                                        label = { Text("Nameserver 1") },
+                                        label = { Text(stringResource(R.string.network_nameserver_n, 1)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp)
@@ -233,7 +237,7 @@ fun NetworkEditScreen(
                                     OutlinedTextField(
                                         value = nameserver2,
                                         onValueChange = { nameserver2 = it },
-                                        label = { Text("Nameserver 2") },
+                                        label = { Text(stringResource(R.string.network_nameserver_n, 2)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp)
@@ -242,7 +246,7 @@ fun NetworkEditScreen(
                                     OutlinedTextField(
                                         value = nameserver3,
                                         onValueChange = { nameserver3 = it },
-                                        label = { Text("Nameserver 3") },
+                                        label = { Text(stringResource(R.string.network_nameserver_n, 3)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp)
@@ -252,16 +256,16 @@ fun NetworkEditScreen(
                         }
 
                         item {
-                            ExpressiveSection("HTTP Proxy", Icons.Default.Visibility) {
+                            ExpressiveSection(stringResource(R.string.network_http_proxy), Icons.Default.Visibility) {
                                 ExpressiveInfoCard {
                                     OutlinedTextField(
                                         value = httpProxy,
                                         onValueChange = { httpProxy = it },
-                                        label = { Text("HTTP Proxy URL") },
+                                        label = { Text(stringResource(R.string.network_http_proxy_url)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp),
-                                        supportingText = { Text("Leave blank if not used") }
+                                        supportingText = { Text(stringResource(R.string.network_leave_blank)) }
                                     )
                                 }
                             }

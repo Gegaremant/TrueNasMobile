@@ -47,8 +47,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.annotation.StringRes
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 
@@ -89,8 +92,8 @@ fun InstanceConfigScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         UnifiedScreenHeader(
-            title = "Configuration",
-            subtitle = "Current TrueNAS instance Settings",
+            title = stringResource(R.string.instconfig_title),
+            subtitle = stringResource(R.string.instconfig_subtitle),
             isLoading = false,
             isRefreshing = false,
             error = null,
@@ -108,48 +111,48 @@ fun InstanceConfigScreen(
                 .padding(bottom = 16.dp)
         ) {
             InstanceConfigSection(
-                title = "Core configuration",
+                title = stringResource(R.string.instconfig_section_core),
                 items = listOf(
                     InstanceConfigItem(
                         icon = Icons.Default.Tune,
-                        name = "General settings",
-                        description = "Hostname, timezone, and base options",
+                        nameRes = R.string.instconfig_general,
+                        descRes = R.string.instconfig_general_desc,
                         onClick = onNavigateToGeneralSystemSettings
                     ),
                     InstanceConfigItem(
                         icon = Icons.Default.Bolt,
-                        name = "Advanced settings",
-                        description = "Sysctl, tunables, and developer options",
+                        nameRes = R.string.instconfig_advanced,
+                        descRes = R.string.instconfig_advanced_desc,
                         onClick = onNavigateToAdvancedSettings
                     ),
                     InstanceConfigItem(
                         icon = Icons.Default.Wifi,
-                        name = "Network",
-                        description = "Interfaces, routes, DNS, and configuration",
+                        nameRes = R.string.instconfig_network,
+                        descRes = R.string.instconfig_network_desc,
                         onClick = onNavigateToNetwork
                     ),
                     InstanceConfigItem(
                         icon = Icons.Default.PowerSettingsNew,
-                        name = "Boot",
-                        description = "Boot environments and boot pool",
+                        nameRes = R.string.instconfig_boot,
+                        descRes = R.string.instconfig_boot_desc,
                         onClick = onNavigateToBoot
                     ),
                     InstanceConfigItem(
                         icon = Icons.Default.Dns,
-                        name = "Services",
-                        description = "Manage and configure running services",
+                        nameRes = R.string.instconfig_services,
+                        descRes = R.string.instconfig_services_desc,
                         onClick = onNavigateToServices
                     ),
                     InstanceConfigItem(
                         icon = Icons.Default.People,
-                        name = "Users",
-                        description = "Manage local user accounts",
+                        nameRes = R.string.instconfig_users,
+                        descRes = R.string.instconfig_users_desc,
                         onClick = onNavigateToUsers
                     ),
                     InstanceConfigItem(
                         icon = Icons.Default.Key,
-                        name = "API Keys",
-                        description = "Manage API key access",
+                        nameRes = R.string.instconfig_api_keys,
+                        descRes = R.string.instconfig_api_keys_desc,
                         onClick = onNavigateToApiKeys
                     ),
 
@@ -159,12 +162,12 @@ fun InstanceConfigScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             InstanceConfigSection(
-                title = "App Management",
+                title = stringResource(R.string.instconfig_section_apps),
                 items = listOf(
                     InstanceConfigItem(
                         icon = Icons.Default.Image,
-                        name = "App Image Management",
-                        description = "View, pull, and delete Docker images",
+                        nameRes = R.string.instconfig_app_images,
+                        descRes = R.string.instconfig_app_images_desc,
                         onClick = onNavigateToAppImageManagement
                     )
                 )
@@ -173,24 +176,24 @@ fun InstanceConfigScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             InstanceConfigSection(
-                title = "Monitoring & compliance",
+                title = stringResource(R.string.instconfig_section_monitoring),
                 items = listOf(
                     InstanceConfigItem(
                         icon = Icons.Default.NotificationsActive,
-                        name = "Alert settings",
-                        description = "Notification levels and delivery",
+                        nameRes = R.string.instconfig_alert_settings,
+                        descRes = R.string.instconfig_alert_settings_desc,
                         onClick = onNavigateToAlertSettings
                     ),
                     InstanceConfigItem(
                         icon = Icons.Default.FactCheck,
-                        name = "Audit config",
-                        description = "Audit logging and retention settings",
+                        nameRes = R.string.instconfig_audit_config,
+                        descRes = R.string.instconfig_audit_config_desc,
                         onClick = onNavigateToAuditConfig
                     ),
                     InstanceConfigItem(
                         icon = Icons.Default.FactCheck,
-                        name = "Audit logs",
-                        description = "View and export audit entries",
+                        nameRes = R.string.instconfig_audit_logs,
+                        descRes = R.string.instconfig_audit_logs_desc,
                         onClick = onNavigateToAuditLogs
                     )
                 )
@@ -199,24 +202,24 @@ fun InstanceConfigScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             InstanceConfigSection(
-                title = "System information",
+                title = stringResource(R.string.instconfig_section_sysinfo),
                 items = listOf(
                     InstanceConfigItem(
                         icon = Icons.Default.Cloud,
-                        name = "TrueNAS Connect",
-                        description = "Configure the TrueNAS cloud connection",
+                        nameRes = R.string.instconfig_truenas_connect,
+                        descRes = R.string.instconfig_truenas_connect_desc,
                         onClick = onNavigateToTrueNasConnect
                     ),
                     InstanceConfigItem(
                         icon = Icons.Default.Insights,
-                        name = "TrueCommand",
-                        description = "Centralized instance management",
+                        nameRes = R.string.instconfig_truecommand,
+                        descRes = R.string.instconfig_truecommand_desc,
                         onClick = onNavigateToTrueCommand
                     ),
                     InstanceConfigItem(
                         icon = Icons.Default.Info,
-                        name = "System information",
-                        description = "Version, identifiers, state and features",
+                        nameRes = R.string.instconfig_system_information,
+                        descRes = R.string.instconfig_system_information_desc,
                         onClick = onNavigateToSystemInformation
                     )
                 )
@@ -285,7 +288,7 @@ private fun InstanceConfigCard(item: InstanceConfigItem) {
                 } else {
                     Icon(
                         imageVector = item.icon,
-                        contentDescription = item.name,
+                        contentDescription = stringResource(item.nameRes),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.size(24.dp)
                     )
@@ -298,14 +301,14 @@ private fun InstanceConfigCard(item: InstanceConfigItem) {
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = item.name,
+                    text = stringResource(item.nameRes),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = if (item.isLoading) "Processing..." else item.description,
+                    text = if (item.isLoading) stringResource(R.string.common_processing) else stringResource(item.descRes),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -332,8 +335,8 @@ private fun InstanceConfigCard(item: InstanceConfigItem) {
 
 data class InstanceConfigItem(
     val icon: ImageVector,
-    val name: String,
-    val description: String,
+    @StringRes val nameRes: Int,
+    @StringRes val descRes: Int,
     val onClick: () -> Unit,
     val isLoading: Boolean = false,
     val onToggle: ((Boolean) -> Unit)? = null,

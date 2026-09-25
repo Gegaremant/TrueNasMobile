@@ -50,10 +50,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -71,12 +74,13 @@ fun GeneralSystemSettingsEditScreen(
     )
     val uiState by vm.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) { vm.loadAll() }
 
     LaunchedEffect(uiState.saveSuccess) {
         if (uiState.saveSuccess) {
-            snackbarHostState.showSnackbar("Settings saved successfully")
+            snackbarHostState.showSnackbar(context.getString(R.string.toast_settings_saved))
             if (uiState.checkinWaiting != null) {
                 vm.doCheckin()
             }
@@ -137,7 +141,7 @@ fun GeneralSystemSettingsEditScreen(
                         ) {
                             Icon(Icons.Default.Cancel, contentDescription = null, modifier = Modifier.size(20.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Discard", fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.common_discard), fontWeight = FontWeight.SemiBold)
                         }
                         Button(
                             onClick = {
@@ -170,7 +174,7 @@ fun GeneralSystemSettingsEditScreen(
                             } else {
                                 Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(20.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Save Changes", fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.common_save_changes), fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -180,8 +184,8 @@ fun GeneralSystemSettingsEditScreen(
     ) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(bottom = innerPadding.calculateBottomPadding())) {
             UnifiedScreenHeader(
-                title = "Edit General Settings",
-                subtitle = "Modify system general configuration",
+                title = stringResource(R.string.generalsettings_edit_title),
+                subtitle = stringResource(R.string.generalsettings_edit_subtitle),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = null,
@@ -190,7 +194,7 @@ fun GeneralSystemSettingsEditScreen(
                 onBackPressed = onNavigateBack
             )
             when {
-                uiState.isLoading -> LoadingScreen("Loading settings...")
+                uiState.isLoading -> LoadingScreen(stringResource(R.string.generalsettings_edit_loading))
                 config != null -> {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -202,12 +206,12 @@ fun GeneralSystemSettingsEditScreen(
                         }
 
                         item {
-                            ExpressiveSection(title = "Web Interface", icon = Icons.Default.Visibility) {
+                            ExpressiveSection(title = stringResource(R.string.generalsettings_section_web_interface), icon = Icons.Default.Visibility) {
                                 ExpressiveInfoCard {
                                     OutlinedTextField(
                                         value = uiPort,
                                         onValueChange = { uiPort = it },
-                                        label = { Text("HTTP Port") },
+                                        label = { Text(stringResource(R.string.attr_http_port)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -217,7 +221,7 @@ fun GeneralSystemSettingsEditScreen(
                                     OutlinedTextField(
                                         value = uiHttpsPort,
                                         onValueChange = { uiHttpsPort = it },
-                                        label = { Text("HTTPS Port") },
+                                        label = { Text(stringResource(R.string.attr_https_port)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -225,8 +229,8 @@ fun GeneralSystemSettingsEditScreen(
                                     )
                                     Spacer(Modifier.height(12.dp))
                                     ToggleRow(
-                                        label = "HTTPS Redirect",
-                                        description = "Redirect HTTP traffic to HTTPS",
+                                        label = stringResource(R.string.attr_https_redirect),
+                                        description = stringResource(R.string.generalsettings_https_redirect_desc),
                                         checked = uiHttpsRedirect,
                                         onCheckedChange = { uiHttpsRedirect = it }
                                     )
@@ -234,16 +238,16 @@ fun GeneralSystemSettingsEditScreen(
                                     OutlinedTextField(
                                         value = selectedHttpsProtocols,
                                         onValueChange = { selectedHttpsProtocols = it },
-                                        label = { Text("HTTPS Protocols") },
+                                        label = { Text(stringResource(R.string.attr_https_protocols)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp),
-                                        supportingText = { Text("e.g. TLSv1.2, TLSv1.3") }
+                                        supportingText = { Text(stringResource(R.string.generalsettings_https_protocols_hint)) }
                                     )
                                     Spacer(Modifier.height(12.dp))
                                     ToggleRow(
-                                        label = "Console Messages",
-                                        description = "Show console messages on the UI",
+                                        label = stringResource(R.string.attr_console_messages),
+                                        description = stringResource(R.string.generalsettings_console_msg_desc),
                                         checked = uiConsoleMsg,
                                         onCheckedChange = { uiConsoleMsg = it }
                                     )
@@ -251,57 +255,57 @@ fun GeneralSystemSettingsEditScreen(
                                     OutlinedTextField(
                                         value = uiXFrameOptions,
                                         onValueChange = { uiXFrameOptions = it },
-                                        label = { Text("X-Frame-Options") },
+                                        label = { Text(stringResource(R.string.attr_x_frame_options)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp),
-                                        supportingText = { Text("SAMEORIGIN, DENY, or ALLOWALL") }
+                                        supportingText = { Text(stringResource(R.string.generalsettings_xframe_hint)) }
                                     )
                                 }
                             }
                         }
 
                         item {
-                            ExpressiveSection(title = "Network Addresses", icon = Icons.Default.SettingsEthernet) {
+                            ExpressiveSection(title = stringResource(R.string.generalsettings_section_network_addresses), icon = Icons.Default.SettingsEthernet) {
                                 ExpressiveInfoCard {
                                     OutlinedTextField(
                                         value = uiAddressText,
                                         onValueChange = { uiAddressText = it },
-                                        label = { Text("IPv4 Addresses") },
+                                        label = { Text(stringResource(R.string.attr_ipv4_addresses)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp),
-                                        supportingText = { Text("Comma separated. Leave empty for all (0.0.0.0)") }
+                                        supportingText = { Text(stringResource(R.string.generalsettings_ipv4_hint)) }
                                     )
                                     Spacer(Modifier.height(12.dp))
                                     OutlinedTextField(
                                         value = uiV6AddressText,
                                         onValueChange = { uiV6AddressText = it },
-                                        label = { Text("IPv6 Addresses") },
+                                        label = { Text(stringResource(R.string.attr_ipv6_addresses)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp),
-                                        supportingText = { Text("Comma separated. Leave empty for all (::)") }
+                                        supportingText = { Text(stringResource(R.string.generalsettings_ipv6_hint)) }
                                     )
                                     Spacer(Modifier.height(12.dp))
                                     OutlinedTextField(
                                         value = uiAllowlistText,
                                         onValueChange = { uiAllowlistText = it },
-                                        label = { Text("Allow List") },
+                                        label = { Text(stringResource(R.string.attr_allow_list)) },
                                         modifier = Modifier.fillMaxWidth(),
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp),
-                                        supportingText = { Text("IPs allowed to access the web interface") }
+                                        supportingText = { Text(stringResource(R.string.generalsettings_allowlist_hint)) }
                                     )
                                 }
                             }
                         }
 
                         item {
-                            ExpressiveSection(title = "Localization", icon = Icons.Default.Language) {
+                            ExpressiveSection(title = stringResource(R.string.generalsettings_section_localization), icon = Icons.Default.Language) {
                                 ExpressiveInfoCard {
                                     SearchableDropdown(
-                                        label = "Timezone",
+                                        label = stringResource(R.string.attr_timezone),
                                         selectedKey = selectedTimezone,
                                         choices = uiState.timezoneChoices,
                                         isLoading = uiState.timezoneChoices.isEmpty() && uiState.isLoading,
@@ -309,7 +313,7 @@ fun GeneralSystemSettingsEditScreen(
                                     )
                                     Spacer(Modifier.height(12.dp))
                                     SearchableDropdown(
-                                        label = "Keyboard Map",
+                                        label = stringResource(R.string.attr_keyboard_map),
                                         selectedKey = selectedKbdMap,
                                         choices = uiState.kbdmapChoices,
                                         isLoading = uiState.kbdmapChoices.isEmpty() && uiState.isLoading,
@@ -320,11 +324,11 @@ fun GeneralSystemSettingsEditScreen(
                         }
 
                         item {
-                            ExpressiveSection(title = "Other", icon = Icons.Default.Security) {
+                            ExpressiveSection(title = stringResource(R.string.generalsettings_section_other), icon = Icons.Default.Security) {
                                 ExpressiveInfoCard {
                                     ToggleRow(
-                                        label = "DS Auth",
-                                        description = "Directory services authentication",
+                                        label = stringResource(R.string.attr_ds_auth),
+                                        description = stringResource(R.string.generalsettings_ds_auth_desc),
                                         checked = dsAuth,
                                         onCheckedChange = { dsAuth = it }
                                     )
@@ -342,7 +346,7 @@ fun GeneralSystemSettingsEditScreen(
 
 @Composable
 private fun RollbackInfoBanner(seconds: Int, onCheckIn: () -> Unit) {
-    ExpressiveSection(title = "Rollback Pending", icon = Icons.Default.Info) {
+    ExpressiveSection(title = stringResource(R.string.generalsettings_section_rollback), icon = Icons.Default.Info) {
         androidx.compose.material3.Card(
             colors = androidx.compose.material3.CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.4f)
@@ -356,13 +360,13 @@ private fun RollbackInfoBanner(seconds: Int, onCheckIn: () -> Unit) {
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        "UI changes require a restart",
+                        stringResource(R.string.generalsettings_rollback_restart),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onTertiaryContainer
                     )
                     Text(
-                        "Automatic rollback in ${seconds}s if unreachable.",
+                        stringResource(R.string.generalsettings_rollback_auto, seconds),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
                     )
@@ -371,7 +375,7 @@ private fun RollbackInfoBanner(seconds: Int, onCheckIn: () -> Unit) {
                 OutlinedButton(onClick = onCheckIn, shape = RoundedCornerShape(12.dp)) {
                     Icon(Icons.Default.CheckCircle, null, Modifier.size(16.dp))
                     Spacer(Modifier.width(4.dp))
-                    Text("Check in", style = MaterialTheme.typography.labelSmall)
+                    Text(stringResource(R.string.generalsettings_checkin), style = MaterialTheme.typography.labelSmall)
                 }
             }
         }
@@ -408,7 +412,7 @@ private fun SearchableDropdown(
             onValueChange = { query = it; if (!expanded) expanded = true },
             readOnly = !expanded,
             label = { Text(label) },
-            placeholder = { Text("Search $label…") },
+            placeholder = { Text(stringResource(R.string.generalsettings_search_placeholder, label)) },
             leadingIcon = if (expanded) {
                 { Icon(Icons.Default.Search, contentDescription = null, modifier = Modifier.size(18.dp)) }
             } else null,
@@ -430,7 +434,7 @@ private fun SearchableDropdown(
             onDismissRequest = { expanded = false; query = "" }
         ) {
             if (filtered.isEmpty()) {
-                DropdownMenuItem(text = { Text("No matches") }, onClick = {}, enabled = false)
+                DropdownMenuItem(text = { Text(stringResource(R.string.generalsettings_no_matches)) }, onClick = {}, enabled = false)
             }
             filtered.take(200).forEach { (key, name) ->
                 DropdownMenuItem(
