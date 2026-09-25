@@ -90,6 +90,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
@@ -103,6 +104,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Storage
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -200,7 +202,7 @@ fun DatasetExplorerScreen(
                     .padding(innerPadding)
             ) {
                 UnifiedScreenHeader(
-                    title = "Datasets",
+                    title = stringResource(R.string.dataset_title),
                     subtitle = poolName,
                     isLoading = uiState is DatasetExplorerViewModel.UiState.Loading,
                     isRefreshing = false,
@@ -222,7 +224,7 @@ fun DatasetExplorerScreen(
                     onViewModeChange = { viewMode = it }
                 )
                 when (val state = uiState) {
-                    is DatasetExplorerViewModel.UiState.Loading -> LoadingScreen("Loading Datasets…")
+                    is DatasetExplorerViewModel.UiState.Loading -> LoadingScreen(stringResource(R.string.dataset_loading))
                     is DatasetExplorerViewModel.UiState.Error -> {}
                     is DatasetExplorerViewModel.UiState.Success,
                     is DatasetExplorerViewModel.UiState.LoadingWithCache -> {
@@ -313,7 +315,7 @@ private fun DatasetToolbar(
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = onQueryChange,
-                    placeholder = { Text("Search datasets…") },
+                    placeholder = { Text(stringResource(R.string.dataset_search_placeholder)) },
                     leadingIcon = {
                         Icon(
                             Icons.Default.Search, null,
@@ -322,7 +324,7 @@ private fun DatasetToolbar(
                     },
                     trailingIcon = {
                         IconButton(onClick = onSearchToggle) {
-                            Icon(Icons.Default.Close, "Close search")
+                            Icon(Icons.Default.Close, stringResource(R.string.dataset_close_search_cd))
                         }
                     },
                     singleLine = true,
@@ -362,9 +364,9 @@ private fun DatasetToolbar(
                             ) {
                                 Text(
                                     text = when (mode) {
-                                        DatasetViewMode.TREE -> "Tree"
-                                        DatasetViewMode.LIST -> "List"
-                                        DatasetViewMode.GRID -> "Grid"
+                                        DatasetViewMode.TREE -> stringResource(R.string.dataset_view_tree)
+                                        DatasetViewMode.LIST -> stringResource(R.string.dataset_view_list)
+                                        DatasetViewMode.GRID -> stringResource(R.string.dataset_view_grid)
                                     },
                                     style = MaterialTheme.typography.labelSmall
                                 )
@@ -375,7 +377,7 @@ private fun DatasetToolbar(
                         checked = false,
                         onCheckedChange = { onSearchToggle() }
                     ) {
-                        Icon(Icons.Default.Search, "Search", modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.Search, stringResource(R.string.dataset_search_cd), modifier = Modifier.size(20.dp))
                     }
                 }
             }
@@ -529,7 +531,7 @@ private fun FlatListView(
     if (nodes.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
-                "No datasets found",
+                stringResource(R.string.dataset_empty),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyLarge
             )
@@ -719,7 +721,7 @@ private fun DatasetFabGroup(
                     ExtendedFloatingActionButton(
                         onClick = onDeleteDataset,
                         icon = { Icon(Icons.Default.Delete, null) },
-                        text = { Text("Delete Dataset") },
+                        text = { Text(stringResource(R.string.dataset_delete_title)) },
                         containerColor = MaterialTheme.colorScheme.errorContainer,
                         contentColor = MaterialTheme.colorScheme.onErrorContainer,
                         elevation = FloatingActionButtonDefaults.elevation(4.dp)
@@ -731,8 +733,8 @@ private fun DatasetFabGroup(
                     icon = { Icon(Icons.Default.Add, null) },
                     text = {
                         Text(
-                            if (selectedDataset != null) "Create Child Dataset"
-                            else "Create Dataset"
+                            if (selectedDataset != null) stringResource(R.string.dataset_create_child)
+                            else stringResource(R.string.dataset_create)
                         )
                     },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -762,12 +764,12 @@ private fun DatasetFabGroup(
                     ) {
                         Icon(
                             imageVector = if (isDetailsPanelExpanded) Icons.Default.FolderOpen else Icons.Default.Info,
-                            contentDescription = "Toggle Details",
+                            contentDescription = stringResource(R.string.dataset_toggle_details_cd),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = if (isDetailsPanelExpanded) "Hide Info" else "Show Info",
+                            text = if (isDetailsPanelExpanded) stringResource(R.string.dataset_hide_info) else stringResource(R.string.dataset_show_info),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -797,7 +799,7 @@ private fun DatasetFabGroup(
                 ) {
                     Icon(
                         Icons.Default.ExpandLess,
-                        contentDescription = "More Actions",
+                        contentDescription = stringResource(R.string.dataset_more_actions_cd),
                         tint = if (selectedDataset != null) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.rotate(arrowRotation)
                     )
@@ -995,7 +997,7 @@ fun DatasetDetailsPanel(
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        text = "Details",
+                        text = stringResource(R.string.dataset_details),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -1064,7 +1066,7 @@ fun DatasetSpaceDonutChart(
                     fontWeight = FontWeight.Black
                 )
                 Text(
-                    text = "Used",
+                    text = stringResource(R.string.dataset_used),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1075,8 +1077,8 @@ fun DatasetSpaceDonutChart(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.weight(1f)
         ) {
-            ChartLegendRow(color = primaryColor, title = "Allocated Used Space", value = usedStr)
-            ChartLegendRow(color = trackColor, title = "Available Free Space", value = availableStr)
+            ChartLegendRow(color = primaryColor, title = stringResource(R.string.dataset_allocated_used), value = usedStr)
+            ChartLegendRow(color = trackColor, title = stringResource(R.string.dataset_available_free), value = availableStr)
         }
     }
 }
@@ -1117,7 +1119,7 @@ private fun DatasetDetailsContent(
             ) {
                 Icon(Icons.Default.Folder, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
                 Column {
-                    Text("Mount Path", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.dataset_mount_path), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                     dataset.mountpoint?.let {
                         Text(
                             text = it,
@@ -1133,7 +1135,7 @@ private fun DatasetDetailsContent(
 
         // Storage Usage Visualization Group
         Text(
-            text = "Storage Capacity Breakdown",
+            text = stringResource(R.string.dataset_storage_breakdown),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -1152,7 +1154,7 @@ private fun DatasetDetailsContent(
 
         // Grid of Advanced System Parameter Cards
         Text(
-            text = "Dataset Parameters",
+            text = stringResource(R.string.dataset_params),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -1160,18 +1162,18 @@ private fun DatasetDetailsContent(
         )
 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-            ParamCard("Compression", dataset.compression.value ?: "N/A", Modifier.weight(1f))
-            ParamCard("Ratio", dataset.compressratio.value ?: "N/A", Modifier.weight(1f))
+            ParamCard(stringResource(R.string.dataset_compression), dataset.compression.value ?: stringResource(R.string.common_na), Modifier.weight(1f))
+            ParamCard(stringResource(R.string.dataset_ratio), dataset.compressratio.value ?: stringResource(R.string.common_na), Modifier.weight(1f))
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-            ParamCard("Deduplication", dataset.deduplication.value ?: "N/A", Modifier.weight(1f))
-            ParamCard("Sync Mode", dataset.sync.value ?: "N/A", Modifier.weight(1f))
+            ParamCard(stringResource(R.string.dataset_dedup), dataset.deduplication.value ?: stringResource(R.string.common_na), Modifier.weight(1f))
+            ParamCard(stringResource(R.string.dataset_sync_mode), dataset.sync.value ?: stringResource(R.string.common_na), Modifier.weight(1f))
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-            ParamCard("Read Only", dataset.readonly!!.value ?: "N/A", Modifier.weight(1f))
-            ParamCard("Encrypted", if (dataset.encrypted) "Yes" else "No", Modifier.weight(1f))
+            ParamCard(stringResource(R.string.dataset_read_only), dataset.readonly!!.value ?: stringResource(R.string.common_na), Modifier.weight(1f))
+            ParamCard(stringResource(R.string.dataset_encrypted), if (dataset.encrypted) stringResource(R.string.common_yes) else stringResource(R.string.common_no), Modifier.weight(1f))
         }
     }
 }
@@ -1212,13 +1214,13 @@ fun MobileSlideOverPanel(
                 IconButton(onClick = onDismiss) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Close Info Page"
+                        contentDescription = stringResource(R.string.dataset_close_info_cd)
                     )
                 }
                 Spacer(Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "Dataset Analytics",
+                        text = stringResource(R.string.dataset_analytics),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
@@ -1258,17 +1260,17 @@ fun CreateDatasetDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Create New Dataset") },
+        title = { Text(stringResource(R.string.dataset_create_new)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Dataset Name") },
+                    label = { Text(stringResource(R.string.dataset_name)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Text("Dataset Type", style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.dataset_type), style = MaterialTheme.typography.bodyMedium)
                 SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                     options.forEachIndexed { index, option ->
                         SegmentedButton(
@@ -1286,10 +1288,10 @@ fun CreateDatasetDialog(
             TextButton(
                 onClick = { onCreate(name, selectedOption) },
                 enabled = name.isNotBlank()
-            ) { Text("Create") }
+            ) { Text(stringResource(R.string.common_create)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         }
     )
 }
@@ -1298,14 +1300,14 @@ fun CreateDatasetDialog(
 fun DeleteDatasetDialog(onDismiss: () -> Unit, onDelete: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Delete Dataset") },
-        text = { Text("Are you sure you want to delete this dataset? This action cannot be undone.") },
+        title = { Text(stringResource(R.string.dataset_delete_title)) },
+        text = { Text(stringResource(R.string.dataset_delete_message)) },
         confirmButton = {
             TextButton(onClick = onDelete) {
-                Text("Delete", color = MaterialTheme.colorScheme.error)
+                Text(stringResource(R.string.common_delete), color = MaterialTheme.colorScheme.error)
             }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } }
     )
 }
 
@@ -1323,7 +1325,7 @@ fun EmptySelectionState() {
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            "Select a dataset",
+            stringResource(R.string.dataset_select),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -1352,7 +1354,7 @@ private fun NoDatasetsCard(poolName: String) {
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    "No Datasets",
+                    stringResource(R.string.dataset_none),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )

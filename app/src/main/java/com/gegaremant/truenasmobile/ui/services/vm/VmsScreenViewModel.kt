@@ -3,6 +3,7 @@ package com.gegaremant.truenasmobile.ui.services.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.utils.AppCache
@@ -134,13 +135,13 @@ class VmsScreenViewModel(
             when (val result = manager.vmService.startVmInstanceWithResult(id,overcommit)) {
                 is ApiResult.Success -> {
                     jobId = result.data
-                    ToastManager.showSuccess("Starting")
+                    ToastManager.showSuccessRes(R.string.vm_starting)
                     trackContainerOperation(id,jobId,"STARTING")
                     refresh()
                 }
                 is ApiResult.Error -> {
                     _uiState.update {
-                        it.copy(error = "Failed to start VM: ${result.message}")
+                        it.copy(error = ToastManager.resolveString(R.string.vm_start_failed, result.message ?: ""))
                     }
                 }
                 ApiResult.Loading -> {
@@ -160,13 +161,13 @@ class VmsScreenViewModel(
             when (val result = manager.vmService.stopVmInstanceWithResult(id, force,timeout)) {
                 is ApiResult.Success -> {
                     val jobID = result.data
-                    ToastManager.showSuccess("Stopping")
+                    ToastManager.showSuccessRes(R.string.vm_stopping)
                     trackContainerOperation(id,jobID,"STOPPING")
                     refresh()
                 }
                 is ApiResult.Error -> {
                     _uiState.update {
-                        it.copy(error = "Failed to stop VM: ${result.message}")
+                        it.copy(error = ToastManager.resolveString(R.string.vm_stop_failed, result.message ?: ""))
                     }
                 }
                 ApiResult.Loading -> {
@@ -186,13 +187,13 @@ class VmsScreenViewModel(
             when (val result = manager.vmService.restartVmInstanceWithResult(id)) {
                 is ApiResult.Success -> {
                     val jobID = result.data
-                    ToastManager.showSuccess("Restarting")
+                    ToastManager.showSuccessRes(R.string.vm_restarting)
                     trackContainerOperation(id,jobID,"RESTARTING")
                     refresh()
                 }
                 is ApiResult.Error -> {
                     _uiState.update {
-                        it.copy(error = "Failed to restart VM: ${result.message}")
+                        it.copy(error = ToastManager.resolveString(R.string.vm_restart_failed, result.message ?: ""))
                     }
                 }
                 ApiResult.Loading -> {
@@ -211,12 +212,12 @@ class VmsScreenViewModel(
         viewModelScope.launch {
             when (val result = manager.vmService.suspendVmInstanceWithResult(id)) {
                 is ApiResult.Success -> {
-                    ToastManager.showSuccess("Suspending")
+                    ToastManager.showSuccessRes(R.string.vm_suspending)
                     refresh()
                 }
                 is ApiResult.Error -> {
                     _uiState.update {
-                        it.copy(error = "Failed to suspend VM: ${result.message}")
+                        it.copy(error = ToastManager.resolveString(R.string.vm_suspend_failed, result.message ?: ""))
                     }
                 }
                 ApiResult.Loading -> {
@@ -235,12 +236,12 @@ class VmsScreenViewModel(
         viewModelScope.launch {
             when (val result = manager.vmService.resumeVmInstanceWithResult(id)) {
                 is ApiResult.Success -> {
-                    ToastManager.showSuccess("Resuming VM")
+                    ToastManager.showSuccessRes(R.string.vm_resuming)
                     refresh()
                 }
                 is ApiResult.Error -> {
                     _uiState.update {
-                        it.copy(error = "Failed to resume VM: ${result.message}")
+                        it.copy(error = ToastManager.resolveString(R.string.vm_resume_failed, result.message ?: ""))
                     }
                 }
                 ApiResult.Loading -> {
@@ -259,12 +260,12 @@ class VmsScreenViewModel(
         viewModelScope.launch {
             when (val result = manager.vmService.powerOffVmInstanceWithResult(id)) {
                 is ApiResult.Success -> {
-                    ToastManager.showSuccess("Starting Shutdown")
+                    ToastManager.showSuccessRes(R.string.vm_starting_shutdown)
                     refresh()
                 }
                 is ApiResult.Error -> {
                     _uiState.update {
-                        it.copy(error = "Failed to power off VM: ${result.message}")
+                        it.copy(error = ToastManager.resolveString(R.string.vm_shutdown_failed, result.message ?: ""))
                     }
                 }
                 ApiResult.Loading -> {

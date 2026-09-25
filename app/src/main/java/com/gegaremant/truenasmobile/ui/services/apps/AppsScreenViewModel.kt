@@ -10,6 +10,7 @@ import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.helpers.GlobalJobTracker
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
+import com.gegaremant.truenasmobile.ui.components.ToastManager
 import com.gegaremant.truenasmobile.ui.utils.AppCache
 import com.gegaremant.truenasmobile.data.models.Apps
 import com.gegaremant.truenasmobile.data.models.System
@@ -215,7 +216,7 @@ class AppsScreenViewModel(private val manager: TrueNASApiManager) : ViewModel() 
                 woken.add(app)
             } else {
                 _uiState.update {
-                    it.copy(error = "Started ${app.name} but it did not reach RUNNING; it will not be upgraded.")
+                    it.copy(error = ToastManager.resolveString(R.string.apps_started_not_running, app.name))
                 }
             }
         }
@@ -240,18 +241,18 @@ class AppsScreenViewModel(private val manager: TrueNASApiManager) : ViewModel() 
                             )
                         }
                         is ApiResult.Error -> {
-                            _uiState.update { it.copy(error = "Failed to upgrade $appName: ${result.message}") }
+                            _uiState.update { it.copy(error = ToastManager.resolveString(R.string.apps_upgrade_failed, appName, result.message ?: "")) }
                         }
                         else -> {}
                     }
                 }
                 is ApiResult.Error -> {
-                    _uiState.update { it.copy(error = "Failed to get latest version for $appName") }
+                    _uiState.update { it.copy(error = ToastManager.resolveString(R.string.apps_latest_version_failed, appName)) }
                 }
                 else -> {}
             }
         } catch (e: Exception) {
-            _uiState.update { it.copy(error = "Error upgrading $appName: ${e.message}") }
+            _uiState.update { it.copy(error = ToastManager.resolveString(R.string.apps_error_upgrading, appName, e.message ?: "")) }
         }
     }
     fun deleteApp(context: Context, appName: String, options: Apps.DeleteAppOptions = Apps.DeleteAppOptions()) {
@@ -373,7 +374,7 @@ class AppsScreenViewModel(private val manager: TrueNASApiManager) : ViewModel() 
                     it.copy(
                         isLoading = false,
                         isRefreshing = false,
-                        error = if (it.marketplaceApps.isEmpty()) e.message ?: "Failed to load apps" else null
+                        error = if (it.marketplaceApps.isEmpty()) e.message ?: ToastManager.resolveString(R.string.apps_load_failed) else null
                     )
                 }
             }
@@ -417,7 +418,7 @@ class AppsScreenViewModel(private val manager: TrueNASApiManager) : ViewModel() 
                     it.copy(
                         isLoading = false,
                         isRefreshing = false,
-                        error = if (it.apps.isEmpty()) e.message ?: "Failed to load apps" else null
+                        error = if (it.apps.isEmpty()) e.message ?: ToastManager.resolveString(R.string.apps_load_failed) else null
                     )
                 }
             }
@@ -440,7 +441,7 @@ class AppsScreenViewModel(private val manager: TrueNASApiManager) : ViewModel() 
                 }
                 is ApiResult.Error -> {
                     _uiState.update {
-                        it.copy(error = if (_uiState.value.apps.isEmpty()) result.message else "Failed to start $appName")
+                        it.copy(error = if (_uiState.value.apps.isEmpty()) result.message else ToastManager.resolveString(R.string.apps_start_failed, appName))
                     }
                 }
                 is ApiResult.Loading -> { /* action in progress; UI reflects via refresh */ }
@@ -457,7 +458,7 @@ class AppsScreenViewModel(private val manager: TrueNASApiManager) : ViewModel() 
                 }
                 is ApiResult.Error -> {
                     _uiState.update {
-                        it.copy(error = if (_uiState.value.apps.isEmpty()) result.message else "Failed to stop $appName")
+                        it.copy(error = if (_uiState.value.apps.isEmpty()) result.message else ToastManager.resolveString(R.string.apps_stop_failed, appName))
                     }
                 }
                 is ApiResult.Loading -> { /* action in progress; UI reflects via refresh */ }
@@ -518,7 +519,7 @@ class AppsScreenViewModel(private val manager: TrueNASApiManager) : ViewModel() 
                 _uiState.value = _uiState.value.copy(
                     isLoadingUpgradeSummaryForApp = appName,
                     upgradeSummaryResult = null,
-                    error = e.message ?: "Failed to load upgrade summary"
+                    error = e.message ?: ToastManager.resolveString(R.string.apps_upgrade_summary_failed)
                 )
             }
         }
@@ -562,7 +563,7 @@ class AppsScreenViewModel(private val manager: TrueNASApiManager) : ViewModel() 
                 _uiState.value = _uiState.value.copy(
                     isLoadingRollbackVersions = false,
                     rollbackVersions = emptyList(),
-                    error = e.message ?: "Failed to load rollback versions"
+                    error = e.message ?: ToastManager.resolveString(R.string.apps_rollback_versions_failed)
                 )
             }
         }

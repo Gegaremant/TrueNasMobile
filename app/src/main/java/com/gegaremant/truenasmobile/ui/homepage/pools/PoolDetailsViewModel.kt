@@ -3,6 +3,7 @@ package com.gegaremant.truenasmobile.ui.homepage.pools
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.JobState
@@ -43,7 +44,7 @@ class PoolDetailsViewModel(
             currentPoolId = pool.id
             PoolDataHolder.currentPool = null
         } else {
-            _uiState.value = PoolDetailsUiState.Error("Failed to load pool data. Please go back and try again.")
+            _uiState.value = PoolDetailsUiState.Error(ToastManager.resolveString(R.string.pooldetails_load_failed))
         }
         viewModelScope.launch {
             _jobStates.collect { jobs ->
@@ -65,7 +66,7 @@ class PoolDetailsViewModel(
     }
     fun getPoolDetails() {
         val id = currentPoolId ?: run {
-            _uiState.value = PoolDetailsUiState.Error("Pool ID not found. Cannot refresh.")
+            _uiState.value = PoolDetailsUiState.Error(ToastManager.resolveString(R.string.pooldetails_id_not_found))
             return
         }
 
@@ -89,7 +90,7 @@ class PoolDetailsViewModel(
                             )
                             currentPoolId = newPool.id
                         } else {
-                            _uiState.value = PoolDetailsUiState.Error("Failed to refresh pool data.")
+                            _uiState.value = PoolDetailsUiState.Error(ToastManager.resolveString(R.string.pooldetails_refresh_failed))
                         }
                     }
                     is ApiResult.Error -> {
@@ -98,7 +99,7 @@ class PoolDetailsViewModel(
                     ApiResult.Loading -> {}
                 }
             } catch (e: Exception) {
-                _uiState.value = PoolDetailsUiState.Error(e.message ?: "An unknown error occurred.")
+                _uiState.value = PoolDetailsUiState.Error(e.message ?: ToastManager.resolveString(R.string.pooldetails_error_occurred))
             }
         }
     }
@@ -125,7 +126,7 @@ class PoolDetailsViewModel(
                     }
                 }
             }catch (e: Exception){
-                _uiState.value = PoolDetailsUiState.Error(e.message ?: "An unknown error occurred.")
+                _uiState.value = PoolDetailsUiState.Error(e.message ?: ToastManager.resolveString(R.string.pooldetails_error_occurred))
             }
         }
     }
@@ -146,7 +147,7 @@ class PoolDetailsViewModel(
                     ApiResult.Loading -> {}
                 }
             } catch (e: Exception) {
-                _uiState.value = PoolDetailsUiState.Error(e.message ?: "An unknown error occurred.")
+                _uiState.value = PoolDetailsUiState.Error(e.message ?: ToastManager.resolveString(R.string.pooldetails_error_occurred))
             }
         }
     }
@@ -167,7 +168,7 @@ class PoolDetailsViewModel(
                     ApiResult.Loading -> {}
                 }
             } catch (e: Exception) {
-                _uiState.value = PoolDetailsUiState.Error(e.message ?: "An unknown error occurred.")
+                _uiState.value = PoolDetailsUiState.Error(e.message ?: ToastManager.resolveString(R.string.pooldetails_error_occurred))
             }
         }
     }
@@ -180,19 +181,19 @@ class PoolDetailsViewModel(
                 val result = apiManager.storage.runScrubTask(args)
                 when (result) {
                     is ApiResult.Success -> {
-                        ToastManager.showToast("Scrub task started successfully.")
+                        ToastManager.showToast(ToastManager.resolveString(R.string.pooldetails_scrub_started))
                         getScrubTasks()
                     }
                     is ApiResult.Error -> {
                         _uiState.update {
                             if (it is PoolDetailsUiState.Success) it.copy(isRefreshing = false) else it
                         }
-                        ToastManager.showToast("Scrub task started successfully.")
+                        ToastManager.showToast(ToastManager.resolveString(R.string.pooldetails_scrub_started))
                     }
                     ApiResult.Loading -> {}
                 }
             } catch (e: Exception) {
-                _uiState.value = PoolDetailsUiState.Error(e.message ?: "An unknown error occurred.")
+                _uiState.value = PoolDetailsUiState.Error(e.message ?: ToastManager.resolveString(R.string.pooldetails_error_occurred))
             }
         }
     }
@@ -204,7 +205,7 @@ class PoolDetailsViewModel(
                 when (result) {
                     is ApiResult.Success -> {
                         val jobId = result.data
-                        ToastManager.showToast("Action initiated for scrub task.")
+                        ToastManager.showToast(ToastManager.resolveString(R.string.pooldetails_action_initiated))
                         JobTracker.pollJobStatus(
                             jobId = jobId,
                             manager = apiManager,
@@ -228,7 +229,7 @@ class PoolDetailsViewModel(
                     ApiResult.Loading -> {}
                 }
             } catch (e: Exception) {
-                _uiState.value = PoolDetailsUiState.Error(e.message ?: "An unknown error occurred.")
+                _uiState.value = PoolDetailsUiState.Error(e.message ?: ToastManager.resolveString(R.string.pooldetails_error_occurred))
             }
         }
     }
@@ -255,7 +256,7 @@ class PoolDetailsViewModel(
                     ApiResult.Loading -> {}
                 }
             } catch (e: Exception) {
-                _uiState.value = PoolDetailsUiState.Error(e.message ?: "An unknown error occurred.")
+                _uiState.value = PoolDetailsUiState.Error(e.message ?: ToastManager.resolveString(R.string.pooldetails_error_occurred))
             }
         }
     }

@@ -59,6 +59,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -69,6 +70,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.JobState
 import com.gegaremant.truenasmobile.data.models.Storage
@@ -128,8 +130,8 @@ fun PoolDetailsScreen(
                 .padding(padding)
         ) {
             UnifiedScreenHeader(
-                title = "Pool Details",
-                subtitle = "${currentPool?.name ?: "Current"} Details",
+                title = stringResource(R.string.pooldetails_title),
+                subtitle = stringResource(R.string.pooldetails_subtitle_fmt, currentPool?.name ?: stringResource(R.string.pooldetails_subtitle_current)),
                 isLoading = isLoading,
                 isRefreshing = isRefreshing,
                 error = error,
@@ -140,7 +142,7 @@ fun PoolDetailsScreen(
             )
 
             when (val state = uiState) {
-                is PoolDetailsUiState.Loading -> LoadingScreen("Loading Pool Details...")
+                is PoolDetailsUiState.Loading -> LoadingScreen(stringResource(R.string.pooldetails_loading))
                 is PoolDetailsUiState.Error -> {}
                 is PoolDetailsUiState.Success -> PoolDetailsContent(
                     pool = state.pool,
@@ -198,8 +200,8 @@ private fun PoolDetailsContent(
     taskToDelete?.let { task ->
         AlertDialog(
             onDismissRequest = { taskToDelete = null },
-            title = { Text("Delete Scrub Task") },
-            text = { Text("Are you sure you want to delete this scrub task?") },
+            title = { Text(stringResource(R.string.pooldetails_delete_task_title)) },
+            text = { Text(stringResource(R.string.pooldetails_delete_task_message)) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -207,27 +209,27 @@ private fun PoolDetailsContent(
                         taskToDelete = null
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                ) { Text("Delete") }
+                ) { Text(stringResource(R.string.common_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = { taskToDelete = null }) { Text("Cancel") }
+                TextButton(onClick = { taskToDelete = null }) { Text(stringResource(R.string.common_cancel)) }
             }
         )
     }
     taskToRun?.let { task ->
         AlertDialog(
             onDismissRequest = { taskToRun = null },
-            title = { Text("Run Scrub Task") },
-            text = { Text("Are you sure you want to manually run the scrub task for pool '${task.pool_name}'?") },
+            title = { Text(stringResource(R.string.pooldetails_run_task_title)) },
+            text = { Text(stringResource(R.string.pooldetails_run_task_message, task.pool_name)) },
             confirmButton = {
                 Button(onClick = {
                     val args = Storage.RunPoolScrubArgs(name = task.pool_name, threshold = task.threshold)
                     onRunScrubTask(args)
                     taskToRun = null
-                }) { Text("Run") }
+                }) { Text(stringResource(R.string.pooldetails_run)) }
             },
             dismissButton = {
-                TextButton(onClick = { taskToRun = null }) { Text("Cancel") }
+                TextButton(onClick = { taskToRun = null }) { Text(stringResource(R.string.common_cancel)) }
             }
         )
     }
@@ -258,7 +260,7 @@ private fun PoolDetailsContent(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Browse Datasets")
+                Text(stringResource(R.string.pooldetails_browse_datasets))
             }
         }
 
@@ -334,7 +336,7 @@ private fun PoolInfoHeader(pool: Pool) {
                 )
 
                 Text(
-                    text = "${pool.status} • Total: ${pool.size!!.toGigabytesString()}",
+                    text = stringResource(R.string.pooldetails_total_fmt, pool.status, pool.size!!.toGigabytesString()),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
                     fontSize = 14.sp
@@ -390,7 +392,7 @@ private fun PoolStorageUsageCard(pool: Pool) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Storage Usage",
+                    text = stringResource(R.string.pooldetails_storage_usage),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -418,12 +420,12 @@ private fun PoolStorageUsageCard(pool: Pool) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    "Used: ${pool.allocated!!.toGigabytesString()}",
+                    stringResource(R.string.pooldetails_used_fmt, pool.allocated!!.toGigabytesString()),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    "Free: ${pool.free!!.toGigabytesString()}",
+                    stringResource(R.string.pooldetails_free_fmt, pool.free!!.toGigabytesString()),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -492,7 +494,7 @@ private fun PoolInfoRow(label: String, value: String) {
 
 @Composable
 private fun PoolStatusSection(pool: Pool) {
-    PoolInfoSection(title = "Status & Health", icon = Icons.Default.Info) {
+    PoolInfoSection(title = stringResource(R.string.pooldetails_status_health), icon = Icons.Default.Info) {
         val statusColor = when {
             !pool.healthy -> MaterialTheme.colorScheme.error
             pool.warning -> Color(0xFFF57C00)
@@ -539,15 +541,15 @@ private fun PoolStatusSection(pool: Pool) {
             }
         }
         Spacer(modifier = Modifier.height(12.dp))
-        PoolInfoRow("Fragmentation", pool.fragmentation!!)
-        PoolInfoRow("Autotrim", pool.autotrim?.value ?: "N/A")
+        PoolInfoRow(stringResource(R.string.attr_fragmentation), pool.fragmentation!!)
+        PoolInfoRow(stringResource(R.string.pooldetails_autotrim), pool.autotrim?.value ?: stringResource(R.string.pooldetails_na))
     }
 }
 
 @Composable
 private fun PoolScanSection(scan: PoolScan) {
     fun formatEpoch(timeMap: Map<String, Long>?): String {
-        val epochSeconds = timeMap?.get("\$date")?.div(1000) ?: return "N/A"
+        val epochSeconds = timeMap?.get("\$date")?.div(1000) ?: return stringResource(R.string.common_na)
         val dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.systemDefault())
         return dateTime.format(DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm"))
     }
@@ -564,12 +566,12 @@ private fun PoolScanSection(scan: PoolScan) {
         targetScanProgress = (scan.percentage ?: 0.0).toFloat() / 100f
     }
 
-    PoolInfoSection(title = "Last Scan", icon = Icons.Default.Scanner) {
-        PoolInfoRow("Function", scan.function ?: "None Found")
-        PoolInfoRow("State", scan.state ?: "None Found")
-        PoolInfoRow("Started", formatEpoch(scan.start_time))
-        PoolInfoRow("Ended", formatEpoch(scan.end_time))
-        PoolInfoRow("Errors", scan.errors.toString())
+    PoolInfoSection(title = stringResource(R.string.pool_last_scan), icon = Icons.Default.Scanner) {
+        PoolInfoRow(stringResource(R.string.pool_function), scan.function ?: stringResource(R.string.pool_none_found))
+        PoolInfoRow(stringResource(R.string.pool_state), scan.state ?: stringResource(R.string.pool_none_found))
+        PoolInfoRow(stringResource(R.string.pool_started), formatEpoch(scan.start_time))
+        PoolInfoRow(stringResource(R.string.pool_ended), formatEpoch(scan.end_time))
+        PoolInfoRow(stringResource(R.string.pool_errors), scan.errors.toString())
 
         if (scan.state == "SCANNING") {
             Spacer(modifier = Modifier.height(8.dp))
@@ -596,7 +598,7 @@ private fun PoolScanSection(scan: PoolScan) {
             }else{
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(
-                        text = "Cannot Find Storage Usage statistic",
+                        text = stringResource(R.string.pool_no_usage_stat),
                         style = MaterialTheme.typography.bodySmall
                             .copy(color = MaterialTheme.colorScheme.error)
                     )
@@ -621,21 +623,21 @@ private fun PoolScrubSection(
     }
 
     PoolInfoSection(
-        title = "Scrub Details",
+        title = stringResource(R.string.pool_scrub_details),
         icon = Icons.Default.EventRepeat,
         action = {
             Row {
                 IconButton(onClick = onEditClick) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit Scrub Task",
+                        contentDescription = stringResource(R.string.pool_edit_scrub_cd),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
                 IconButton(onClick = onDeleteClick) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete Scrub Task",
+                        contentDescription = stringResource(R.string.pool_delete_scrub_cd),
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
@@ -652,10 +654,10 @@ private fun PoolScrubSection(
             shape = RoundedCornerShape(12.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                PoolInfoRow("Status", if (scrubTask.enabled) "Enabled" else "Disabled")
-                PoolInfoRow("Description", scrubTask.description)
-                PoolInfoRow("Threshold (Days)", scrubTask.threshold.toString())
-                PoolInfoRow("Cron Schedule", formatSchedule(scrubTask.schedule))
+                PoolInfoRow(stringResource(R.string.attr_status), if (scrubTask.enabled) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled))
+                PoolInfoRow(stringResource(R.string.share_description), scrubTask.description)
+                PoolInfoRow(stringResource(R.string.pool_threshold_days), scrubTask.threshold.toString())
+                PoolInfoRow(stringResource(R.string.pool_cron_schedule), formatSchedule(scrubTask.schedule))
             }
         }
         if (jobState != null) {
@@ -689,13 +691,13 @@ private fun PoolScrubSection(
 @Composable
 private fun NoScrubTaskSection(onAddClick: () -> Unit) {
     PoolInfoSection(
-        title = "Scrub Details",
+        title = stringResource(R.string.pool_scrub_details),
         icon = Icons.Default.EventRepeat,
         action = {
             IconButton(onClick = onAddClick) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Create Scrub Task",
+                    contentDescription = stringResource(R.string.pool_create_scrub_cd),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -707,7 +709,7 @@ private fun NoScrubTaskSection(onAddClick: () -> Unit) {
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Text(
-                text = "No Scrub Task Found for this Pool.",
+                text = stringResource(R.string.pool_no_scrub_task),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .padding(16.dp)
@@ -734,7 +736,7 @@ private fun CreateScrubTaskDialog(
     var dayOfWeek by remember { mutableStateOf(existingTask?.schedule?.dow ?: "7") }
     var enabled by remember { mutableStateOf(existingTask?.enabled ?: true) }
 
-    val title = if (existingTask == null) "Create Scrub Task" else "Edit Scrub Task"
+    val title = stringResource(if (existingTask == null) R.string.pool_create_scrub_task else R.string.pool_edit_scrub_task)
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -747,21 +749,21 @@ private fun CreateScrubTaskDialog(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Description") },
+                    label = { Text(stringResource(R.string.share_description)) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = threshold,
                     onValueChange = { threshold = it },
-                    label = { Text("Threshold (days)") },
+                    label = { Text(stringResource(R.string.pool_threshold_days)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
-                Text("Schedule (Cron)", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.pool_schedule_cron), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(value = minute, onValueChange = { minute = it }, label = { Text("Min") }, modifier = Modifier.weight(1f))
-                    OutlinedTextField(value = hour, onValueChange = { hour = it }, label = { Text("Hour") }, modifier = Modifier.weight(1f))
-                    OutlinedTextField(value = dayOfMonth, onValueChange = { dayOfMonth = it }, label = { Text("Day (M)") }, modifier = Modifier.weight(1f))
+                    OutlinedTextField(value = minute, onValueChange = { minute = it }, label = { Text(stringResource(R.string.pool_min)) }, modifier = Modifier.weight(1f))
+                    OutlinedTextField(value = hour, onValueChange = { hour = it }, label = { Text(stringResource(R.string.pool_hour)) }, modifier = Modifier.weight(1f))
+                    OutlinedTextField(value = dayOfMonth, onValueChange = { dayOfMonth = it }, label = { Text(stringResource(R.string.pool_day_m)) }, modifier = Modifier.weight(1f))
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(value = month, onValueChange = { month = it }, label = { Text("Month") }, modifier = Modifier.weight(1f))
