@@ -1,8 +1,10 @@
 package com.gegaremant.truenasmobile.ui.topbar
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Apps
@@ -11,6 +13,7 @@ import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.data.models.Virt
 import com.gegaremant.truenasmobile.data.models.Vm
 import com.gegaremant.truenasmobile.ui.Screen
+import com.gegaremant.truenasmobile.ui.components.ToastManager
 import com.gegaremant.truenasmobile.ui.utils.AppCache
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -179,19 +182,19 @@ sealed class SearchResult {
     }
 }
 
-enum class SearchCategory(val displayName: String) {
-    ALL("All"),
-    NAVIGATION("Screens"),
-    STORAGE("Storage"),
-    SERVICES("Services"),
-    SHARES("Shares"),
-    SYSTEM("System Info"),
-    ACTIONS("Actions"),
-    APPS("Installed Apps"),
-    MARKETPLACE("Marketplace"),
-    CONTAINERS("Containers"),
-    VMS("VMs"),
-    INSTANCE_SETTINGS("Instance Settings")
+enum class SearchCategory(@StringRes val labelRes: Int) {
+    ALL(R.string.search_category_all),
+    NAVIGATION(R.string.search_category_screens),
+    STORAGE(R.string.search_category_storage),
+    SERVICES(R.string.search_category_services),
+    SHARES(R.string.search_category_shares),
+    SYSTEM(R.string.search_category_system),
+    ACTIONS(R.string.search_category_actions),
+    APPS(R.string.search_category_apps),
+    MARKETPLACE(R.string.search_category_marketplace),
+    CONTAINERS(R.string.search_category_containers),
+    VMS(R.string.search_category_vms),
+    INSTANCE_SETTINGS(R.string.search_category_instance_settings)
 }
 
 enum class AppAction {
@@ -364,7 +367,7 @@ class SearchViewModel(
                             SearchResult.PoolResult(
                                 id = "pool_${pool.id}",
                                 title = pool.name,
-                                subtitle = "Pool • ${formatBytes(pool.size ?: 0)}",
+                                subtitle = ToastManager.resolveString(R.string.search_pool_fmt, formatBytes(pool.size ?: 0)),
                                 relevanceScore = relevance,
                                 pool = pool
                             )
@@ -600,132 +603,135 @@ class SearchViewModel(
 
     private data class ScreenEntry(
         val id: String,
-        val title: String,
-        val subtitle: String,
+        @StringRes val titleRes: Int,
+        @StringRes val subtitleRes: Int,
         val route: String,
         val keywords: List<String>
-    )
+    ) {
+        val title: String get() = ToastManager.resolveString(titleRes)
+        val subtitle: String get() = ToastManager.resolveString(subtitleRes)
+    }
 
     private val screenRegistry: List<ScreenEntry> = listOf(
         // Top-level tabs
-        ScreenEntry("nav_home", "Dashboard", "Home tab", Screen.Home.route,
+        ScreenEntry("nav_home", R.string.search_nav_home_title, R.string.search_nav_home_subtitle, Screen.Home.route,
             listOf("dashboard", "home", "overview", "main")),
-        ScreenEntry("nav_apps", "Applications", "Installed applications", Screen.Apps.route,
+        ScreenEntry("nav_apps", R.string.search_nav_apps_title, R.string.search_nav_apps_subtitle, Screen.Apps.route,
             listOf("apps", "applications", "installed")),
-        ScreenEntry("nav_containers", "Containers", "Virtual containers", Screen.Containers.route,
+        ScreenEntry("nav_containers", R.string.search_nav_containers_title, R.string.search_nav_containers_subtitle, Screen.Containers.route,
             listOf("containers", "docker", "lxc", "container")),
-        ScreenEntry("nav_vms", "Virtual Machines", "Manage VMs", Screen.Vms.route,
+        ScreenEntry("nav_vms", R.string.search_nav_vms_title, R.string.search_nav_vms_subtitle, Screen.Vms.route,
             listOf("vms", "virtual machines", "kvm", "vm")),
 
         // Marketplace
-        ScreenEntry("nav_marketplace", "Marketplace", "Discover and install apps", Screen.Marketplace.route,
+        ScreenEntry("nav_marketplace", R.string.search_nav_marketplace_title, R.string.search_nav_marketplace_subtitle, Screen.Marketplace.route,
             listOf("marketplace", "catalog", "discover", "store", "install")),
 
         // Settings & sub-screens
-        ScreenEntry("nav_settings", "Settings", "App preferences", Screen.Settings.route,
+        ScreenEntry("nav_settings", R.string.search_nav_settings_title, R.string.search_nav_settings_subtitle, Screen.Settings.route,
             listOf("settings", "preferences", "config")),
-        ScreenEntry("nav_about", "About", "About TrueNasMobile", Screen.About.route,
+        ScreenEntry("nav_about", R.string.search_nav_about_title, R.string.search_nav_about_subtitle, Screen.About.route,
             listOf("about", "version", "credits")),
-        ScreenEntry("nav_theme", "Theme", "Change app theme", Screen.Theme.route,
+        ScreenEntry("nav_theme", R.string.search_nav_theme_title, R.string.search_nav_theme_subtitle, Screen.Theme.route,
             listOf("theme", "dark mode", "light mode", "appearance", "colors")),
-        ScreenEntry("nav_licenses", "Licenses", "Open source licenses", Screen.Licenses.route,
+        ScreenEntry("nav_licenses", R.string.search_nav_licenses_title, R.string.search_nav_licenses_subtitle, Screen.Licenses.route,
             listOf("licenses", "open source", "oss")),
 
         // Home sub-screens
-        ScreenEntry("nav_pools", "Storage Pools", "ZFS pools list", Screen.Home.route,
+        ScreenEntry("nav_pools", R.string.search_nav_pools_title, R.string.search_nav_pools_subtitle, Screen.Home.route,
             listOf("pools", "storage", "zfs", "pool")),
-        ScreenEntry("nav_disks", "Disks", "Disk information", Screen.DiskInfo.route,
+        ScreenEntry("nav_disks", R.string.search_nav_disks_title, R.string.search_nav_disks_subtitle, Screen.DiskInfo.route,
             listOf("disks", "drives", "hard drives", "nvme", "ssd", "hdd")),
-        ScreenEntry("nav_shares", "Shares", "SMB and NFS shares", Screen.Home.route,
+        ScreenEntry("nav_shares", R.string.search_nav_shares_title, R.string.search_nav_shares_subtitle, Screen.Home.route,
             listOf("shares", "smb", "nfs", "file sharing", "samba")),
-        ScreenEntry("nav_performance", "Performance", "CPU, Memory, Temperature metrics", Screen.Performance.route,
+        ScreenEntry("nav_performance", R.string.search_nav_performance_title, R.string.search_nav_performance_subtitle, Screen.Performance.route,
             listOf("performance", "cpu", "memory", "temperature", "metrics", "stats")),
-        ScreenEntry("nav_system_update", "System Update", "Check and update TrueNAS", Screen.SystemUpdateScreen.route,
+        ScreenEntry("nav_system_update", R.string.search_nav_system_update_title, R.string.search_nav_system_update_subtitle, Screen.SystemUpdateScreen.route,
             listOf("update", "upgrade", "version", "system update")),
-        ScreenEntry("nav_system_info", "System Information", "Hostname, version, uptime", Screen.SystemInformationScreen.route,
+        ScreenEntry("nav_system_info", R.string.search_nav_system_info_title, R.string.search_nav_system_info_subtitle, Screen.SystemInformationScreen.route,
             listOf("system info", "hostname", "version", "uptime", "platform")),
-        ScreenEntry("nav_software_info", "Software Information", "Software details", Screen.SoftwareInformationScreen.route,
+        ScreenEntry("nav_software_info", R.string.search_nav_software_info_title, R.string.search_nav_software_info_subtitle, Screen.SoftwareInformationScreen.route,
             listOf("software", "license", "os")),
-        ScreenEntry("nav_hardware_info", "Hardware Information", "CPU, memory, physical", Screen.HardwareInformationScreen.route,
+        ScreenEntry("nav_hardware_info", R.string.search_nav_hardware_info_title, R.string.search_nav_hardware_info_subtitle, Screen.HardwareInformationScreen.route,
             listOf("hardware", "cpu model", "memory", "physical", "serial")),
 
         // Instance config sub-screens
-        ScreenEntry("nav_instance_config", "Instance Configuration", "TrueNAS instance settings", Screen.InstanceConfigScreen.route,
+        ScreenEntry("nav_instance_config", R.string.search_nav_instance_config_title, R.string.search_nav_instance_config_subtitle, Screen.InstanceConfigScreen.route,
             listOf("instance", "configuration", "truenas settings", "server config")),
-        ScreenEntry("nav_services", "TrueNAS Services", "Manage system services", Screen.ServicesScreen.route,
+        ScreenEntry("nav_services", R.string.search_nav_services_title, R.string.search_nav_services_subtitle, Screen.ServicesScreen.route,
             listOf("services", "ssh", "nfs", "smb", "ftp", "rsync", "iscsi")),
-        ScreenEntry("nav_users", "Users", "Manage user accounts", Screen.UserListScreen.route,
+        ScreenEntry("nav_users", R.string.search_nav_users_title, R.string.search_nav_users_subtitle, Screen.UserListScreen.route,
             listOf("users", "accounts", "user list")),
-        ScreenEntry("nav_api_keys", "API Keys", "Manage API keys", Screen.ApiKeyListScreen.route,
+        ScreenEntry("nav_api_keys", R.string.search_nav_api_keys_title, R.string.search_nav_api_keys_subtitle, Screen.ApiKeyListScreen.route,
             listOf("api keys", "tokens", "bearer")),
-        ScreenEntry("nav_network", "Network", "Network configuration", Screen.NetworkScreen.route,
+        ScreenEntry("nav_network", R.string.search_nav_network_title, R.string.search_nav_network_subtitle, Screen.NetworkScreen.route,
             listOf("network", "interfaces", "ip", "dns", "gateway")),
-        ScreenEntry("nav_boot", "Boot", "Boot environments and pool", Screen.BootScreen.route,
+        ScreenEntry("nav_boot", R.string.search_nav_boot_title, R.string.search_nav_boot_subtitle, Screen.BootScreen.route,
             listOf("boot", "boot environments", "boot pool", "startup")),
-        ScreenEntry("nav_alerts", "Alert Services", "Configure alerts", Screen.AlertServicesList.route,
+        ScreenEntry("nav_alerts", R.string.search_nav_alerts_title, R.string.search_nav_alerts_subtitle, Screen.AlertServicesList.route,
             listOf("alerts", "notifications", "alert services", "email")),
-        ScreenEntry("nav_audit", "Audit", "Audit configuration and logs", Screen.AuditConfigScreen.route,
+        ScreenEntry("nav_audit", R.string.search_nav_audit_title, R.string.search_nav_audit_subtitle, Screen.AuditConfigScreen.route,
             listOf("audit", "logs", "audit logs")),
-        ScreenEntry("nav_general_settings", "General Settings", "GUI, HTTPS, timezone", Screen.GeneralSystemSettingsScreen.route,
+        ScreenEntry("nav_general_settings", R.string.search_nav_general_settings_title, R.string.search_nav_general_settings_subtitle, Screen.GeneralSystemSettingsScreen.route,
             listOf("general settings", "gui", "https", "timezone", "language")),
-        ScreenEntry("nav_advanced_settings", "Advanced Settings", "Sysctl, kernel", Screen.AdvancedSystemSettingsScreen.route,
+        ScreenEntry("nav_advanced_settings", R.string.search_nav_advanced_settings_title, R.string.search_nav_advanced_settings_subtitle, Screen.AdvancedSystemSettingsScreen.route,
             listOf("advanced settings", "sysctl", "kernel", "advanced")),
-        ScreenEntry("nav_truenas_connect", "TrueNAS Connect", "Connect to TrueNAS cloud", Screen.TrueNasConnectScreen.route,
+        ScreenEntry("nav_truenas_connect", R.string.search_nav_truenas_connect_title, R.string.search_nav_truenas_connect_subtitle, Screen.TrueNasConnectScreen.route,
             listOf("truenas connect", "cloud", "ixsystems")),
-        ScreenEntry("nav_truecommand", "TrueCommand", "TrueCommand management", Screen.TrueCommandScreen.route,
+        ScreenEntry("nav_truecommand", R.string.search_nav_truecommand_title, R.string.search_nav_truecommand_subtitle, Screen.TrueCommandScreen.route,
             listOf("truecommand", "fleet", "management")),
 
         // Account
-        ScreenEntry("nav_account", "Account Switcher", "Switch accounts or servers", Screen.AccountSwitcher.route,
+        ScreenEntry("nav_account", R.string.search_nav_account_title, R.string.search_nav_account_subtitle, Screen.AccountSwitcher.route,
             listOf("account", "login", "logout", "switch", "profile")),
-        ScreenEntry("nav_change_password", "Change Password", "Change your password", Screen.ChangePassword.route,
+        ScreenEntry("nav_change_password", R.string.search_nav_change_password_title, R.string.search_nav_change_password_subtitle, Screen.ChangePassword.route,
             listOf("change password", "password", "credentials")),
     )
 
     // ── Instance Settings registry — every section reachable from InstanceConfigScreen ──
     private val instanceSettingsRegistry: List<ScreenEntry> = listOf(
         // Core configuration
-        ScreenEntry("is_general", "General Settings", "Hostname, timezone, base options",
+        ScreenEntry("is_general", R.string.search_is_general_title, R.string.search_is_general_subtitle,
             Screen.GeneralSystemSettingsScreen.route,
             listOf("general settings", "hostname", "timezone", "gui", "https", "language", "console", "motd")),
-        ScreenEntry("is_advanced", "Advanced Settings", "Sysctl, tunables, kernel, developer options",
+        ScreenEntry("is_advanced", R.string.search_is_advanced_title, R.string.search_is_advanced_subtitle,
             Screen.AdvancedSystemSettingsScreen.route,
             listOf("advanced settings", "sysctl", "kernel", "tunables", "developer", "crash reporting")),
-        ScreenEntry("is_network", "Network", "Interfaces, routes, DNS, configuration",
+        ScreenEntry("is_network", R.string.search_is_network_title, R.string.search_is_network_subtitle,
             Screen.NetworkScreen.route,
             listOf("network", "interfaces", "ip", "dns", "gateway", "routes", "link")),
-        ScreenEntry("is_boot", "Boot", "Boot environments and boot pool",
+        ScreenEntry("is_boot", R.string.search_is_boot_title, R.string.search_is_boot_subtitle,
             Screen.BootScreen.route,
             listOf("boot", "boot environments", "boot pool", "startup", "recovery")),
-        ScreenEntry("is_services", "Services", "Manage and configure running services",
+        ScreenEntry("is_services", R.string.search_is_services_title, R.string.search_is_services_subtitle,
             Screen.ServicesScreen.route,
             listOf("services", "ssh", "nfs", "smb", "ftp", "rsync", "iscsi", "snmp")),
-        ScreenEntry("is_users", "Users", "Manage local user accounts",
+        ScreenEntry("is_users", R.string.search_is_users_title, R.string.search_is_users_subtitle,
             Screen.UserListScreen.route,
             listOf("users", "accounts", "local users", "user list")),
-        ScreenEntry("is_api_keys", "API Keys", "Manage API key access",
+        ScreenEntry("is_api_keys", R.string.search_is_api_keys_title, R.string.search_is_api_keys_subtitle,
             Screen.ApiKeyListScreen.route,
             listOf("api keys", "keys", "tokens", "bearer", "access")),
 
         // Monitoring & compliance
-        ScreenEntry("is_alerts", "Alert Settings", "Notification levels and delivery",
+        ScreenEntry("is_alerts", R.string.search_is_alerts_title, R.string.search_is_alerts_subtitle,
             Screen.AlertServicesList.route,
             listOf("alerts", "alert services", "notifications", "email", "webhook")),
-        ScreenEntry("is_audit_config", "Audit Config", "Audit logging and retention settings",
+        ScreenEntry("is_audit_config", R.string.search_is_audit_config_title, R.string.search_is_audit_config_subtitle,
             Screen.AuditConfigScreen.route,
             listOf("audit", "audit config", "retention", "logging", "zfs dataset")),
-        ScreenEntry("is_audit_logs", "Audit Logs", "View and export audit entries",
+        ScreenEntry("is_audit_logs", R.string.search_is_audit_logs_title, R.string.search_is_audit_logs_subtitle,
             Screen.AuditLogsScreen.route,
             listOf("audit logs", "logs", "audit entries", "export")),
 
         // System information
-        ScreenEntry("is_truenas_connect", "TrueNAS Connect", "Configure the TrueNAS cloud connection",
+        ScreenEntry("is_truenas_connect", R.string.search_is_truenas_connect_title, R.string.search_is_truenas_connect_subtitle,
             Screen.TrueNasConnectScreen.route,
             listOf("truenas connect", "cloud", "connect", "ixsystems")),
-        ScreenEntry("is_truecommand", "TrueCommand", "Centralized instance management",
+        ScreenEntry("is_truecommand", R.string.search_is_truecommand_title, R.string.search_is_truecommand_subtitle,
             Screen.TrueCommandScreen.route,
             listOf("truecommand", "fleet", "management", "cluster")),
-        ScreenEntry("is_system_info", "System Information", "Version, identifiers, state and features",
+        ScreenEntry("is_system_info", R.string.search_is_system_info_title, R.string.search_is_system_info_subtitle,
             Screen.SystemInformationScreen.route,
             listOf("system information", "system info", "version", "platform", "hardware", "uuid")),
     )
@@ -737,7 +743,7 @@ class SearchViewModel(
                 SearchResult.InstanceSettingsResult(
                     id = entry.id,
                     title = entry.title,
-                    subtitle = "Instance Setting • ${entry.subtitle}",
+                    subtitle = ToastManager.resolveString(R.string.search_instance_setting_prefix, entry.subtitle),
                     relevanceScore = relevance + 0.5f,
                     route = entry.route
                 )

@@ -81,7 +81,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -99,9 +101,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.PersonalizationManager
 import com.gegaremant.truenasmobile.ui.Screen
+import com.gegaremant.truenasmobile.ui.components.ToastManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -211,7 +215,7 @@ fun ExpressiveSearchAppBar(
                 IconButton(onClick = it) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back"
+                        contentDescription = stringResource(R.string.search_back_cd)
                     )
                 }
             }
@@ -220,7 +224,7 @@ fun ExpressiveSearchAppBar(
             IconButton(onClick = { isSearchActive = true }) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
+                    contentDescription = stringResource(R.string.search_cd)
                 )
             }
             actions()
@@ -259,7 +263,7 @@ private fun SearchTopBar(
             IconButton(onClick = onClose) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Close search"
+                    contentDescription = stringResource(R.string.search_close_cd)
                 )
             }
 
@@ -284,7 +288,7 @@ private fun SearchTopBar(
                     Box(modifier = Modifier.weight(1f)) {
                         if (query.isEmpty()) {
                             Text(
-                                text = "Search TrueNasMobile...",
+                                text = stringResource(R.string.search_hint),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -300,7 +304,7 @@ private fun SearchTopBar(
             IconButton(onClick = { onQueryChange("") }) {
                 Icon(
                     imageVector = Icons.Default.Clear,
-                    contentDescription = "Clear search"
+                    contentDescription = stringResource(R.string.search_clear_cd)
                 )
             }
         }
@@ -345,7 +349,7 @@ private fun SearchCategoryChipsRow(
                 onClick = { onCategorySelected(category) },
                 label = {
                     Text(
-                        text = category.displayName,
+                        text = stringResource(category.labelRes),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
                     )
@@ -382,61 +386,64 @@ private fun SearchCategoryChipsRow(
 // ═══════════════════════════════════════════════════════════════
 
 private data class QuickAction(
-    val title: String,
+    @StringRes val titleRes: Int,
     val icon: ImageVector,
     val result: SearchResult.NavigationResult
 )
 
-private val quickActions: List<QuickAction> = listOf(
+private fun quickActions(): List<QuickAction> {
+    val navigate = ToastManager.resolveString(R.string.search_navigate)
+    return listOf(
     QuickAction(
-        title = "Instance Settings",
+        titleRes = R.string.search_quick_instance_settings,
         icon = Icons.Default.Settings,
         result = SearchResult.NavigationResult(
-            id = "quick_settings", title = "Instance Settings", subtitle = "Navigate",
+            id = "quick_settings", title = ToastManager.resolveString(R.string.search_quick_instance_settings), subtitle = navigate,
             relevanceScore = 10f, destinationRoute = Screen.InstanceConfigScreen.route
         )
     ),
     QuickAction(
-        title = "Create API Key",
+        titleRes = R.string.search_quick_create_api_key,
         icon = Icons.Default.Key,
         result = SearchResult.NavigationResult(
-            id = "quick_apikey", title = "Create API Key", subtitle = "Navigate",
+            id = "quick_apikey", title = ToastManager.resolveString(R.string.search_quick_create_api_key), subtitle = navigate,
             relevanceScore = 10f, destinationRoute = Screen.ApiKeyCreateScreen.route
         )
     ),
     QuickAction(
-        title = "Discover Apps",
+        titleRes = R.string.search_quick_marketplace,
         icon = Icons.Default.Storefront,
         result = SearchResult.NavigationResult(
-            id = "quick_marketplace", title = "Marketplace", subtitle = "Navigate",
+            id = "quick_marketplace", title = ToastManager.resolveString(R.string.search_quick_marketplace), subtitle = navigate,
             relevanceScore = 10f, destinationRoute = Screen.Marketplace.route
         )
     ),
     QuickAction(
-        title = "System Update",
+        titleRes = R.string.search_quick_system_update,
         icon = Icons.Default.SystemUpdateAlt,
         result = SearchResult.NavigationResult(
-            id = "quick_update", title = "System Update", subtitle = "Navigate",
+            id = "quick_update", title = ToastManager.resolveString(R.string.search_quick_system_update), subtitle = navigate,
             relevanceScore = 10f, destinationRoute = Screen.SystemUpdateScreen.route
         )
     ),
     QuickAction(
-        title = "Users",
+        titleRes = R.string.search_quick_users,
         icon = Icons.Default.Group,
         result = SearchResult.NavigationResult(
-            id = "quick_users", title = "Users", subtitle = "Navigate",
+            id = "quick_users", title = ToastManager.resolveString(R.string.search_quick_users), subtitle = navigate,
             relevanceScore = 10f, destinationRoute = Screen.UserListScreen.route
         )
     ),
     QuickAction(
-        title = "Network",
+        titleRes = R.string.search_quick_network,
         icon = Icons.Default.NetworkWifi,
         result = SearchResult.NavigationResult(
-            id = "quick_network", title = "Network", subtitle = "Navigate",
+            id = "quick_network", title = ToastManager.resolveString(R.string.search_quick_network), subtitle = navigate,
             relevanceScore = 10f, destinationRoute = Screen.NetworkScreen.route
         )
     ),
-)
+    )
+}
 
 @Composable
 private fun QuickActionCard(
@@ -470,7 +477,7 @@ private fun QuickActionCard(
             }
             Spacer(modifier = Modifier.width(12.dp))
             Text(
-                text = action.title,
+                text = stringResource(action.titleRes),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface
@@ -503,14 +510,14 @@ private fun SearchResultsContent(
             // Quick actions grid
             item {
                 Text(
-                    text = "Quick Actions",
+                    text = stringResource(R.string.search_quick_actions),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
                 )
             }
-            items(quickActions.chunked(2)) { rowActions ->
+            items(quickActions().chunked(2)) { rowActions ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -535,7 +542,7 @@ private fun SearchResultsContent(
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Recent Searches",
+                    text = stringResource(R.string.search_recent),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.SemiBold,
@@ -552,7 +559,7 @@ private fun SearchResultsContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No search history",
+                            text = stringResource(R.string.search_no_history),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
@@ -574,7 +581,7 @@ private fun SearchResultsContent(
                             .padding(horizontal = 12.dp, vertical = 4.dp)
                     ) {
                         Text(
-                            text = "Clear search history",
+                            text = stringResource(R.string.search_clear_history),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.error,
                             fontWeight = FontWeight.Medium
@@ -607,7 +614,7 @@ private fun SearchResultsContent(
             grouped.forEach { (category, results) ->
                 item {
                     Text(
-                        text = category.displayName,
+                        text = stringResource(category.labelRes),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
@@ -650,8 +657,8 @@ private fun SearchResultsContent(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = if (isExpanded) "Show less"
-                                else "Show all ($remaining more)",
+                                text = if (isExpanded) stringResource(R.string.search_show_less)
+                                else stringResource(R.string.search_show_all, remaining),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.SemiBold

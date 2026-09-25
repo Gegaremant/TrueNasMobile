@@ -58,6 +58,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -65,6 +66,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Shares
 import com.gegaremant.truenasmobile.ui.background.WavyGradientBackground
@@ -84,11 +86,11 @@ fun ShareInfoScreen(
 ) {
     val title = when (shareType) {
         is ShareType.Smb -> shareType.share.name
-        is ShareType.Nfs -> shareType.share.path.substringAfterLast('/').ifEmpty { "NFS Share" }
+        is ShareType.Nfs -> shareType.share.path.substringAfterLast('/').ifEmpty { stringResource(R.string.share_nfs_fallback) }
     }
     val subtitle = when (shareType) {
-        is ShareType.Smb -> "SMB Share"
-        is ShareType.Nfs -> "NFS Share"
+        is ShareType.Smb -> stringResource(R.string.share_smb_fallback)
+        is ShareType.Nfs -> stringResource(R.string.share_nfs_fallback)
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -120,7 +122,7 @@ fun ShareInfoScreen(
                         badgeLabel = "SMB"
                     )
                     is ShareType.Nfs -> ShareHeroCard(
-                        name = shareType.share.path.substringAfterLast('/').ifEmpty { "NFS Share" },
+                        name = shareType.share.path.substringAfterLast('/').ifEmpty { stringResource(R.string.share_nfs_fallback) },
                         path = shareType.share.path,
                         enabled = shareType.share.enabled,
                         icon = Icons.Default.Storage,
@@ -219,7 +221,7 @@ private fun ShareHeroCard(
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                         ShareBadge(
-                            label = if (enabled) "Active" else "Disabled",
+                            label = if (enabled) stringResource(R.string.common_active) else stringResource(R.string.common_disabled),
                             containerColor = enabledColor.copy(alpha = 0.15f),
                             contentColor = enabledColor
                         )
@@ -282,14 +284,14 @@ private fun ShareStatusBanner(enabled: Boolean) {
                     modifier = Modifier.size(20.dp)
                 )
                 Text(
-                    text = "Share Status",
+                    text = stringResource(R.string.share_status),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = contentColor
                 )
             }
             Text(
-                text = if (enabled) "Enabled & Active" else "Disabled",
+                text = if (enabled) stringResource(R.string.share_enabled_active) else stringResource(R.string.common_disabled),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = contentColor
@@ -301,50 +303,50 @@ private fun ShareStatusBanner(enabled: Boolean) {
 @Composable
 private fun SmbShareSections(share: Shares.SmbShare) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        ShareInfoSection(title = "Basic Information", icon = Icons.Default.Info) {
+        ShareInfoSection(title = stringResource(R.string.share_section_basic), icon = Icons.Default.Info) {
             ExpressiveInfoGrid(
                 items = buildList {
-                    add("Share Name" to share.name)
-                    add("Path" to share.path)
-                    if (!share.path_suffix.isNullOrEmpty()) add("Path Suffix" to share.path_suffix)
-                    if (!share.comment.isNullOrEmpty()) add("Description" to share.comment)
-                    add("Purpose" to share.purpose!!.ifEmpty { "General" })
+                    add(stringResource(R.string.share_name) to share.name)
+                    add(stringResource(R.string.attr_path) to share.path)
+                    if (!share.path_suffix.isNullOrEmpty()) add(stringResource(R.string.share_path_suffix) to share.path_suffix)
+                    if (!share.comment.isNullOrEmpty()) add(stringResource(R.string.share_description) to share.comment)
+                    add(stringResource(R.string.share_purpose) to share.purpose!!.ifEmpty { stringResource(R.string.share_purpose_general) })
                 }
             )
         }
 
-        ShareInfoSection(title = "Features", icon = Icons.Default.ToggleOn) {
+        ShareInfoSection(title = stringResource(R.string.share_section_features), icon = Icons.Default.ToggleOn) {
             ShareFeatureChips(share = share)
         }
 
-        ShareInfoSection(title = "Access Control", icon = Icons.Default.Security) {
+        ShareInfoSection(title = stringResource(R.string.share_section_access), icon = Icons.Default.Security) {
             ShareAccessCard(share = share)
         }
 
-        ShareInfoSection(title = "Advanced Settings", icon = Icons.Default.Settings) {
+        ShareInfoSection(title = stringResource(R.string.share_section_advanced), icon = Icons.Default.Settings) {
             ShareAdvancedCard(share = share)
         }
 
         if (!share.hostsallow.isNullOrEmpty()) {
-            ShareInfoSection(title = "Network Access", icon = Icons.Default.NetworkCheck) {
+            ShareInfoSection(title = stringResource(R.string.share_section_network), icon = Icons.Default.NetworkCheck) {
                 ShareNetworkCard(share = share)
             }
         }
 
         if (share.timemachine == true) {
-            ShareInfoSection(title = "Time Machine", icon = Icons.Default.Backup) {
+            ShareInfoSection(title = stringResource(R.string.share_section_timemachine), icon = Icons.Default.Backup) {
                 ShareTimeMachineCard(share = share)
             }
         }
 
         if (share.audit.enable) {
-            ShareInfoSection(title = "Audit Settings", icon = Icons.AutoMirrored.Filled.Assignment) {
+            ShareInfoSection(title = stringResource(R.string.share_section_audit), icon = Icons.AutoMirrored.Filled.Assignment) {
                 ShareAuditCard(share = share)
             }
         }
 
         if (!share.auxsmbconf.isNullOrEmpty()) {
-            ShareInfoSection(title = "Additional Configuration", icon = Icons.Default.Code) {
+            ShareInfoSection(title = stringResource(R.string.share_section_additional), icon = Icons.Default.Code) {
                 Card(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     shape = RoundedCornerShape(12.dp)
@@ -365,40 +367,40 @@ private fun SmbShareSections(share: Shares.SmbShare) {
 @Composable
 private fun NfsShareSections(share: Shares.NfsShare) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        ShareInfoSection(title = "Basic Information", icon = Icons.Default.Info) {
+        ShareInfoSection(title = stringResource(R.string.share_section_basic), icon = Icons.Default.Info) {
             ExpressiveInfoGrid(
                 items = buildList {
-                    add("Path" to share.path)
+                    add(stringResource(R.string.attr_path) to share.path)
                     add("ID" to share.id.toString())
-                    if (share.comment.isNotEmpty()) add("Description" to share.comment)
+                    if (share.comment.isNotEmpty()) add(stringResource(R.string.share_description) to share.comment)
                 }
             )
         }
 
-        ShareInfoSection(title = "Features", icon = Icons.Default.ToggleOn) {
+        ShareInfoSection(title = stringResource(R.string.share_section_features), icon = Icons.Default.ToggleOn) {
             NfsFeatureChips(share = share)
         }
 
         if (share.networks.isNotEmpty() || share.hosts.isNotEmpty()) {
-            ShareInfoSection(title = "Network Access", icon = Icons.Default.NetworkCheck) {
+            ShareInfoSection(title = stringResource(R.string.share_section_network), icon = Icons.Default.NetworkCheck) {
                 NfsNetworkAccessCard(share = share)
             }
         }
 
         if (!share.maproot_user.isNullOrEmpty() || !share.mapall_user.isNullOrEmpty()) {
-            ShareInfoSection(title = "User Mapping", icon = Icons.Default.Person) {
+            ShareInfoSection(title = stringResource(R.string.share_section_user_mapping), icon = Icons.Default.Person) {
                 NfsUserMappingCard(share = share)
             }
         }
 
         if (share.security.isNotEmpty()) {
-            ShareInfoSection(title = "Security", icon = Icons.Default.Security) {
+            ShareInfoSection(title = stringResource(R.string.share_section_security), icon = Icons.Default.Security) {
                 NfsSecurityCard(share = share)
             }
         }
 
         if (share.aliases.isNotEmpty()) {
-            ShareInfoSection(title = "Aliases", icon = Icons.AutoMirrored.Filled.Label) {
+            ShareInfoSection(title = stringResource(R.string.share_section_aliases), icon = Icons.AutoMirrored.Filled.Label) {
                 Card(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     shape = RoundedCornerShape(12.dp)
@@ -603,8 +605,8 @@ private fun ShareFeatureChips(share: Shares.SmbShare) {
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (share.acl == true) FeatureChip("ACL", Icons.Default.AdminPanelSettings)
-            if (share.streams == true) FeatureChip("Streams", Icons.Default.Stream)
-            if (share.durablehandle == true) FeatureChip("Durable Handle", Icons.Default.Link)
+            if (share.streams == true) FeatureChip(stringResource(R.string.share_feat_streams), Icons.Default.Stream)
+            if (share.durablehandle == true) FeatureChip(stringResource(R.string.share_feat_durable_handle), Icons.Default.Link)
         }
     }
 }
@@ -612,9 +614,9 @@ private fun ShareFeatureChips(share: Shares.SmbShare) {
 @Composable
 private fun NfsFeatureChips(share: Shares.NfsShare) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (share.ro) FeatureChip("Read-Only", Icons.Default.Lock)
-        if (share.locked) FeatureChip("Locked", Icons.Default.LockPerson)
-        if (share.expose_snapshots) FeatureChip("Snapshots Exposed", Icons.Default.CameraAlt)
+        if (share.ro) FeatureChip(stringResource(R.string.share_feat_read_only), Icons.Default.Lock)
+        if (share.locked) FeatureChip(stringResource(R.string.share_feat_locked), Icons.Default.LockPerson)
+        if (share.expose_snapshots) FeatureChip(stringResource(R.string.share_feat_snapshots_exposed), Icons.Default.CameraAlt)
     }
 }
 
@@ -631,17 +633,17 @@ private fun ShareAccessCard(share: Shares.SmbShare) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AccessDetailRow("Read-Only", if (share.ro == true) "Yes" else "No", share.ro ?: false)
+            AccessDetailRow(stringResource(R.string.share_feat_read_only), if (share.ro == true) stringResource(R.string.common_yes) else stringResource(R.string.common_no), share.ro ?: false)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-            AccessDetailRow("Guest Access", if (share.guestok == true) "Allowed" else "Not Allowed", share.guestok == true)
+            AccessDetailRow(stringResource(R.string.share_feat_guest_access), if (share.guestok == true) stringResource(R.string.share_allowed) else stringResource(R.string.share_not_allowed), share.guestok == true)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-            AccessDetailRow("Browsable", if (share.browsable) "Yes" else "No", share.browsable)
+            AccessDetailRow(stringResource(R.string.share_feat_browsable), if (share.browsable) stringResource(R.string.common_yes) else stringResource(R.string.common_no), share.browsable)
             if (!share.vuid.isNullOrEmpty()) {
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
                 AccessDetailRow("VUID", share.vuid, true)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-            AccessDetailRow("Locked", if (share.locked) "Yes" else "No", share.locked)
+            AccessDetailRow(stringResource(R.string.share_feat_locked), if (share.locked) stringResource(R.string.common_yes) else stringResource(R.string.common_no), share.locked)
         }
     }
 }
@@ -659,21 +661,21 @@ private fun ShareAdvancedCard(share: Shares.SmbShare) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AccessDetailRow("ACL Support", if (share.acl == true) "Enabled" else "Disabled", share.acl == true)
+            AccessDetailRow(stringResource(R.string.share_acl_support), if (share.acl == true) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled), share.acl == true)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-            AccessDetailRow("Alternate Data Streams", if (share.streams == true) "Enabled" else "Disabled", share.streams == true)
+            AccessDetailRow(stringResource(R.string.share_alt_data_streams), if (share.streams == true) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled), share.streams == true)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-            AccessDetailRow("Durable Handles", if (share.durablehandle == true) "Enabled" else "Disabled", share.durablehandle == true)
+            AccessDetailRow(stringResource(R.string.share_durable_handles), if (share.durablehandle == true) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled), share.durablehandle == true)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-            AccessDetailRow("Apple Name Mangling", if (share.aapl_name_mangling == true) "Enabled" else "Disabled", share.aapl_name_mangling == true)
+            AccessDetailRow(stringResource(R.string.share_apple_name_mangling), if (share.aapl_name_mangling == true) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled), share.aapl_name_mangling == true)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-            AccessDetailRow("Access Based Enumeration", if (share.abe == true) "Enabled" else "Disabled", share.abe ?: false)
+            AccessDetailRow(stringResource(R.string.share_abe), if (share.abe == true) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled), share.abe ?: false)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-            AccessDetailRow("Shadow Copies", if (share.shadowcopy == true) "Enabled" else "Disabled", share.shadowcopy == true)
+            AccessDetailRow(stringResource(R.string.share_shadow_copies), if (share.shadowcopy == true) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled), share.shadowcopy == true)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-            AccessDetailRow("FSRVP", if (share.fsrvp == true) "Enabled" else "Disabled", share.fsrvp == true)
+            AccessDetailRow("FSRVP", if (share.fsrvp == true) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled), share.fsrvp == true)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
-            AccessDetailRow("Recycle Bin", if (share.recyclebin == true) "Enabled" else "Disabled", share.recyclebin == true)
+            AccessDetailRow(stringResource(R.string.share_recycle_bin), if (share.recyclebin == true) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled), share.recyclebin == true)
         }
     }
 }
@@ -691,7 +693,7 @@ private fun ShareNetworkCard(share: Shares.SmbShare) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.CheckCircle, null, Modifier.size(16.dp), tint = Color(0xFF2E7D32))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Allowed Hosts", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.share_allowed_hosts), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     share.hostsallow.forEach { host ->
                         Text("• $host", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 24.dp))
@@ -703,7 +705,7 @@ private fun ShareNetworkCard(share: Shares.SmbShare) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Cancel, null, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.error)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Denied Hosts", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.share_denied_hosts), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     share.hostsdeny.forEach { host ->
                         Text("• $host", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 24.dp))
@@ -725,12 +727,12 @@ private fun ShareTimeMachineCard(share: Shares.SmbShare) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.Backup, null, tint = MaterialTheme.colorScheme.onTertiaryContainer, modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Time Machine Enabled", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onTertiaryContainer)
+                Text(stringResource(R.string.share_timemachine_enabled), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onTertiaryContainer)
             }
             if (share.timemachine_quota != null && share.timemachine_quota > 0) {
-                Text("Quota: ${share.timemachine_quota} GB", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f))
+                Text(stringResource(R.string.share_quota_fmt, share.timemachine_quota), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f))
             } else {
-                Text("No quota limit set", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.7f))
+                Text(stringResource(R.string.share_no_quota), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.7f))
             }
         }
     }
@@ -747,11 +749,11 @@ private fun ShareAuditCard(share: Shares.SmbShare) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.CheckCircle, null, tint = Color(0xFF2E7D32), modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Auditing Enabled", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.share_auditing_enabled), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             if (share.audit.watch_list.isNotEmpty()) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("Watch List:", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.share_watch_list), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
                     share.audit.watch_list.forEach { item ->
                         Text("• $item", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 12.dp))
                     }
@@ -759,7 +761,7 @@ private fun ShareAuditCard(share: Shares.SmbShare) {
             }
             if (share.audit.ignore_list.isNotEmpty()) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("Ignore List:", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.share_ignore_list), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
                     share.audit.ignore_list.forEach { item ->
                         Text("• $item", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 12.dp))
                     }
@@ -782,7 +784,7 @@ private fun NfsNetworkAccessCard(share: Shares.NfsShare) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.NetworkCheck, null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.primary)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Allowed Networks", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.share_allowed_networks), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     share.networks.forEach { network ->
                         Text("• $network", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 24.dp))
@@ -794,7 +796,7 @@ private fun NfsNetworkAccessCard(share: Shares.NfsShare) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Computer, null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.primary)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Allowed Hosts", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.share_allowed_hosts), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     share.hosts.forEach { host ->
                         Text("• $host", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 24.dp))
@@ -813,10 +815,10 @@ private fun NfsUserMappingCard(share: Shares.NfsShare) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (!share.maproot_user.isNullOrEmpty()) ShareInfoRow("Map Root User", share.maproot_user)
-            if (!share.maproot_group.isNullOrEmpty()) ShareInfoRow("Map Root Group", share.maproot_group)
-            if (!share.mapall_user.isNullOrEmpty()) ShareInfoRow("Map All User", share.mapall_user)
-            if (!share.mapall_group.isNullOrEmpty()) ShareInfoRow("Map All Group", share.mapall_group)
+            if (!share.maproot_user.isNullOrEmpty()) ShareInfoRow(stringResource(R.string.share_map_root_user), share.maproot_user)
+            if (!share.maproot_group.isNullOrEmpty()) ShareInfoRow(stringResource(R.string.share_map_root_group), share.maproot_group)
+            if (!share.mapall_user.isNullOrEmpty()) ShareInfoRow(stringResource(R.string.share_map_all_user), share.mapall_user)
+            if (!share.mapall_group.isNullOrEmpty()) ShareInfoRow(stringResource(R.string.share_map_all_group), share.mapall_group)
         }
     }
 }
@@ -831,7 +833,7 @@ private fun NfsSecurityCard(share: Shares.NfsShare) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Icon(Icons.Default.Security, null, tint = MaterialTheme.colorScheme.onTertiaryContainer, modifier = Modifier.size(20.dp))
-                Text("Security Flavors", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onTertiaryContainer)
+                Text(stringResource(R.string.share_security_flavors), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onTertiaryContainer)
             }
             share.security.forEach { flavor ->
                 Surface(
