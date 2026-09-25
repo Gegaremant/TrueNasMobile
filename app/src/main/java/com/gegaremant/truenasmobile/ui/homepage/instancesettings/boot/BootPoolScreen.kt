@@ -40,9 +40,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -86,8 +88,8 @@ fun BootPoolScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             UnifiedScreenHeader(
-                title = "Boot Pool",
-                subtitle = "State and disks",
+                title = stringResource(R.string.bootpool_title),
+                subtitle = stringResource(R.string.bootpool_subtitle),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = uiState.error,
@@ -99,7 +101,7 @@ fun BootPoolScreen(
     ) { innerPadding ->
         when {
             uiState.isLoading && uiState.bootState == null ->
-                LoadingScreen("Loading boot pool...")
+                LoadingScreen(stringResource(R.string.bootpool_loading))
             else ->
                 PullToRefreshContent(
                     isRefreshing = uiState.isRefreshing,
@@ -119,46 +121,46 @@ fun BootPoolScreen(
                     }
 
                     item {
-                        ExpressiveSection(title = "Pool Details", icon = Icons.Default.Storage) {
+                        ExpressiveSection(title = stringResource(R.string.bootpool_section_details), icon = Icons.Default.Storage) {
                             ExpressiveInfoCard {
                                 val state = uiState.bootState
                                 state?.let {
-                                    InfoRow("Pool Name", it.name)
+                                    InfoRow(stringResource(R.string.bootpool_pool_name), it.name)
                                     HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                    InfoRow("Status", it.status)
+                                    InfoRow(stringResource(R.string.attr_status), it.status)
                                     HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                    InfoRow("Path", it.path)
+                                    InfoRow(stringResource(R.string.attr_path), it.path)
                                     HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                    InfoRow("Health", if (it.healthy) "Healthy" else "Degraded")
+                                    InfoRow(stringResource(R.string.attr_health), if (it.healthy) stringResource(R.string.bootpool_healthy) else stringResource(R.string.bootpool_degraded))
                                     if (it.size != null) {
                                         HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                        InfoRow("Size", formatBytes(it.size))
+                                        InfoRow(stringResource(R.string.attr_size), formatBytes(it.size))
                                     }
                                     if (it.allocated != null) {
                                         HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                        InfoRow("Allocated", formatBytes(it.allocated))
+                                        InfoRow(stringResource(R.string.attr_allocated), formatBytes(it.allocated))
                                     }
                                     if (it.free != null) {
                                         HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                        InfoRow("Free", formatBytes(it.free))
+                                        InfoRow(stringResource(R.string.attr_free), formatBytes(it.free))
                                     }
                                     HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                    InfoRow("Is Upgraded", if (it.isUpgraded) "Yes" else "No")
+                                    InfoRow(stringResource(R.string.bootpool_is_upgraded), if (it.isUpgraded) stringResource(R.string.common_yes) else stringResource(R.string.common_no))
                                     if (!it.fragmentation.isNullOrBlank()) {
                                         HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                        InfoRow("Fragmentation", it.fragmentation)
+                                        InfoRow(stringResource(R.string.attr_fragmentation), it.fragmentation)
                                     }
-                                } ?: Text("Boot pool state unavailable.")
+                                } ?: Text(stringResource(R.string.bootpool_state_unavailable))
                             }
                         }
                     }
 
                     item {
-                        ExpressiveSection(title = "Attached Disks", icon = Icons.Default.Storage) {
+                        ExpressiveSection(title = stringResource(R.string.bootpool_section_disks), icon = Icons.Default.Storage) {
                             if (uiState.disks.isEmpty()) {
                                 ExpressiveInfoCard {
                                     Text(
-                                        "No disks reported for the boot pool.",
+                                        stringResource(R.string.bootpool_no_disks),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -177,18 +179,18 @@ fun BootPoolScreen(
                     }
 
                     item {
-                        ExpressiveSection(title = "Actions", icon = Icons.Default.Refresh) {
+                        ExpressiveSection(title = stringResource(R.string.attr_actions), icon = Icons.Default.Refresh) {
                             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                 ActionButton(
                                     modifier = Modifier.weight(1f),
-                                    label = "Attach",
+                                    label = stringResource(R.string.bootpool_attach),
                                     icon = Icons.Default.Add,
                                     enabled = !uiState.isActing,
                                     onClick = { showAttachDialog = true }
                                 )
                                 ActionButton(
                                     modifier = Modifier.weight(1f),
-                                    label = "Replace",
+                                    label = stringResource(R.string.bootpool_replace),
                                     icon = Icons.Default.SwapVert,
                                     enabled = !uiState.isActing && uiState.disks.isNotEmpty(),
                                     onClick = { showReplaceDialog = true }
@@ -198,7 +200,7 @@ fun BootPoolScreen(
                             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                 ActionButton(
                                     modifier = Modifier.weight(1f),
-                                    label = "Scrub",
+                                    label = stringResource(R.string.bootpool_scrub),
                                     icon = Icons.Default.Upload,
                                     enabled = !uiState.isActing,
                                     loading = uiState.isActing,
@@ -206,7 +208,7 @@ fun BootPoolScreen(
                                 )
                                 ActionButton(
                                     modifier = Modifier.weight(1f),
-                                    label = "Refresh",
+                                    label = stringResource(R.string.bootpool_refresh),
                                     icon = Icons.Default.Refresh,
                                     enabled = !uiState.isActing,
                                     onClick = { vm.refresh() }
@@ -215,7 +217,7 @@ fun BootPoolScreen(
                             Spacer(Modifier.height(12.dp))
                             ActionButton(
                                 modifier = Modifier.fillMaxWidth(),
-                                label = "Set Scrub Interval",
+                                label = stringResource(R.string.bootpool_scrub_interval),
                                 icon = Icons.Default.Refresh,
                                 enabled = !uiState.isActing,
                                 onClick = { showScrubIntervalDialog = true }
@@ -263,16 +265,16 @@ fun BootPoolScreen(
     detachTarget?.let { disk ->
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { detachTarget = null },
-            title = { Text("Detach disk?") },
-            text = { Text("Detach \"$disk\" from the boot pool?") },
+            title = { Text(stringResource(R.string.bootpool_detach_title)) },
+            text = { Text(stringResource(R.string.bootpool_detach_message, disk)) },
             confirmButton = {
                 TextButton(onClick = {
                     vm.detachDisk(disk)
                     detachTarget = null
-                }) { Text("Detach") }
+                }) { Text(stringResource(R.string.bootpool_detach)) }
             },
             dismissButton = {
-                TextButton(onClick = { detachTarget = null }) { Text("Cancel") }
+                TextButton(onClick = { detachTarget = null }) { Text(stringResource(R.string.common_cancel)) }
             }
         )
     }
@@ -307,7 +309,7 @@ private fun DiskCard(disk: String, onDetach: () -> Unit) {
                 modifier = Modifier.weight(1f)
             )
             OutlinedButton(onClick = onDetach, shape = RoundedCornerShape(12.dp)) {
-                Text("Detach", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.bootpool_detach), style = MaterialTheme.typography.labelMedium)
             }
         }
     }
@@ -370,11 +372,11 @@ private fun AttachDiskDialog(
     var expand by remember { mutableStateOf(false) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Attach Disk") },
+        title = { Text(stringResource(R.string.bootpool_attach_title)) },
         text = {
             Column {
                 Text(
-                    "Attach a disk to the boot pool to turn a stripe into a mirror.",
+                    stringResource(R.string.bootpool_attach_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -382,7 +384,7 @@ private fun AttachDiskDialog(
                 OutlinedTextField(
                     value = dev,
                     onValueChange = { dev = it },
-                    label = { Text("Device name / path") },
+                    label = { Text(stringResource(R.string.bootpool_device_path)) },
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
@@ -390,7 +392,7 @@ private fun AttachDiskDialog(
                 Spacer(Modifier.height(12.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "Expand pool after attach",
+                        stringResource(R.string.bootpool_expand_after_attach),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f)
                     )
@@ -400,11 +402,11 @@ private fun AttachDiskDialog(
         },
         confirmButton = {
             TextButton(enabled = dev.isNotBlank(), onClick = { onConfirm(dev.trim(), expand) }) {
-                Text("Attach")
+                Text(stringResource(R.string.bootpool_attach))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         }
     )
 }
@@ -419,11 +421,11 @@ private fun ReplaceDiskDialog(
     var dev by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Replace Disk") },
+        title = { Text(stringResource(R.string.bootpool_replace_title)) },
         text = {
             Column {
                 Text(
-                    "Replace a disk in the boot pool with a new device.",
+                    stringResource(R.string.bootpool_replace_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -431,7 +433,7 @@ private fun ReplaceDiskDialog(
                 OutlinedTextField(
                     value = label,
                     onValueChange = { label = it },
-                    label = { Text("Label to replace") },
+                    label = { Text(stringResource(R.string.bootpool_label_to_replace)) },
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
@@ -440,7 +442,7 @@ private fun ReplaceDiskDialog(
                 OutlinedTextField(
                     value = dev,
                     onValueChange = { dev = it },
-                    label = { Text("Replacement device") },
+                    label = { Text(stringResource(R.string.bootpool_replacement_device)) },
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
@@ -451,10 +453,10 @@ private fun ReplaceDiskDialog(
             TextButton(
                 enabled = label.isNotBlank() && dev.isNotBlank(),
                 onClick = { onConfirm(label.trim(), dev.trim()) }
-            ) { Text("Replace") }
+            ) { Text(stringResource(R.string.bootpool_replace)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         }
     )
 }
@@ -467,11 +469,11 @@ private fun SetScrubIntervalDialog(
     var interval by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Set Scrub Interval") },
+        title = { Text(stringResource(R.string.bootpool_scrub_interval)) },
         text = {
             Column {
                 Text(
-                    "Set the automatic scrub interval in days (must be a positive integer).",
+                    stringResource(R.string.bootpool_scrub_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -479,7 +481,7 @@ private fun SetScrubIntervalDialog(
                 OutlinedTextField(
                     value = interval,
                     onValueChange = { interval = it.filter(Char::isDigit) },
-                    label = { Text("Interval (days)") },
+                    label = { Text(stringResource(R.string.bootpool_interval_days)) },
                     singleLine = true,
                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                         keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
@@ -493,10 +495,10 @@ private fun SetScrubIntervalDialog(
             TextButton(
                 enabled = interval.toIntOrNull()?.let { it > 0 } == true,
                 onClick = { interval.toIntOrNull()?.let { onConfirm(it) } }
-            ) { Text("Save") }
+            ) { Text(stringResource(R.string.common_save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         }
     )
 }

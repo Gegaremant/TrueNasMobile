@@ -72,6 +72,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
@@ -83,6 +84,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -117,8 +119,8 @@ fun UserListScreen(
             )
     ) {
         UnifiedScreenHeader(
-            title = "Users",
-            subtitle = "${uiState.filteredUsers.size} / ${uiState.users.size} user(s)",
+            title = stringResource(R.string.users_title),
+            subtitle = stringResource(R.string.users_subtitle_count, uiState.filteredUsers.size, uiState.users.size),
             isLoading = uiState.isLoading,
             isRefreshing = uiState.isRefreshing,
             error = uiState.error,
@@ -149,7 +151,7 @@ fun UserListScreen(
                     OutlinedTextField(
                         value = uiState.searchQuery,
                         onValueChange = { viewModel.setSearchQuery(it) },
-                        placeholder = { Text("Search users…") },
+                        placeholder = { Text(stringResource(R.string.users_search_placeholder)) },
                         leadingIcon = {
                             Icon(
                                 Icons.Default.Search,
@@ -162,7 +164,7 @@ fun UserListScreen(
                                 IconButton(onClick = { viewModel.setSearchQuery("") }) {
                                     Icon(
                                         Icons.Default.Clear,
-                                        contentDescription = "Clear",
+                                        contentDescription = stringResource(R.string.common_clear),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
@@ -198,7 +200,7 @@ fun UserListScreen(
                                     viewModel.setFilterBuiltin(null)
                                     viewModel.setFilterRole(null)
                                 },
-                                label = { Text("All") },
+                                label = { Text(stringResource(R.string.users_filter_all)) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
                                 )
@@ -211,7 +213,7 @@ fun UserListScreen(
                                 onClick = {
                                     viewModel.setFilterLocked(if (sel) null else true)
                                 },
-                                label = { Text("Locked") },
+                                label = { Text(stringResource(R.string.users_filter_locked)) },
                                 leadingIcon = if (sel) null else null,
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = MaterialTheme.colorScheme.errorContainer
@@ -225,7 +227,7 @@ fun UserListScreen(
                                 onClick = {
                                     viewModel.setFilterLocked(if (sel) null else false)
                                 },
-                                label = { Text("Unlocked") },
+                                label = { Text(stringResource(R.string.users_filter_unlocked)) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = MaterialTheme.colorScheme.tertiaryContainer
                                 )
@@ -238,7 +240,7 @@ fun UserListScreen(
                                 onClick = {
                                     viewModel.setFilterSmb(if (sel) null else true)
                                 },
-                                label = { Text("SMB") },
+                                label = { Text(stringResource(R.string.users_filter_smb)) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
                                 )
@@ -251,7 +253,7 @@ fun UserListScreen(
                                 onClick = {
                                     viewModel.setFilterBuiltin(if (sel) null else true)
                                 },
-                                label = { Text("System") },
+                                label = { Text(stringResource(R.string.users_filter_system)) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = MaterialTheme.colorScheme.tertiaryContainer
                                 )
@@ -264,7 +266,7 @@ fun UserListScreen(
                                 onClick = {
                                     viewModel.setFilterBuiltin(if (sel) null else false)
                                 },
-                                label = { Text("Local") },
+                                label = { Text(stringResource(R.string.users_filter_local)) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
                                 )
@@ -277,7 +279,7 @@ fun UserListScreen(
                                 onClick = {
                                     viewModel.setFilterRole(if (sel) null else "FULL_ADMIN")
                                 },
-                                label = { Text("Admin") },
+                                label = { Text(stringResource(R.string.users_filter_admin)) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = MaterialTheme.colorScheme.errorContainer
                                 )
@@ -287,7 +289,7 @@ fun UserListScreen(
 
                     // User list
                     when {
-                        uiState.isLoading -> LoadingScreen("Loading users...")
+                        uiState.isLoading -> LoadingScreen(stringResource(R.string.users_loading))
                         uiState.filteredUsers.isEmpty() -> EmptyUsersState(
                             hasFilters = uiState.searchQuery.isNotBlank() ||
                                     uiState.filterLocked != null ||
@@ -323,6 +325,10 @@ private fun UserFabMenu(
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val colorScheme = MaterialTheme.colorScheme
+    val creationOptions = stringResource(R.string.users_creation_options)
+    val addUserLabel = stringResource(R.string.users_add_user)
+    val expandedLabel = stringResource(R.string.common_expanded)
+    val collapsedLabel = stringResource(R.string.common_collapsed)
 
     BackHandler(expanded) { expanded = false }
 
@@ -338,10 +344,10 @@ private fun UserFabMenu(
                     PlainTooltip(
                         modifier = Modifier.semantics {
                             liveRegion = LiveRegionMode.Assertive
-                            paneTitle = "User creation options"
+                            paneTitle = creationOptions
                         }
                     ) {
-                        Text(if (expanded) "Close" else "Add user")
+                        Text(if (expanded) stringResource(R.string.common_close) else addUserLabel)
                     }
                 },
                 state = rememberTooltipState()
@@ -350,8 +356,8 @@ private fun UserFabMenu(
                     modifier = Modifier
                         .semantics {
                             traversalIndex = -1f
-                            stateDescription = if (expanded) "Expanded" else "Collapsed"
-                            contentDescription = "User creation options"
+                            stateDescription = if (expanded) expandedLabel else collapsedLabel
+                            contentDescription = creationOptions
                         }
                         .animateFloatingActionButton(
                             visible = true,
@@ -385,12 +391,12 @@ private fun UserFabMenu(
         FloatingActionButtonMenuItem(
             onClick = { expanded = false; onCreateUserClick() },
             icon = { Icon(Icons.Default.PersonAdd, contentDescription = null) },
-            text = { Text("Create User") }
+            text = { Text(stringResource(R.string.users_create_user)) }
         )
         FloatingActionButtonMenuItem(
             onClick = { expanded = false; onSetupAdminClick() },
             icon = { Icon(Icons.Default.AdminPanelSettings, contentDescription = null) },
-            text = { Text("Setup Local Admin") }
+            text = { Text(stringResource(R.string.users_setup_local_admin)) }
         )
     }
 }
@@ -410,15 +416,15 @@ private fun EmptyUsersState(hasFilters: Boolean) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = if (hasFilters) "No users match your filters"
-            else "No users found",
+            text = if (hasFilters) stringResource(R.string.users_empty_filtered)
+            else stringResource(R.string.users_empty_none),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = if (hasFilters) "Try adjusting your search or filter criteria"
-            else "Tap the + button to add a new user",
+            text = if (hasFilters) stringResource(R.string.users_empty_filtered_hint)
+            else stringResource(R.string.users_empty_none_hint),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
         )
@@ -522,10 +528,10 @@ private fun UserCard(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = when {
-                            isLocked -> "Locked"
-                            user.builtin -> "System"
-                            user.roles.contains("FULL_ADMIN") -> "Admin"
-                            else -> "Active"
+                            isLocked -> stringResource(R.string.user_status_locked)
+                            user.builtin -> stringResource(R.string.user_status_system)
+                            user.roles.contains("FULL_ADMIN") -> stringResource(R.string.user_status_admin)
+                            else -> stringResource(R.string.common_active)
                         },
                         style = MaterialTheme.typography.labelSmall,
                         color = statusColor,

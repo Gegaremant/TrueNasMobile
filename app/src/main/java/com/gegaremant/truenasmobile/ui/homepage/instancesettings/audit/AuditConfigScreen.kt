@@ -44,10 +44,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
@@ -63,6 +66,7 @@ fun AuditConfigScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
 
     var retention by remember { mutableStateOf("") }
@@ -86,10 +90,10 @@ fun AuditConfigScreen(
     LaunchedEffect(uiState.saveResult) {
         when (val result = uiState.saveResult) {
             is AuditSaveResult.Success -> {
-                snackbarHostState.showSnackbar("Audit settings saved")
+                snackbarHostState.showSnackbar(context.getString(R.string.toast_audit_saved))
             }
             is AuditSaveResult.Error -> {
-                snackbarHostState.showSnackbar("Error: ${result.message}")
+                snackbarHostState.showSnackbar(context.getString(R.string.audit_error, result.message))
             }
             null -> {}
         }
@@ -98,8 +102,8 @@ fun AuditConfigScreen(
     Scaffold(
         topBar = {
             UnifiedScreenHeader(
-                title = "Audit Configuration",
-                subtitle = "ZFS dataset, quotas & retention",
+                title = stringResource(R.string.audit_title),
+                subtitle = stringResource(R.string.audit_subtitle),
                 isLoading = uiState.isLoading && uiState.config == null,
                 isRefreshing = false,
                 error = null,
@@ -131,7 +135,7 @@ fun AuditConfigScreen(
                         ) {
                             Icon(Icons.Default.Cancel, contentDescription = null, modifier = Modifier.size(20.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Discard", fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.common_discard), fontWeight = FontWeight.SemiBold)
                         }
                         Button(
                             onClick = {
@@ -156,7 +160,7 @@ fun AuditConfigScreen(
                             } else {
                                 Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(20.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Save Changes", fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.common_save_changes), fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -165,7 +169,7 @@ fun AuditConfigScreen(
         }
     ) { innerPadding ->
         when {
-            uiState.isLoading && uiState.config == null -> LoadingScreen("Loading audit configuration…")
+            uiState.isLoading && uiState.config == null -> LoadingScreen(stringResource(R.string.audit_loading))
             uiState.config != null -> {
                 LazyColumn(
                     modifier = Modifier
@@ -179,17 +183,17 @@ fun AuditConfigScreen(
                     val space = uiState.config!!.space
                     if (space != null) {
                         item {
-                            ExpressiveSection(title = "ZFS Dataset Space", icon = Icons.Default.SdStorage) {
+                            ExpressiveSection(title = stringResource(R.string.audit_section_zfs_space), icon = Icons.Default.SdStorage) {
                                 ExpressiveInfoCard {
-                                    InfoRow("Used", formatBytes(space.used))
+                                    InfoRow(stringResource(R.string.audit_used), formatBytes(space.used))
                                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                    InfoRow("Used by dataset", formatBytes(space.usedByDataset))
+                                    InfoRow(stringResource(R.string.audit_used_by_dataset), formatBytes(space.usedByDataset))
                                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                    InfoRow("Used by reservation", formatBytes(space.usedByReservation))
+                                    InfoRow(stringResource(R.string.audit_used_by_reservation), formatBytes(space.usedByReservation))
                                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                    InfoRow("Used by snapshots", formatBytes(space.usedBySnapshots))
+                                    InfoRow(stringResource(R.string.audit_used_by_snapshots), formatBytes(space.usedBySnapshots))
                                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                    InfoRow("Available", formatBytes(space.available))
+                                    InfoRow(stringResource(R.string.audit_available), formatBytes(space.available))
                                 }
                             }
                         }
@@ -197,25 +201,25 @@ fun AuditConfigScreen(
 
 
                     item {
-                        ExpressiveSection(title = "Remote Logging", icon = Icons.Default.Cloud) {
+                        ExpressiveSection(title = stringResource(R.string.audit_section_remote_logging), icon = Icons.Default.Cloud) {
                             ExpressiveInfoCard {
                                 val cfg = uiState.config!!
-                                InfoRow("Remote logging enabled", if (cfg.remoteLoggingEnabled) "Yes" else "No")
+                                InfoRow(stringResource(R.string.audit_remote_logging_enabled), if (cfg.remoteLoggingEnabled) stringResource(R.string.common_yes) else stringResource(R.string.common_no))
                                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                                 val svcCount = cfg.enabledServices.middleware.size + cfg.enabledServices.smb.size + cfg.enabledServices.sudo.size
-                                InfoRow("Enabled services", "$svcCount configured")
+                                InfoRow(stringResource(R.string.audit_enabled_services), stringResource(R.string.audit_services_configured, svcCount))
                             }
                         }
                     }
 
 
                     item {
-                        ExpressiveSection(title = "Settings", icon = Icons.Default.Tune) {
+                        ExpressiveSection(title = stringResource(R.string.audit_section_settings), icon = Icons.Default.Tune) {
                             ExpressiveInfoCard {
                                 EditableField(
                                     value = retention,
                                     onValueChange = { retention = it },
-                                    label = "Retention (days)",
+                                    label = stringResource(R.string.audit_retention_days),
                                     icon = Icons.Default.Schedule,
                                     supportingText = "1 – 30"
                                 )
@@ -223,7 +227,7 @@ fun AuditConfigScreen(
                                 EditableField(
                                     value = reservation,
                                     onValueChange = { reservation = it },
-                                    label = "Reservation (GiB)",
+                                    label = stringResource(R.string.audit_reservation_gib),
                                     icon = Icons.Default.Dataset,
                                     supportingText = "0 – 100"
                                 )
@@ -231,7 +235,7 @@ fun AuditConfigScreen(
                                 EditableField(
                                     value = quota,
                                     onValueChange = { quota = it },
-                                    label = "Quota (GiB)",
+                                    label = stringResource(R.string.audit_quota_gib),
                                     icon = Icons.Default.SdStorage,
                                     supportingText = "0 – 100"
                                 )
@@ -239,7 +243,7 @@ fun AuditConfigScreen(
                                 EditableField(
                                     value = fillWarning,
                                     onValueChange = { fillWarning = it },
-                                    label = "Quota fill warning (%)",
+                                    label = stringResource(R.string.audit_quota_warning),
                                     icon = Icons.Default.Warning,
                                     supportingText = "5 – 80"
                                 )
@@ -247,7 +251,7 @@ fun AuditConfigScreen(
                                 EditableField(
                                     value = fillCritical,
                                     onValueChange = { fillCritical = it },
-                                    label = "Quota fill critical (%)",
+                                    label = stringResource(R.string.audit_quota_critical),
                                     icon = Icons.Default.Warning,
                                     supportingText = "50 – 95"
                                 )

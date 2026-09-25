@@ -41,9 +41,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -91,8 +93,8 @@ fun UserCreateScreen(
             )
     ) {
         UnifiedScreenHeader(
-            title = "Create User",
-            subtitle = "Add a new local user account",
+            title = stringResource(R.string.user_create_title),
+            subtitle = stringResource(R.string.user_create_subtitle),
             isLoading = false,
             isRefreshing = false,
             error = uiState.error,
@@ -102,7 +104,7 @@ fun UserCreateScreen(
         )
 
         when {
-            uiState.isLoading -> LoadingScreen("Loading defaults...")
+            uiState.isLoading -> LoadingScreen(stringResource(R.string.user_create_loading))
             else -> Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -112,16 +114,16 @@ fun UserCreateScreen(
             ) {
                 // ── Account Details section ──
                 SectionCard(
-                    title = "Account Details",
+                    title = stringResource(R.string.user_section_account_details),
                     icon = Icons.Default.Person
                 ) {
                     OutlinedTextField(
                         value = username, onValueChange = { username = it },
-                        label = { Text("Username *") },
-                        placeholder = { Text("e.g. jdoe") },
+                        label = { Text(stringResource(R.string.user_username_req)) },
+                        placeholder = { Text(stringResource(R.string.user_username_hint)) },
                         supportingText = {
                             if (username.isNotBlank() && !username.matches(Regex("^[a-zA-Z0-9._-]+$"))) {
-                                Text("Only alphanumeric, hyphens, underscores, and periods",
+                                Text(stringResource(R.string.user_username_error),
                                     color = MaterialTheme.colorScheme.error)
                             }
                         },
@@ -129,43 +131,44 @@ fun UserCreateScreen(
                     )
                     OutlinedTextField(
                         value = fullName, onValueChange = { fullName = it },
-                        label = { Text("Full Name *") },
-                        placeholder = { Text("e.g. John Doe") },
+                        label = { Text(stringResource(R.string.user_fullname_req)) },
+                        placeholder = { Text(stringResource(R.string.user_fullname_hint)) },
                         modifier = Modifier.fillMaxWidth(), singleLine = true
                     )
                     OutlinedTextField(
                         value = email, onValueChange = { email = it },
-                        label = { Text("Email") },
+                        label = { Text(stringResource(R.string.attr_email)) },
                         placeholder = { Text("user@example.com") },
                         modifier = Modifier.fillMaxWidth(), singleLine = true
                     )
                     OutlinedTextField(
                         value = password, onValueChange = { password = it },
-                        label = { Text("Password") },
-                        placeholder = { Text("Leave blank to set later") },
+                        label = { Text(stringResource(R.string.common_password)) },
+                        placeholder = { Text(stringResource(R.string.user_password_hint)) },
                         modifier = Modifier.fillMaxWidth(), singleLine = true
                     )
                 }
 
                 // ── Home & Shell section ──
                 SectionCard(
-                    title = "Home & Shell",
+                    title = stringResource(R.string.user_section_home_shell),
                     icon = Icons.Default.Folder
                 ) {
                     OutlinedTextField(
                         value = home, onValueChange = { home = it },
-                        label = { Text("Home Directory") },
+                        label = { Text(stringResource(R.string.user_home_dir)) },
                         modifier = Modifier.fillMaxWidth(), singleLine = true
                     )
                     OutlinedTextField(
                         value = shell, onValueChange = { shell = it },
-                        label = { Text("Shell") },
+                        label = { Text(stringResource(R.string.user_shell)) },
                         modifier = Modifier.fillMaxWidth(), singleLine = true
                     )
-                    if (uiState.nextUid != null) {
+                    val nextUid = uiState.nextUid
+                    if (nextUid != null) {
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            "Next available UID: ${uiState.nextUid}",
+                            stringResource(R.string.user_next_uid, nextUid),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium
@@ -175,19 +178,19 @@ fun UserCreateScreen(
 
                 // ── Options section ──
                 SectionCard(
-                    title = "Options",
+                    title = stringResource(R.string.user_section_options),
                     icon = Icons.Default.Lock
                 ) {
-                    ToggleRow(label = "SMB Access", description = "Allow SMB share access",
+                    ToggleRow(label = stringResource(R.string.user_smb_access), description = stringResource(R.string.user_smb_access_desc),
                         checked = smb, onCheckedChange = { smb = it })
-                    ToggleRow(label = "Locked", description = "Prevent account authentication",
+                    ToggleRow(label = stringResource(R.string.user_locked), description = stringResource(R.string.user_locked_desc),
                         checked = locked, onCheckedChange = { locked = it })
-                    ToggleRow(label = "Password Disabled", description = "Disable password login",
+                    ToggleRow(label = stringResource(R.string.user_password_disabled), description = stringResource(R.string.user_password_disabled_desc),
                         checked = passwordDisabled, onCheckedChange = { passwordDisabled = it })
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                    ToggleRow(label = "Create Group", description = "Auto-create primary group",
+                    ToggleRow(label = stringResource(R.string.user_create_group), description = stringResource(R.string.user_create_group_desc),
                         checked = groupCreate, onCheckedChange = { groupCreate = it })
-                    ToggleRow(label = "Create Home", description = "Auto-create home directory",
+                    ToggleRow(label = stringResource(R.string.user_create_home), description = stringResource(R.string.user_create_home_desc),
                         checked = homeCreate, onCheckedChange = { homeCreate = it })
                 }
 
@@ -200,7 +203,7 @@ fun UserCreateScreen(
                         onClick = onNavigateBack,
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.common_cancel))
                     }
                     Button(
                         onClick = {
@@ -225,7 +228,7 @@ fun UserCreateScreen(
                             Icon(Icons.Default.PersonAdd, null, Modifier.size(18.dp))
                         }
                         Spacer(Modifier.width(8.dp))
-                        Text("Create User")
+                        Text(stringResource(R.string.users_create_user))
                     }
                 }
             }

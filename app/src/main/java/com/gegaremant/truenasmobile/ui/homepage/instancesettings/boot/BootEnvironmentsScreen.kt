@@ -46,11 +46,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.ExpressiveFAB
@@ -94,8 +96,8 @@ fun BootEnvironmentsScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             UnifiedScreenHeader(
-                title = "Boot Environments",
-                subtitle = "${uiState.environments.size} environments",
+                title = stringResource(R.string.bootenv_title),
+                subtitle = stringResource(R.string.bootenv_subtitle_count, uiState.environments.size),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = uiState.error,
@@ -108,7 +110,7 @@ fun BootEnvironmentsScreen(
             ExpressiveFAB(
                 onClick = { cloneSourceId = uiState.environments.firstOrNull()?.id },
                 icon = Icons.Default.Add,
-                text = "Clone",
+                text = stringResource(R.string.bootenv_clone),
                 visible = uiState.environments.isNotEmpty(),
                 initiallyExpanded = true,
                 expandedDurationMillis = 2500
@@ -117,7 +119,7 @@ fun BootEnvironmentsScreen(
     ) { innerPadding ->
         when {
             uiState.isLoading && uiState.environments.isEmpty() ->
-                LoadingScreen("Loading boot environments...")
+                LoadingScreen(stringResource(R.string.bootenv_loading))
             uiState.environments.isEmpty() ->
                 Column(
                     modifier = Modifier
@@ -128,7 +130,7 @@ fun BootEnvironmentsScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        "No boot environments found.",
+                        stringResource(R.string.bootenv_empty),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -137,7 +139,7 @@ fun BootEnvironmentsScreen(
                     OutlinedButton(onClick = { vm.refresh() }) {
                         Icon(Icons.Default.Refresh, null, modifier = Modifier.size(16.dp))
                         Spacer(Modifier.width(6.dp))
-                        Text("Retry")
+                        Text(stringResource(R.string.common_retry))
                     }
                 }
             else ->
@@ -155,9 +157,9 @@ fun BootEnvironmentsScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                     item {
-                        ExpressiveSection(title = "Environments", icon = Icons.Default.PowerSettingsNew) {
+                        ExpressiveSection(title = stringResource(R.string.bootenv_section_environments), icon = Icons.Default.PowerSettingsNew) {
                             IconButton(onClick = { vm.refresh() }, modifier = Modifier.align(Alignment.End)) {
-                                Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                                Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.common_refresh_cd))
                             }
                         }
                     }
@@ -192,16 +194,16 @@ fun BootEnvironmentsScreen(
     destroyTargetId?.let { id ->
         AlertDialog(
             onDismissRequest = { destroyTargetId = null },
-            title = { Text("Destroy environment?") },
-            text = { Text("Permanently destroy boot environment \"$id\"? This cannot be undone.") },
+            title = { Text(stringResource(R.string.bootenv_destroy_title)) },
+            text = { Text(stringResource(R.string.bootenv_destroy_message, id)) },
             confirmButton = {
                 TextButton(onClick = {
                     vm.destroy(id)
                     destroyTargetId = null
-                }) { Text("Destroy") }
+                }) { Text(stringResource(R.string.bootenv_destroy)) }
             },
             dismissButton = {
-                TextButton(onClick = { destroyTargetId = null }) { Text("Cancel") }
+                TextButton(onClick = { destroyTargetId = null }) { Text(stringResource(R.string.common_cancel)) }
             }
         )
     }
@@ -244,7 +246,7 @@ private fun BootEnvironmentCard(
                     if (isActive) {
                         Icon(
                             Icons.Default.CheckCircle,
-                            contentDescription = "Active",
+                            contentDescription = stringResource(R.string.attr_active),
                             tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(22.dp)
                         )
@@ -260,7 +262,7 @@ private fun BootEnvironmentCard(
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = env.id ?: "Unknown",
+                        text = env.id ?: stringResource(R.string.common_unknown),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = if (isActive) FontWeight.Bold else FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -294,14 +296,14 @@ private fun BootEnvironmentCard(
                     enabled = !isActing && !isActive && env.canActivate == true,
                     onClick = onActivate,
                     shape = RoundedCornerShape(12.dp)
-                ) { Text("Activate") }
+                ) { Text(stringResource(R.string.bootenv_activate)) }
 
                 Row(
                     modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "Keep",
+                        stringResource(R.string.bootenv_keep),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f)
@@ -320,7 +322,7 @@ private fun BootEnvironmentCard(
                 ) {
                     Icon(
                         Icons.Default.Add,
-                        contentDescription = "Clone",
+                        contentDescription = stringResource(R.string.bootenv_clone),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -331,7 +333,7 @@ private fun BootEnvironmentCard(
                 ) {
                     Icon(
                         Icons.Default.Delete,
-                        contentDescription = "Destroy",
+                        contentDescription = stringResource(R.string.bootenv_destroy),
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
@@ -349,11 +351,11 @@ private fun CloneDialog(
     var target by remember(sourceId) { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Clone Environment") },
+        title = { Text(stringResource(R.string.bootenv_clone_title)) },
         text = {
             Column {
                 Text(
-                    "Source: $sourceId. Choose a name for the new boot environment.",
+                    stringResource(R.string.bootenv_clone_desc, sourceId),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -361,7 +363,7 @@ private fun CloneDialog(
                 OutlinedTextField(
                     value = target,
                     onValueChange = { target = it },
-                    label = { Text("New environment name") },
+                    label = { Text(stringResource(R.string.bootenv_new_name)) },
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
@@ -370,11 +372,11 @@ private fun CloneDialog(
         },
         confirmButton = {
             TextButton(enabled = target.isNotBlank(), onClick = { onConfirm(target.trim()) }) {
-                Text("Clone")
+                Text(stringResource(R.string.bootenv_clone))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         }
     )
 }

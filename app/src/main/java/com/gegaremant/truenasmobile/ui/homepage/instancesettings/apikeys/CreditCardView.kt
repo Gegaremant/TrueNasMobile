@@ -54,6 +54,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.gegaremant.truenasmobile.R
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
@@ -214,14 +216,14 @@ fun CreditCardKeyDialog(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                "API Key Created",
+                stringResource(R.string.apikey_created_title),
                 color = Color.White,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 18.sp
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                "Store this key now — it won't be shown again",
+                stringResource(R.string.apikey_created_hint),
                 color = Color.White.copy(alpha = 0.65f),
                 fontSize = 12.sp
             )
@@ -345,7 +347,7 @@ fun CreditCardKeyDialog(
                             )
                             Spacer(Modifier.height(6.dp))
                             Text(
-                                if (showKeyText) "Tap card to hide" else "Tap card to reveal",
+                                if (showKeyText) stringResource(R.string.apikey_tap_hide) else stringResource(R.string.apikey_tap_reveal),
                                 color = Color.White.copy(alpha = 0.55f),
                                 fontSize = 10.sp
                             )
@@ -359,13 +361,13 @@ fun CreditCardKeyDialog(
                         ) {
                             Column {
                                 Text(
-                                    "KEY NAME",
+                                    stringResource(R.string.apikey_key_name_label),
                                     color = Color.White.copy(alpha = 0.55f),
                                     fontSize = 8.5.sp,
                                     letterSpacing = 1.sp
                                 )
                                 Text(
-                                    keyName.ifBlank { "UNNAMED" }.uppercase(),
+                                    keyName.ifBlank { stringResource(R.string.apikey_unnamed) }.uppercase(),
                                     color = Color.White,
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = 13.sp,
@@ -384,7 +386,7 @@ fun CreditCardKeyDialog(
                                 ) {
                                     Icon(
                                         if (showKeyText) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                        contentDescription = if (showKeyText) "Hide key" else "Reveal key",
+                                        contentDescription = if (showKeyText) stringResource(R.string.apikey_hide_key) else stringResource(R.string.apikey_reveal_key),
                                         modifier = Modifier.size(16.dp)
                                     )
                                 }
@@ -412,7 +414,7 @@ fun CreditCardKeyDialog(
 
             AnimatedVisibility(visible = justCopied, enter = fadeIn(), exit = fadeOut()) {
                 Text(
-                    "Copied to clipboard",
+                    stringResource(R.string.apikey_copied_to_clipboard),
                     color = colorScheme.tertiary,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
@@ -427,7 +429,7 @@ fun CreditCardKeyDialog(
                     .clickable { dismiss() }
                     .padding(horizontal = 20.dp, vertical = 10.dp)
             ) {
-                Text("Done", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                Text(stringResource(R.string.common_done), color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
             }
         }
     }
@@ -441,14 +443,14 @@ private fun CopyIconSwap(showCheck: Boolean) {
             enter = scaleIn(animationSpec = tween(200)) + fadeIn(),
             exit = scaleOut(animationSpec = tween(150)) + fadeOut()
         ) {
-            Icon(Icons.Default.Check, contentDescription = "Copied", modifier = Modifier.size(16.dp))
+            Icon(Icons.Default.Check, contentDescription = stringResource(R.string.common_copied), modifier = Modifier.size(16.dp))
         }
         AnimatedVisibility(
             visible = !showCheck,
             enter = scaleIn(animationSpec = tween(200)) + fadeIn(),
             exit = scaleOut(animationSpec = tween(150)) + fadeOut()
         ) {
-            Icon(Icons.Default.ContentCopy, contentDescription = "Copy key", modifier = Modifier.size(16.dp))
+            Icon(Icons.Default.ContentCopy, contentDescription = stringResource(R.string.apikey_copy_key), modifier = Modifier.size(16.dp))
         }
     }
 }

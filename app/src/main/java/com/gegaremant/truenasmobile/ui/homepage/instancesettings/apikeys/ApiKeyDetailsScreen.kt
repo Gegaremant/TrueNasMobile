@@ -43,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -51,6 +52,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System.formatDate
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -82,15 +84,15 @@ fun ApiKeyDetailScreen(
         Brush.verticalGradient(listOf(MaterialTheme.colorScheme.surface, MaterialTheme.colorScheme.surfaceContainer))
     )) {
         UnifiedScreenHeader(
-            title = current?.name ?: "API Key",
-            subtitle = current?.username ?: "Key details",
+            title = current?.name ?: stringResource(R.string.common_api_key),
+            subtitle = current?.username ?: stringResource(R.string.apikey_details_subtitle),
             isLoading = uiState.isLoading, isRefreshing = false,
             error = uiState.error, onDismissError = { vm.clearDetailError() },
             manager = manager, onBackPressed = onNavigateBack
         )
         Box(Modifier.weight(1f)) {
             when {
-                uiState.isLoading -> LoadingScreen("Loading key details")
+                uiState.isLoading -> LoadingScreen(stringResource(R.string.apikey_details_loading))
                 current != null -> Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     // Status card
@@ -104,14 +106,14 @@ fun ApiKeyDetailScreen(
                             Column(Modifier.weight(1f)) {
                                 Text(current.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface)
-                                Text(current.username ?: "System key", style = MaterialTheme.typography.bodySmall,
+                                Text(current.username ?: stringResource(R.string.apikey_system_key), style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                             Surface(color = sc.value.copy(alpha = 0.12f), shape = RoundedCornerShape(100.dp)) {
                                 Row(Modifier.padding(horizontal = 12.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
                                     Box(Modifier.size(8.dp).clip(CircleShape).background(sc.value))
                                     Spacer(Modifier.width(6.dp))
-                                    Text(if (current.revoked) "Revoked" else "Active",
+                                    Text(if (current.revoked) stringResource(R.string.apikey_revoked) else stringResource(R.string.common_active),
                                         style = MaterialTheme.typography.labelMedium, color = sc.value, fontWeight = FontWeight.Bold)
                                 }
                             }
@@ -119,20 +121,20 @@ fun ApiKeyDetailScreen(
                     }
 
                     // Key Info section
-                    SectionCard(title = "Key Info", icon = Icons.Default.VpnKey) {
-                        DetailRow("Name", current.name)
-                        DetailRow("Username", current.username ?: "—")
-                        DetailRow("Key Hash", current.keyhash.take(16) + "...")
-                        DetailRow("Created", current.created_at.formatDate())
-                        DetailRow("Expires", current.expires_at?.formatDate() ?: "Never")
+                    SectionCard(title = stringResource(R.string.apikey_section_info), icon = Icons.Default.VpnKey) {
+                        DetailRow(stringResource(R.string.attr_name), current.name)
+                        DetailRow(stringResource(R.string.common_username), current.username ?: stringResource(R.string.common_dash))
+                        DetailRow(stringResource(R.string.apikey_hash), current.keyhash.take(16) + "...")
+                        DetailRow(stringResource(R.string.attr_created), current.created_at.formatDate())
+                        DetailRow(stringResource(R.string.apikey_expires), current.expires_at?.formatDate() ?: stringResource(R.string.attr_never))
 
 
                     }
                     // Status section
-                    SectionCard(title = "Status", icon = Icons.Default.Security) {
-                        DetailRow("Local", if (current.local) "Yes" else "No")
-                        DetailRow("Revoked", if (current.revoked) "Yes" else "No")
-                        if (current.revoked_reason != null) DetailRow("Reason", current.revoked_reason)
+                    SectionCard(title = stringResource(R.string.attr_status), icon = Icons.Default.Security) {
+                        DetailRow(stringResource(R.string.attr_local), if (current.local) stringResource(R.string.common_yes) else stringResource(R.string.common_no))
+                        DetailRow(stringResource(R.string.apikey_revoked), if (current.revoked) stringResource(R.string.common_yes) else stringResource(R.string.common_no))
+                        if (current.revoked_reason != null) DetailRow(stringResource(R.string.attr_reason), current.revoked_reason)
                     }
 
                     // Actions
@@ -142,7 +144,7 @@ fun ApiKeyDetailScreen(
                             modifier = Modifier.weight(1f)) {
                             if (uiState.isResetting) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                             else Icon(Icons.Default.Refresh, null, Modifier.size(18.dp))
-                            Spacer(Modifier.width(8.dp)); Text("Reset")
+                            Spacer(Modifier.width(8.dp)); Text(stringResource(R.string.apikey_reset))
                         }
                         OutlinedButton(onClick = { showDeleteDialog = true },
                             enabled = !uiState.isDeleting,
@@ -150,7 +152,7 @@ fun ApiKeyDetailScreen(
                             modifier = Modifier.weight(1f)) {
                             if (uiState.isDeleting) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                             else Icon(Icons.Default.Delete, null, Modifier.size(18.dp))
-                            Spacer(Modifier.width(8.dp)); Text("Delete")
+                            Spacer(Modifier.width(8.dp)); Text(stringResource(R.string.common_delete))
                         }
                     }
                 }
@@ -160,19 +162,19 @@ fun ApiKeyDetailScreen(
 
     if (showDeleteDialog) AlertDialog(
         onDismissRequest = { showDeleteDialog = false },
-        title = { Text("Delete API Key") },
-        text = { Text("Are you sure you want to delete \"${current?.name}\"? This cannot be undone.") },
+        title = { Text(stringResource(R.string.apikey_delete_title)) },
+        text = { Text(stringResource(R.string.apikey_delete_message, current?.name ?: "")) },
         confirmButton = { TextButton(onClick = { showDeleteDialog = false; vm.deleteKey(keyId) },
-            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) { Text("Delete") } },
-        dismissButton = { TextButton(onClick = { showDeleteDialog = false }) { Text("Cancel") } }
+            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) { Text(stringResource(R.string.common_delete)) } },
+        dismissButton = { TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.common_cancel)) } }
     )
 
     if (showResetDialog) AlertDialog(
         onDismissRequest = { showResetDialog = false },
-        title = { Text("Reset API Key") },
-        text = { Text("Reset \"${current?.name}\"? The old key will stop working immediately.") },
-        confirmButton = { TextButton(onClick = { showResetDialog = false; vm.resetKey(keyId) }) { Text("Reset") } },
-        dismissButton = { TextButton(onClick = { showResetDialog = false }) { Text("Cancel") } }
+        title = { Text(stringResource(R.string.apikey_reset_title)) },
+        text = { Text(stringResource(R.string.apikey_reset_message, current?.name ?: "")) },
+        confirmButton = { TextButton(onClick = { showResetDialog = false; vm.resetKey(keyId) }) { Text(stringResource(R.string.apikey_reset)) } },
+        dismissButton = { TextButton(onClick = { showResetDialog = false }) { Text(stringResource(R.string.common_cancel)) } }
     )
 }
 

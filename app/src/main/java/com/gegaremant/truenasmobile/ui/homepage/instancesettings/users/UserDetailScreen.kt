@@ -55,6 +55,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -62,6 +63,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -113,6 +115,14 @@ fun UserDetailScreen(
 
     val current = uiState.user
     var showDeleteDialog by remember { mutableStateOf(false) }
+    val yes = stringResource(R.string.common_yes)
+    val no = stringResource(R.string.common_no)
+    val enabled = stringResource(R.string.common_enabled)
+    val disabled = stringResource(R.string.common_disabled)
+    val configured = stringResource(R.string.generalsettings_configured)
+    val notConfigured = stringResource(R.string.generalsettings_not_configured)
+    val dash = stringResource(R.string.common_dash)
+    val present = stringResource(R.string.user_present)
 
     val statusColor by animateColorAsState(
         targetValue = when {
@@ -125,10 +135,10 @@ fun UserDetailScreen(
     )
 
     val statusLabel = when {
-        current?.locked == true -> "Locked"
-        current?.builtin == true -> "System"
-        current?.roles?.contains("FULL_ADMIN") == true -> "Admin"
-        else -> "Active"
+        current?.locked == true -> stringResource(R.string.user_status_locked)
+        current?.builtin == true -> stringResource(R.string.user_status_system)
+        current?.roles?.contains("FULL_ADMIN") == true -> stringResource(R.string.user_status_admin)
+        else -> stringResource(R.string.common_active)
     }
 
     Column(
@@ -144,8 +154,8 @@ fun UserDetailScreen(
             )
     ) {
         UnifiedScreenHeader(
-            title = current?.username ?: "User",
-            subtitle = current?.full_name ?: "User details",
+            title = current?.username ?: stringResource(R.string.user_detail_title_fallback),
+            subtitle = current?.full_name ?: stringResource(R.string.user_detail_subtitle_fallback),
             isLoading = uiState.isLoading,
             isRefreshing = false,
             error = uiState.error,
@@ -156,7 +166,7 @@ fun UserDetailScreen(
 
         Box(modifier = Modifier.weight(1f)) {
             when {
-                uiState.isLoading -> LoadingScreen("Loading user details")
+                uiState.isLoading -> LoadingScreen(stringResource(R.string.user_detail_loading))
                 current != null -> Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -258,7 +268,7 @@ fun UserDetailScreen(
                             OutlinedButton(
                                 onClick = { isEditing = false },
                                 modifier = Modifier.weight(1f)
-                            ) { Text("Cancel") }
+                            ) { Text(stringResource(R.string.common_cancel)) }
                             Button(
                                 onClick = {
                                     viewModel.updateUser(
@@ -284,63 +294,63 @@ fun UserDetailScreen(
                                     Icon(Icons.Default.Save, null, Modifier.size(18.dp))
                                 }
                                 Spacer(Modifier.width(8.dp))
-                                Text("Save")
+                                Text(stringResource(R.string.common_save))
                             }
                         }
                     } else {
                         // Account Info section
                         SectionCard(
-                            title = "Account Info",
+                            title = stringResource(R.string.user_section_account_info),
                             icon = Icons.Default.Person
                         ) {
                             DetailRow("UID", current.uid.toString())
-                            DetailRow("Username", current.username)
-                            DetailRow("Full Name", current.full_name)
-                            DetailRow("Email", current.email ?: "—")
-                            DetailRow("Home", current.home)
-                            DetailRow("Shell", current.shell)
+                            DetailRow(stringResource(R.string.common_username), current.username)
+                            DetailRow(stringResource(R.string.user_full_name), current.full_name)
+                            DetailRow(stringResource(R.string.attr_email), current.email ?: dash)
+                            DetailRow(stringResource(R.string.user_home_dir), current.home)
+                            DetailRow(stringResource(R.string.user_shell), current.shell)
                         }
 
                         // Status & Permissions section
                         SectionCard(
-                            title = "Status & Permissions",
+                            title = stringResource(R.string.user_section_status_permissions),
                             icon = Icons.Default.Security
                         ) {
-                            DetailRow("Built-in", if (current.builtin) "Yes" else "No")
-                            DetailRow("Local", if (current.local) "Yes" else "No")
-                            DetailRow("Locked", if (current.locked) "Yes" else "No")
-                            DetailRow("SMB Access", if (current.smb) "Enabled" else "Disabled")
-                            DetailRow("Password", if (current.password_disabled) "Disabled" else "Enabled")
-                            DetailRow("SSH Password", if (current.ssh_password_enabled) "Enabled" else "Disabled")
-                            DetailRow("2FA", if (current.twofactor_auth_configured) "Configured" else "Not configured")
-                            DetailRow("Change Required", if (current.password_change_required) "Yes" else "No")
+                            DetailRow(stringResource(R.string.user_builtin), if (current.builtin) yes else no)
+                            DetailRow(stringResource(R.string.user_local), if (current.local) yes else no)
+                            DetailRow(stringResource(R.string.user_locked), if (current.locked) yes else no)
+                            DetailRow(stringResource(R.string.user_smb_access), if (current.smb) enabled else disabled)
+                            DetailRow(stringResource(R.string.common_password), if (current.password_disabled) disabled else enabled)
+                            DetailRow(stringResource(R.string.user_ssh_password), if (current.ssh_password_enabled) enabled else disabled)
+                            DetailRow(stringResource(R.string.user_2fa), if (current.twofactor_auth_configured) configured else notConfigured)
+                            DetailRow(stringResource(R.string.user_change_required), if (current.password_change_required) yes else no)
                         }
 
                         // Roles section
                         SectionCard(
-                            title = "Roles & Groups",
+                            title = stringResource(R.string.user_section_roles_groups),
                             icon = Icons.Default.AdminPanelSettings
                         ) {
-                            DetailRow("Roles", current.roles.joinToString(", ").ifEmpty { "—" })
+                            DetailRow(stringResource(R.string.user_roles), current.roles.joinToString(", ").ifEmpty { dash })
                             DetailRow(
-                                "Primary Group",
-                                current.group?.bsdgrp_group ?: "—"
+                                stringResource(R.string.user_primary_group),
+                                current.group?.bsdgrp_group ?: dash
                             )
                             DetailRow(
                                 "GID",
-                                current.group?.bsdgrp_gid?.toString() ?: "—"
+                                current.group?.bsdgrp_gid?.toString() ?: dash
                             )
-                            DetailRow("Groups", current.groups.joinToString(", ").ifEmpty { "—" })
+                            DetailRow(stringResource(R.string.user_groups), current.groups.joinToString(", ").ifEmpty { dash })
                         }
 
                         // Password section
                         SectionCard(
-                            title = "Password",
+                            title = stringResource(R.string.user_section_password),
                             icon = Icons.Default.Lock
                         ) {
-                            DetailRow("Age (days)", current.password_age?.toString() ?: "—")
-                            DetailRow("SMB Hash", if (current.smbhash != null && current.smbhash != "") "Present" else "—")
-                            DetailRow("SID", current.sid ?: "—")
+                            DetailRow(stringResource(R.string.user_password_age), current.password_age?.toString() ?: dash)
+                            DetailRow(stringResource(R.string.user_smb_hash), if (current.smbhash != null && current.smbhash != "") present else dash)
+                            DetailRow("SID", current.sid ?: dash)
                         }
                         if (!current.builtin && !current.password_disabled) {
                             OutlinedButton(
@@ -349,16 +359,16 @@ fun UserDetailScreen(
                             ) {
                                 Icon(Icons.Default.Key, null, Modifier.size(18.dp))
                                 Spacer(Modifier.width(8.dp))
-                                Text("Change Password")
+                                Text(stringResource(R.string.user_change_password))
                             }
                         }
                         if (current.twofactor_auth_configured) {
                             SectionCard(
-                                title = "Two-Factor Authentication",
+                                title = stringResource(R.string.user_section_2fa),
                                 icon = Icons.Default.Security
                             ) {
                                 Text(
-                                    "2FA is currently configured for this account",
+                                    stringResource(R.string.user_2fa_configured),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -369,7 +379,7 @@ fun UserDetailScreen(
                                 ) {
                                     Icon(Icons.Default.Refresh, null, Modifier.size(18.dp))
                                     Spacer(Modifier.width(8.dp))
-                                    Text("Manage 2FA")
+                                    Text(stringResource(R.string.user_manage_2fa))
                                 }
                             }
                         }
@@ -385,7 +395,7 @@ fun UserDetailScreen(
                             ) {
                                 Icon(Icons.Default.Edit, null, Modifier.size(18.dp))
                                 Spacer(Modifier.width(8.dp))
-                                Text("Edit")
+                                Text(stringResource(R.string.common_edit))
                             }
                             OutlinedButton(
                                 onClick = { showDeleteDialog = true },
@@ -401,7 +411,7 @@ fun UserDetailScreen(
                                     Icon(Icons.Default.Delete, null, Modifier.size(18.dp))
                                 }
                                 Spacer(Modifier.width(8.dp))
-                                Text("Delete")
+                                Text(stringResource(R.string.common_delete))
                             }
                         }
                     }
@@ -420,12 +430,12 @@ fun UserDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        "Manage Two-Factor Authentication",
+                        stringResource(R.string.user_2fa_dialog_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        "User: ${current.username}",
+                        stringResource(R.string.user_2fa_dialog_user, current.username),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -444,7 +454,7 @@ fun UserDetailScreen(
                             Icon(Icons.Default.Refresh, null, Modifier.size(18.dp))
                         }
                         Spacer(Modifier.width(8.dp))
-                        Text("Renew 2FA Secret")
+                        Text(stringResource(R.string.user_2fa_renew_secret))
                     }
 
                     OutlinedButton(
@@ -463,7 +473,7 @@ fun UserDetailScreen(
                             Icon(Icons.Default.RemoveModerator, null, Modifier.size(18.dp))
                         }
                         Spacer(Modifier.width(8.dp))
-                        Text("Unset 2FA Secret")
+                        Text(stringResource(R.string.user_2fa_unset_secret))
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -483,12 +493,12 @@ fun UserDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        "Change Password",
+                        stringResource(R.string.user_password_dialog_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        "Set a new password for ${current.username}",
+                        stringResource(R.string.user_password_dialog_message, current.username),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -497,7 +507,7 @@ fun UserDetailScreen(
                     OutlinedTextField(
                         value = changePasswordValue,
                         onValueChange = { changePasswordValue = it },
-                        label = { Text("New Password") },
+                        label = { Text(stringResource(R.string.user_new_password)) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
@@ -515,7 +525,7 @@ fun UserDetailScreen(
                             Icon(Icons.Default.Key, null, Modifier.size(18.dp))
                         }
                         Spacer(Modifier.width(8.dp))
-                        Text("Set Password")
+                        Text(stringResource(R.string.user_set_password))
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -550,9 +560,9 @@ fun UserDetailScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete User") },
+            title = { Text(stringResource(R.string.user_delete_title)) },
             text = {
-                Text("Are you sure you want to delete \"${current?.username}\"? This action cannot be undone.")
+                Text(stringResource(R.string.user_delete_message, current?.username ?: ""))
             },
             confirmButton = {
                 TextButton(
@@ -563,10 +573,10 @@ fun UserDetailScreen(
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colorScheme.error
                     )
-                ) { Text("Delete") }
+                ) { Text(stringResource(R.string.common_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) { Text("Cancel") }
+                TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.common_cancel)) }
             }
         )
     }
@@ -648,7 +658,7 @@ private fun EditUserForm(
                     modifier = Modifier.size(18.dp)
                 )
                 Text(
-                    "Edit User",
+                    stringResource(R.string.user_edit_title),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary
@@ -659,27 +669,27 @@ private fun EditUserForm(
             )
             OutlinedTextField(
                 value = username, onValueChange = onUsernameChange,
-                label = { Text("Username") },
+                label = { Text(stringResource(R.string.common_username)) },
                 modifier = Modifier.fillMaxWidth(), singleLine = true
             )
             OutlinedTextField(
                 value = fullName, onValueChange = onFullNameChange,
-                label = { Text("Full Name") },
+                label = { Text(stringResource(R.string.user_full_name)) },
                 modifier = Modifier.fillMaxWidth(), singleLine = true
             )
             OutlinedTextField(
                 value = email, onValueChange = onEmailChange,
-                label = { Text("Email") },
+                label = { Text(stringResource(R.string.attr_email)) },
                 modifier = Modifier.fillMaxWidth(), singleLine = true
             )
             OutlinedTextField(
                 value = home, onValueChange = onHomeChange,
-                label = { Text("Home Directory") },
+                label = { Text(stringResource(R.string.user_home_dir)) },
                 modifier = Modifier.fillMaxWidth(), singleLine = true
             )
             OutlinedTextField(
                 value = shell, onValueChange = onShellChange,
-                label = { Text("Shell") },
+                label = { Text(stringResource(R.string.user_shell)) },
                 modifier = Modifier.fillMaxWidth(), singleLine = true
             )
             HorizontalDivider(
@@ -689,7 +699,7 @@ private fun EditUserForm(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Locked", style = MaterialTheme.typography.bodyMedium,
+                Text(stringResource(R.string.user_locked), style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f))
                 Switch(checked = locked, onCheckedChange = onLockedChange)
             }
@@ -697,7 +707,7 @@ private fun EditUserForm(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Password Disabled", style = MaterialTheme.typography.bodyMedium,
+                Text(stringResource(R.string.user_password_disabled), style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f))
                 Switch(
                     checked = passwordDisabled,
