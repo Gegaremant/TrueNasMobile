@@ -1157,4 +1157,53 @@
     <string name="appinfo_advanced_short">Advanced</string>
     <string name="appinfo_volume_mounts">Volume Mounts</string>
     <string name="appinfo_open_url_cd">Open URL</string>
+
+    <!-- VMs -->
+    <string name="vm_category_all">All</string>
+    <string name="vm_category_running">Running</string>
+    <string name="vm_category_stopped">Stopped</string>
+    <string name="vm_category_suspended">Suspended</string>
+    <string name="vms_title">Virtual Machines</string>
+    <string name="vms_subtitle_count">%1$d VMs</string>
+    <string name="vms_loading">Loading Virtual Machines</string>
+    <string name="vms_empty_category">No VMs in this category</string>
+    <string name="vms_empty_title">No virtual machines found</string>
+    <string name="vms_empty_hint">Create VMs to see them here</string>
+    <string name="vm_detail_cores">Cores</string>
+    <string name="vm_detail_memory">Memory</string>
+    <string name="vm_operation_completed">Completed</string>
+    <string name="vm_operation_failed">Failed</string>
+    <string name="vm_power_off">Power Off</string>
+    <string name="common_view_info">View Info</string>
+
+    <!-- Containers -->
+    <string name="container_category_all">All</string>
+    <string name="container_category_running">Running</string>
+    <string name="container_category_stopped">Stopped</string>
+    <string name="container_category_other">Other</string>
+    <string name="containers_title">Containers</string>
+    <string name="containers_subtitle_count">%1$d containers</string>
+    <string name="containers_loading">Loading Containers</string>
+    <string name="containers_empty_category">No containers in this category</string>
+    <string name="containers_empty_title">No containers found</string>
+    <string name="containers_empty_hint">Create containers to see them here</string>
+    <string name="container_detail_autostart">Autostart</string>
+    <string name="container_delete_title">Delete Container</string>
+    <string name="container_delete_message">Are you sure you want to delete \'%1$s\'? This action cannot be undone.</string>
+    <string name="container_close_pane_cd">Close Pane</string>
+    <string name="container_current_state">Current State</string>
+    <string name="container_section_system">System Details</string>
+    <string name="container_detail_id">Container ID</string>
+    <string name="container_secure_boot">Secure Boot</string>
+    <string name="container_aliases">Aliases</string>
+    <string name="container_section_resources">Resources</string>
+    <string name="container_cpu_allocation">CPU Allocation</string>
+    <string name="container_memory_allocation">Memory Allocation</string>
+    <string name="container_section_storage">Storage</string>
+    <string name="container_storage_pool">Storage Pool</string>
+    <string name="container_root_disk_size">Root Disk Size</string>
+    <string name="container_io_bus">IO Bus</string>
+    <string name="container_section_vnc">Remote Access (VNC)</string>
+    <string name="container_vnc_status">VNC Status</string>
+    <string name="container_section_env">Environment Variables</string>
 </resources>

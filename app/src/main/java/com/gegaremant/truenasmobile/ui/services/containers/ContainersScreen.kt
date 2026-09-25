@@ -74,7 +74,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -91,14 +93,15 @@ import com.gegaremant.truenasmobile.data.models.Virt
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import com.gegaremant.truenasmobile.ui.components.PullToRefreshContent
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.ui.services.containers.details.ContainerInfoPane
 import com.gegaremant.truenasmobile.ui.utils.AdaptiveLayoutHelper
 
-enum class ContainerFilterCategory(val label: String) {
-    ALL("All"),
-    RUNNING("Running"),
-    STOPPED("Stopped"),
-    OTHER("Other")
+enum class ContainerFilterCategory(@StringRes val labelRes: Int) {
+    ALL(R.string.container_category_all),
+    RUNNING(R.string.container_category_running),
+    STOPPED(R.string.container_category_stopped),
+    OTHER(R.string.container_category_other)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -135,8 +138,8 @@ fun ContainersScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         UnifiedScreenHeader(
-            title = "Containers",
-            subtitle = "${filteredContainers.size} containers",
+            title = stringResource(R.string.containers_title),
+            subtitle = stringResource(R.string.containers_subtitle_count, filteredContainers.size),
             isLoading = uiState.isLoading,
             isRefreshing = uiState.isRefreshing,
             error = uiState.error,
@@ -159,7 +162,7 @@ fun ContainersScreen(
         ) {
             when {
                 uiState.isLoading -> {
-                    LoadingScreen("Loading Containers")
+                    LoadingScreen(stringResource(R.string.containers_loading))
                 }
                 uiState.containers.isEmpty() && !uiState.isLoading -> {
                     EmptyContainerContent()
@@ -178,7 +181,7 @@ fun ContainersScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "No containers in this category",
+                            text = stringResource(R.string.containers_empty_category),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -239,7 +242,7 @@ fun ContainerFilterBar(
             FilterChip(
                 selected = isSelected,
                 onClick = { onCategorySelected(category) },
-                label = { Text(category.label) },
+                label = { Text(stringResource(category.labelRes)) },
                 leadingIcon = if (isSelected) {
                     {
                         Icon(
@@ -339,12 +342,12 @@ private fun EmptyContainerContent() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "No containers found",
+            text = stringResource(R.string.containers_empty_title),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            text = "Create containers to see them here",
+            text = stringResource(R.string.containers_empty_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -585,7 +588,7 @@ private fun ContainerCard(
             ) {
                 DetailItem(label = "CPU", value = container.cpu ?: "N/A")
                 DetailItem(label = "Memory", value = container.memory?.let { "$it MB" } ?: "N/A")
-                DetailItem(label = "Autostart", value = if (container.autostart) "Yes" else "No")
+                DetailItem(label = stringResource(R.string.container_detail_autostart), value = if (container.autostart) stringResource(R.string.common_yes) else stringResource(R.string.common_no))
             }
 
             operationJob?.let { job ->
@@ -634,7 +637,7 @@ private fun ContainerCard(
                 ) {
                     when (container.status) {
                         Virt.Status.STOPPED -> ActionButton(
-                            text = "Start",
+                            text = stringResource(R.string.common_start),
                             icon = Icons.Default.PlayArrow,
                             enabled = true,
                             isPrimary = true,
@@ -642,7 +645,7 @@ private fun ContainerCard(
                             modifier = Modifier.weight(1f)
                         )
                         Virt.Status.RUNNING -> ActionButton(
-                            text = "Stop",
+                            text = stringResource(R.string.common_stop),
                             icon = Icons.Default.Stop,
                             enabled = true,
                             isPrimary = true,
@@ -659,7 +662,7 @@ private fun ContainerCard(
                         )
                     }
                     ActionButton(
-                        text = "View Info",
+                        text = stringResource(R.string.common_view_info),
                         icon = Icons.Default.Info,
                         enabled = true,
                         isPrimary = false,
@@ -675,14 +678,14 @@ private fun ContainerCard(
                     when (container.status) {
                         Virt.Status.STOPPED -> CompactActionButton(
                             icon = Icons.Default.PlayArrow,
-                            contentDescription = "Start",
+                            contentDescription = stringResource(R.string.common_start),
                             isPrimary = true,
                             onClick = onStartContainer,
                             modifier = Modifier.weight(1f)
                         )
                         Virt.Status.RUNNING -> CompactActionButton(
                             icon = Icons.Default.Stop,
-                            contentDescription = "Stop",
+                            contentDescription = stringResource(R.string.common_stop),
                             isPrimary = true,
                             onClick = onStopContainer,
                             modifier = Modifier.weight(1f)
@@ -698,14 +701,14 @@ private fun ContainerCard(
                     }
                     CompactActionButton(
                         icon = Icons.Default.Info,
-                        contentDescription = "View Info",
+                        contentDescription = stringResource(R.string.common_view_info_cd),
                         isPrimary = false,
                         onClick = { onContainerInfoClicked(container) },
                         modifier = Modifier.weight(1f)
                     )
                     CompactActionButton(
                         icon = Icons.Default.Settings,
-                        contentDescription = "More Options",
+                        contentDescription = stringResource(R.string.common_more_options_cd),
                         isPrimary = false,
                         onClick = { showMoreOptions = !showMoreOptions },
                         modifier = Modifier.weight(1f)
@@ -737,7 +740,7 @@ private fun ContainerCard(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "More Options",
+                                text = stringResource(R.string.common_more_options_cd),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -745,7 +748,7 @@ private fun ContainerCard(
                         }
                         Icon(
                             imageVector = if (showMoreOptions) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                            contentDescription = if (showMoreOptions) "Collapse" else "Expand",
+                            contentDescription = if (showMoreOptions) stringResource(R.string.common_collapsed) else stringResource(R.string.common_expanded),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -763,7 +766,7 @@ private fun ContainerCard(
                 ) {
                     if (container.status == Virt.Status.RUNNING) {
                         ActionButton(
-                            text = "Restart",
+                            text = stringResource(R.string.common_restart),
                             icon = Icons.Default.RestartAlt,
                             enabled = true,
                             isPrimary = false,
@@ -772,7 +775,7 @@ private fun ContainerCard(
                         )
                     }
                     ActionButton(
-                        text = "Delete",
+                        text = stringResource(R.string.common_delete),
                         icon = Icons.Default.Delete,
                         enabled = container.status == Virt.Status.STOPPED,
                         isPrimary = false,
@@ -1003,7 +1006,7 @@ private fun MorphingRefreshIndicator(
                 } else {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = "Refresh",
+                        contentDescription = stringResource(R.string.common_refresh_cd),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.size(24.dp)
                     )
@@ -1021,25 +1024,26 @@ private fun DeleteConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Delete Container") },
-        text = { Text(text = "Are you sure you want to delete '$containerName'? This action cannot be undone.") },
+        title = { Text(text = stringResource(R.string.container_delete_title)) },
+        text = { Text(text = stringResource(R.string.container_delete_message, containerName)) },
         confirmButton = {
             TextButton(
                 onClick = onConfirm,
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
-            ) { Text("Delete") }
+            ) { Text(stringResource(R.string.common_delete)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         }
     )
 }
 
+@Composable
 private fun getOperationText(state: String): String {
     return when (state) {
-        "RUNNING" -> "Processing..."
-        "SUCCESS" -> "Completed"
-        "FAILED" -> "Failed"
+        "RUNNING" -> stringResource(R.string.common_processing)
+        "SUCCESS" -> stringResource(R.string.vm_operation_completed)
+        "FAILED" -> stringResource(R.string.vm_operation_failed)
         else -> state.lowercase().replaceFirstChar { it.uppercase() }
     }
 }

@@ -31,6 +31,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Computer
@@ -75,6 +76,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -89,15 +91,16 @@ import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.data.models.Vm
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import com.gegaremant.truenasmobile.ui.components.PullToRefreshContent
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 import com.gegaremant.truenasmobile.ui.services.vm.details.VmInfoPane
 import com.gegaremant.truenasmobile.ui.utils.AdaptiveLayoutHelper
 
-enum class VmFilterCategory(val label: String) {
-    ALL("All"),
-    RUNNING("Running"),
-    STOPPED("Stopped"),
-    SUSPENDED("Suspended")
+enum class VmFilterCategory(@StringRes val labelRes: Int) {
+    ALL(R.string.vm_category_all),
+    RUNNING(R.string.vm_category_running),
+    STOPPED(R.string.vm_category_stopped),
+    SUSPENDED(R.string.vm_category_suspended)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -132,8 +135,8 @@ fun VmsScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         UnifiedScreenHeader(
-            title = "Virtual Machines",
-            subtitle = "${filteredVms.size} VMs",
+            title = stringResource(R.string.vms_title),
+            subtitle = stringResource(R.string.vms_subtitle_count, filteredVms.size),
             isLoading = uiState.isLoading,
             isRefreshing = uiState.isRefreshing,
             error = uiState.error,
@@ -156,7 +159,7 @@ fun VmsScreen(
         ) {
             when {
                 uiState.vms.isEmpty() && uiState.isLoading -> {
-                    LoadingScreen("Loading Virtual Machines")
+                    LoadingScreen(stringResource(R.string.vms_loading))
                 }
                 uiState.vms.isEmpty() && !uiState.isLoading -> {
                     EmptyVmContent()
@@ -175,7 +178,7 @@ fun VmsScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "No VMs in this category",
+                            text = stringResource(R.string.vms_empty_category),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -242,7 +245,7 @@ fun VmFilterBar(
             FilterChip(
                 selected = isSelected,
                 onClick = { onCategorySelected(category) },
-                label = { Text(category.label) },
+                label = { Text(stringResource(category.labelRes)) },
                 leadingIcon = if (isSelected) {
                     {
                         Icon(
@@ -348,12 +351,12 @@ private fun EmptyVmContent() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "No virtual machines found",
+            text = stringResource(R.string.vms_empty_title),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            text = "Create VMs to see them here",
+            text = stringResource(R.string.vms_empty_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -582,8 +585,8 @@ private fun VmCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 DetailItem(label = "vCPUs", value = "${vm.vcpus}")
-                DetailItem(label = "Cores", value = "${vm.cores}")
-                DetailItem(label = "Memory", value = "${vm.memory} MB")
+                DetailItem(label = stringResource(R.string.vm_detail_cores), value = "${vm.cores}")
+                DetailItem(label = stringResource(R.string.vm_detail_memory), value = "${vm.memory} MB")
             }
 
             operationJob?.let { job ->
@@ -632,7 +635,7 @@ private fun VmCard(
                 ) {
                     when (vm.status.state.lowercase()) {
                         "stopped" -> ActionButton(
-                            text = "Start",
+                            text = stringResource(R.string.common_start),
                             icon = Icons.Default.PlayArrow,
                             enabled = true,
                             isPrimary = true,
@@ -640,7 +643,7 @@ private fun VmCard(
                             modifier = Modifier.weight(1f)
                         )
                         "running" -> ActionButton(
-                            text = "Stop",
+                            text = stringResource(R.string.common_stop),
                             icon = Icons.Default.Stop,
                             enabled = true,
                             isPrimary = true,
@@ -648,7 +651,7 @@ private fun VmCard(
                             modifier = Modifier.weight(1f)
                         )
                         "suspended" -> ActionButton(
-                            text = "Resume",
+                            text = stringResource(R.string.common_resume),
                             icon = Icons.Default.PlayArrow,
                             enabled = true,
                             isPrimary = true,
@@ -665,7 +668,7 @@ private fun VmCard(
                         )
                     }
                     ActionButton(
-                        text = "View Info",
+                        text = stringResource(R.string.common_view_info),
                         icon = Icons.Default.Info,
                         enabled = true,
                         isPrimary = false,
@@ -681,21 +684,21 @@ private fun VmCard(
                     when (vm.status.state.lowercase()) {
                         "stopped" -> CompactActionButton(
                             icon = Icons.Default.PlayArrow,
-                            contentDescription = "Start",
+                            contentDescription = stringResource(R.string.common_start),
                             isPrimary = true,
                             onClick = { showStartDialog = true },
                             modifier = Modifier.weight(1f)
                         )
                         "running" -> CompactActionButton(
                             icon = Icons.Default.Stop,
-                            contentDescription = "Stop",
+                            contentDescription = stringResource(R.string.common_stop),
                             isPrimary = true,
                             onClick = { showStopDialog = true },
                             modifier = Modifier.weight(1f)
                         )
                         "suspended" -> CompactActionButton(
                             icon = Icons.Default.PlayArrow,
-                            contentDescription = "Resume",
+                            contentDescription = stringResource(R.string.common_resume),
                             isPrimary = true,
                             onClick = onResumeVm,
                             modifier = Modifier.weight(1f)
@@ -711,14 +714,14 @@ private fun VmCard(
                     }
                     CompactActionButton(
                         icon = Icons.Default.Info,
-                        contentDescription = "View Info",
+                        contentDescription = stringResource(R.string.common_view_info_cd),
                         isPrimary = false,
                         onClick = { onVmInfoClick(vm) },
                         modifier = Modifier.weight(1f)
                     )
                     CompactActionButton(
                         icon = Icons.Default.Settings,
-                        contentDescription = "More Options",
+                        contentDescription = stringResource(R.string.common_more_options_cd),
                         isPrimary = false,
                         onClick = { showMoreOptions = !showMoreOptions },
                         modifier = Modifier.weight(1f)
@@ -750,7 +753,7 @@ private fun VmCard(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "More Options",
+                                text = stringResource(R.string.common_more_options_cd),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -758,7 +761,7 @@ private fun VmCard(
                         }
                         Icon(
                             imageVector = if (showMoreOptions) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                            contentDescription = if (showMoreOptions) "Collapse" else "Expand",
+                            contentDescription = if (showMoreOptions) stringResource(R.string.common_collapsed) else stringResource(R.string.common_expanded),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -776,7 +779,7 @@ private fun VmCard(
                 ) {
                     if (vm.status.state.lowercase() == "running") {
                         ActionButton(
-                            text = "Restart",
+                            text = stringResource(R.string.common_restart),
                             icon = Icons.Default.RestartAlt,
                             enabled = true,
                             isPrimary = false,
@@ -784,7 +787,7 @@ private fun VmCard(
                             modifier = Modifier.fillMaxWidth()
                         )
                         ActionButton(
-                            text = "Suspend",
+                            text = stringResource(R.string.common_suspend),
                             icon = Icons.Default.Pause,
                             enabled = true,
                             isPrimary = false,
@@ -792,7 +795,7 @@ private fun VmCard(
                             modifier = Modifier.fillMaxWidth()
                         )
                         ActionButton(
-                            text = "Power Off",
+                            text = stringResource(R.string.vm_power_off),
                             icon = Icons.Default.PowerOff,
                             enabled = true,
                             isPrimary = false,
@@ -801,7 +804,7 @@ private fun VmCard(
                         )
                     }
                     ActionButton(
-                        text = "Delete",
+                        text = stringResource(R.string.common_delete),
                         icon = Icons.Default.Delete,
                         enabled = vm.status.state.lowercase() == "stopped",
                         isPrimary = false,
@@ -1172,11 +1175,12 @@ private fun MorphingRefreshIndicator(
     }
 }
 
+@Composable
 private fun getOperationText(state: String): String {
     return when (state) {
-        "RUNNING" -> "Processing..."
-        "SUCCESS" -> "Completed"
-        "FAILED" -> "Failed"
+        "RUNNING" -> stringResource(R.string.common_processing)
+        "SUCCESS" -> stringResource(R.string.vm_operation_completed)
+        "FAILED" -> stringResource(R.string.vm_operation_failed)
         else -> state.lowercase().replaceFirstChar { it.uppercase() }
     }
 }

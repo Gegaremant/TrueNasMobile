@@ -34,11 +34,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.models.Virt.ContainerResponse
 
 @Composable
@@ -71,12 +73,12 @@ fun ContainerInfoPane(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     IconButton(onClick = onClose) {
-                        Icon(Icons.Default.Close, contentDescription = "Close Pane")
+                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.container_close_pane_cd))
                     }
                 }
             }
 
-            ExpressiveSection(title = "Status", icon = Icons.Default.Info) {
+            ExpressiveSection(title = stringResource(R.string.appinfo_status), icon = Icons.Default.Info) {
                 val statusStr = container.status.toString().uppercase()
                 val isRunning = statusStr == "RUNNING" || statusStr == "ACTIVE"
                 val statusColor = if (isRunning) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer
@@ -94,7 +96,7 @@ fun ContainerInfoPane(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Current State",
+                                text = stringResource(R.string.container_current_state),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = onStatusColor.copy(alpha = 0.8f),
                                 fontWeight = FontWeight.Medium
@@ -110,31 +112,31 @@ fun ContainerInfoPane(
                 }
             }
 
-            ExpressiveSection(title = "System Details", icon = Icons.Default.Computer) {
+            ExpressiveSection(title = stringResource(R.string.container_section_system), icon = Icons.Default.Computer) {
                 ExpressiveInfoCard {
-                    InfoRow(label = "Container ID", value = container.id.take(12))
+                    InfoRow(label = stringResource(R.string.container_detail_id), value = container.id.take(12))
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                    InfoRow(label = "Type", value = container.type.toString())
+                    InfoRow(label = stringResource(R.string.attr_type), value = container.type.toString())
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                    InfoRow(label = "Autostart", value = if (container.autostart) "Enabled" else "Disabled")
+                    InfoRow(label = stringResource(R.string.container_detail_autostart), value = if (container.autostart) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled))
 
                     container.secure_boot?.let { secureBoot ->
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                        InfoRow(label = "Secure Boot", value = if (secureBoot) "Enabled" else "Disabled")
+                        InfoRow(label = stringResource(R.string.container_secure_boot), value = if (secureBoot) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled))
                     }
 
                     if (container.aliases.isNotEmpty()) {
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                        InfoRow(label = "Aliases", value = container.aliases.joinToString { it.toString() })
+                        InfoRow(label = stringResource(R.string.container_aliases), value = container.aliases.joinToString { it.toString() })
                     }
                 }
             }
 
             if (container.cpu != null || container.memory != null) {
-                ExpressiveSection(title = "Resources", icon = Icons.Default.Memory) {
+                ExpressiveSection(title = stringResource(R.string.container_section_resources), icon = Icons.Default.Memory) {
                     ExpressiveInfoCard {
                         container.cpu?.let { cpu ->
-                            InfoRow(label = "CPU Allocation", value = cpu)
+                            InfoRow(label = stringResource(R.string.container_cpu_allocation), value = cpu)
                         }
 
                         if (container.cpu != null && container.memory != null) {
@@ -147,17 +149,17 @@ fun ContainerInfoPane(
                             } else {
                                 "$memory MB"
                             }
-                            InfoRow(label = "Memory Allocation", value = memoryStr)
+                            InfoRow(label = stringResource(R.string.container_memory_allocation), value = memoryStr)
                         }
                     }
                 }
             }
 
             if (container.storage_pool != null || container.root_disk_size != null) {
-                ExpressiveSection(title = "Storage", icon = Icons.Default.Storage) {
+                ExpressiveSection(title = stringResource(R.string.container_section_storage), icon = Icons.Default.Storage) {
                     ExpressiveInfoCard {
                         container.storage_pool?.let { pool ->
-                            InfoRow(label = "Storage Pool", value = pool)
+                            InfoRow(label = stringResource(R.string.container_storage_pool), value = pool)
                         }
 
                         if (container.storage_pool != null && container.root_disk_size != null) {
@@ -165,35 +167,35 @@ fun ContainerInfoPane(
                         }
 
                         container.root_disk_size?.let { size ->
-                            InfoRow(label = "Root Disk Size", value = "$size GB")
+                            InfoRow(label = stringResource(R.string.container_root_disk_size), value = "$size GB")
                         }
 
                         container.root_disk_io_bus?.let { bus ->
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                            InfoRow(label = "IO Bus", value = bus.toString())
+                            InfoRow(label = stringResource(R.string.container_io_bus), value = bus.toString())
                         }
                     }
                 }
             }
 
             if (container.vnc_enabled) {
-                ExpressiveSection(title = "Remote Access (VNC)", icon = Icons.Default.DesktopWindows) {
+                ExpressiveSection(title = stringResource(R.string.container_section_vnc), icon = Icons.Default.DesktopWindows) {
                     ExpressiveInfoCard {
-                        InfoRow(label = "VNC Status", value = "Enabled")
+                        InfoRow(label = stringResource(R.string.container_vnc_status), value = stringResource(R.string.common_enabled))
                         container.vnc_port?.let { port ->
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                            InfoRow(label = "Port", value = port.toString())
+                            InfoRow(label = stringResource(R.string.attr_port), value = port.toString())
                         }
                         if (container.vnc_password != null) {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                            InfoRow(label = "Password", value = "••••••••")
+                            InfoRow(label = stringResource(R.string.common_password), value = "••••••••")
                         }
                     }
                 }
             }
 
             if (container.environment.isNotEmpty()) {
-                ExpressiveSection(title = "Environment Variables", icon = Icons.Default.DeveloperBoard) {
+                ExpressiveSection(title = stringResource(R.string.container_section_env), icon = Icons.Default.DeveloperBoard) {
                     ExpressiveInfoCard {
                         val entries = container.environment.entries.toList()
                         entries.forEachIndexed { index, entry ->

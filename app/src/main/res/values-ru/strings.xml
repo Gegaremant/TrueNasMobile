@@ -1167,4 +1167,53 @@
     <string name="appinfo_advanced_short">Подробнее</string>
     <string name="appinfo_volume_mounts">Тома и монтирования</string>
     <string name="appinfo_open_url_cd">Открыть ссылку</string>
+
+    <!-- VMs -->
+    <string name="vm_category_all">Все</string>
+    <string name="vm_category_running">Запущенные</string>
+    <string name="vm_category_stopped">Остановленные</string>
+    <string name="vm_category_suspended">Приостановленные</string>
+    <string name="vms_title">Виртуальные машины</string>
+    <string name="vms_subtitle_count">ВМ: %1$d</string>
+    <string name="vms_loading">Загрузка виртуальных машин</string>
+    <string name="vms_empty_category">Нет ВМ в этой категории</string>
+    <string name="vms_empty_title">Виртуальные машины не найдены</string>
+    <string name="vms_empty_hint">Создайте виртуальную машину, чтобы увидеть её здесь</string>
+    <string name="vm_detail_cores">Ядра</string>
+    <string name="vm_detail_memory">Память</string>
+    <string name="vm_operation_completed">Завершено</string>
+    <string name="vm_operation_failed">Ошибка</string>
+    <string name="vm_power_off">Выключить</string>
+    <string name="common_view_info">Сведения</string>
+
+    <!-- Containers -->
+    <string name="container_category_all">Все</string>
+    <string name="container_category_running">Запущенные</string>
+    <string name="container_category_stopped">Остановленные</string>
+    <string name="container_category_other">Прочие</string>
+    <string name="containers_title">Контейнеры</string>
+    <string name="containers_subtitle_count">Контейнеров: %1$d</string>
+    <string name="containers_loading">Загрузка контейнеров</string>
+    <string name="containers_empty_category">Нет контейнеров в этой категории</string>
+    <string name="containers_empty_title">Контейнеры не найдены</string>
+    <string name="containers_empty_hint">Создайте контейнер, чтобы увидеть его здесь</string>
+    <string name="container_detail_autostart">Автозапуск</string>
+    <string name="container_delete_title">Удаление контейнера</string>
+    <string name="container_delete_message">Вы уверены, что хотите удалить «%1$s»? Это действие нельзя отменить.</string>
+    <string name="container_close_pane_cd">Закрыть панель</string>
+    <string name="container_current_state">Текущее состояние</string>
+    <string name="container_section_system">Сведения о системе</string>
+    <string name="container_detail_id">ID контейнера</string>
+    <string name="container_secure_boot">Безопасная загрузка</string>
+    <string name="container_aliases">Псевдонимы</string>
+    <string name="container_section_resources">Ресурсы</string>
+    <string name="container_cpu_allocation">Выделено CPU</string>
+    <string name="container_memory_allocation">Выделено памяти</string>
+    <string name="container_section_storage">Хранилище</string>
+    <string name="container_storage_pool">Пул хранилища</string>
+    <string name="container_root_disk_size">Размер корневого диска</string>
+    <string name="container_io_bus">Шина ввода-вывода</string>
+    <string name="container_section_vnc">Удалённый доступ (VNC)</string>
+    <string name="container_vnc_status">Состояние VNC</string>
+    <string name="container_section_env">Переменные окружения</string>
 </resources>
