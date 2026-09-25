@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -35,6 +36,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.gegaremant.truenasmobile.MainActivity
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.helpers.WidgetDataStore
 import com.gegaremant.truenasmobile.data.models.Apps
 
@@ -113,7 +115,7 @@ private fun SmallWidget(upgradableApps: List<Apps.AppQueryResponse>, context: Co
             )
             Spacer(GlanceModifier.height(2.dp))
             Text(
-                text  = if (upgradableApps.isEmpty()) "No updates" else "Updates",
+                text  = if (upgradableApps.isEmpty()) stringResource(R.string.widget_no_updates) else stringResource(R.string.common_update),
                 style = TextStyle(
                     fontSize = 10.sp,
                     color    = GlanceTheme.colors.onSurfaceVariant
@@ -139,7 +141,7 @@ private fun MediumWidget(upgradableApps: List<Apps.AppQueryResponse>, context: C
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text  = "App Updates",
+                text  = stringResource(R.string.widget_app_updates),
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
                     fontSize   = 13.sp,
@@ -159,7 +161,7 @@ private fun MediumWidget(upgradableApps: List<Apps.AppQueryResponse>, context: C
                 contentAlignment  = Alignment.Center
             ) {
                 Text(
-                    text  = "No updates available",
+                    text  = stringResource(R.string.widget_no_updates_available),
                     style = TextStyle(
                         fontSize = 12.sp,
                         color    = GlanceTheme.colors.onSurfaceVariant
@@ -199,7 +201,7 @@ private fun LargeWidget(upgradableApps: List<Apps.AppQueryResponse>, context: Co
         ) {
             Column(modifier = GlanceModifier.defaultWeight()) {
                 Text(
-                    text  = "TrueNAS Updates",
+                    text  = stringResource(R.string.widget_truenas_updates),
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize   = 15.sp,
@@ -207,7 +209,7 @@ private fun LargeWidget(upgradableApps: List<Apps.AppQueryResponse>, context: Co
                     )
                 )
                 Text(
-                    text  = if (upgradableApps.isEmpty()) "No updates available"
+                    text  = if (upgradableApps.isEmpty()) stringResource(R.string.widget_no_updates_available)
                     else "${upgradableApps.size} app(s) need attention",
                     style = TextStyle(
                         fontSize = 11.sp,
@@ -228,7 +230,7 @@ private fun LargeWidget(upgradableApps: List<Apps.AppQueryResponse>, context: Co
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text  = "No updates available",
+                    text  = stringResource(R.string.widget_no_updates_available),
                     style = TextStyle(
                         fontSize = 13.sp,
                         color    = GlanceTheme.colors.onSurfaceVariant
@@ -358,7 +360,7 @@ private fun LargeAppRow(app: Apps.AppQueryResponse, context: Context) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text  = "Update",
+                text  = stringResource(R.string.widget_update),
                 style = TextStyle(
                     fontSize   = 10.sp,
                     fontWeight = FontWeight.Bold,

@@ -32,11 +32,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.models.Vm
 
 @Composable
@@ -69,12 +71,12 @@ fun VmInfoPane(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     IconButton(onClick = onClose) {
-                        Icon(Icons.Default.Close, contentDescription = "Close Pane")
+                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.vminfo_close_pane_cd))
                     }
                 }
             }
 
-            ExpressiveSection(title = "Status", icon = Icons.Default.Info) {
+            ExpressiveSection(title = stringResource(R.string.appinfo_status), icon = Icons.Default.Info) {
                 val isRunning = vm.status.state == "RUNNING"
                 val statusColor = if (isRunning) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer
                 val onStatusColor = if (isRunning) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onErrorContainer
@@ -91,7 +93,7 @@ fun VmInfoPane(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Current State",
+                                text = stringResource(R.string.vminfo_current_state),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = onStatusColor.copy(alpha = 0.8f),
                                 fontWeight = FontWeight.Medium
@@ -107,28 +109,28 @@ fun VmInfoPane(
                 }
             }
 
-            ExpressiveSection(title = "System Configuration", icon = Icons.Default.Computer) {
+            ExpressiveSection(title = stringResource(R.string.vminfo_section_system), icon = Icons.Default.Computer) {
                 ExpressiveInfoCard {
-                    InfoRow(label = "Bootloader", value = vm.bootloader)
+                    InfoRow(label = stringResource(R.string.vminfo_bootloader), value = vm.bootloader)
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                    InfoRow(label = "Autostart", value = if (vm.autostart) "Enabled" else "Disabled")
+                    InfoRow(label = stringResource(R.string.vminfo_autostart), value = if (vm.autostart) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled))
                 }
             }
 
-            ExpressiveSection(title = "Hardware Resources", icon = Icons.Default.Memory) {
+            ExpressiveSection(title = stringResource(R.string.vminfo_section_hardware), icon = Icons.Default.Memory) {
                 ExpressiveInfoCard {
-                    InfoRow(label = "Virtual CPUs", value = vm.vcpus.toString())
+                    InfoRow(label = stringResource(R.string.vminfo_vcpus), value = vm.vcpus.toString())
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                    InfoRow(label = "Cores", value = vm.cores.toString())
+                    InfoRow(label = stringResource(R.string.vm_detail_cores), value = vm.cores.toString())
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                    InfoRow(label = "Threads", value = vm.threads.toString())
+                    InfoRow(label = stringResource(R.string.vminfo_threads), value = vm.threads.toString())
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                     val memoryStr = if (vm.memory >= 1024) {
                         "${String.format(Locale.toString(), vm.memory / 1024.0)} GB"
                     } else {
                         "${vm.memory} MB"
                     }
-                    InfoRow(label = "Allocated Memory", value = memoryStr)
+                    InfoRow(label = stringResource(R.string.vminfo_allocated_memory), value = memoryStr)
                 }
             }
 

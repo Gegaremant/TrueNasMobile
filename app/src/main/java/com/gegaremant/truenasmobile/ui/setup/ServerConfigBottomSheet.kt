@@ -77,7 +77,7 @@ fun ServerConfigBottomSheet(
     // Initialize with existing values
     LaunchedEffect(Unit) {
         initialUrl?.let {
-            viewModel.handleEvent(SetupEvent.UpdateServerUrl(it.replace("/api/current", "")))
+            viewModel.handleEvent(SetupEvent.UpdateServerUrl(context, it.replace("/api/current", "")))
         }
         viewModel.handleEvent(SetupEvent.UpdateInsecure(initialInsecure))
     }
@@ -200,7 +200,7 @@ fun ServerConfigBottomSheet(
                         serverUrl = uiState.serverUrl,
                         urlValidation = uiState.urlValidation,
                         isConfiguring = uiState.isConfiguring,
-                        onUrlChange = { viewModel.handleEvent(SetupEvent.UpdateServerUrl(it)) }
+                        onUrlChange = { viewModel.handleEvent(SetupEvent.UpdateServerUrl(context, it)) }
                     )
 
                     // Connection Error

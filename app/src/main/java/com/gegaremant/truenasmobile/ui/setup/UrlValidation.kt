@@ -1,5 +1,7 @@
 package com.gegaremant.truenasmobile.ui.setup
 
+import android.content.Context
+import com.gegaremant.truenasmobile.R
 import java.util.regex.Pattern
 
 data class UrlValidation(
@@ -8,7 +10,7 @@ data class UrlValidation(
     val warnings: List<String>
 )
 
-fun validateUrl(url: String): UrlValidation {
+fun validateUrl(context: Context, url: String): UrlValidation {
     if (url.isEmpty()) {
         return UrlValidation(false, emptyList(), emptyList())
     }
@@ -19,16 +21,16 @@ fun validateUrl(url: String): UrlValidation {
     // Check protocol
     when {
         url.startsWith("ws://") -> {
-            warnings.add("Using insecure WebSocket (ws://). Consider using wss:// for production.")
+            warnings.add(context.getString(R.string.urlwarn_insecure_ws))
         }
         url.startsWith("wss://") -> {
             // Good, secure connection
         }
         url.startsWith("http://") || url.startsWith("https://") -> {
-            errors.add("Use WebSocket protocol (ws:// or wss://) instead of HTTP.")
+            errors.add(context.getString(R.string.urlerr_http_proto))
         }
         else -> {
-            errors.add("URL must start with ws:// or wss://")
+            errors.add(context.getString(R.string.urlerr_must_start))
         }
     }
 
@@ -36,7 +38,7 @@ fun validateUrl(url: String): UrlValidation {
     val urlWithoutProtocol = url.substringAfter("://")
 
     if (urlWithoutProtocol.isEmpty()) {
-        errors.add("URL is incomplete after protocol")
+        errors.add(context.getString(R.string.urlerr_incomplete_proto))
         return UrlValidation(false, errors, warnings)
     }
 
@@ -46,7 +48,7 @@ fun validateUrl(url: String): UrlValidation {
 
     // Validate host part (IP or domain)
     if (hostPart.isEmpty()) {
-        errors.add("Host/IP address is missing")
+        errors.add(context.getString(R.string.urlerr_missing_host))
     } else {
         // Check if it looks like an IP address
         val ipPattern = Pattern.compile("^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})(:\\d+)?$")
@@ -70,20 +72,20 @@ fun validateUrl(url: String): UrlValidation {
             domainPattern.matcher(hostPart).matches() || hostPart.contains(".") -> {
                 // Looks like a domain name
                 if (hostPart.count { it == '.' } < 1 && !hostPart.contains("localhost")) {
-                    warnings.add("Domain name might be incomplete")
+                    warnings.add(context.getString(R.string.urlwarn_domain_incomplete))
                 }
             }
             hostPart.matches(Regex("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$")) -> {
-                errors.add("Incomplete IP address (missing last octet)")
+                errors.add(context.getString(R.string.urlerr_ip_missing_last))
             }
             hostPart.matches(Regex("^\\d{1,3}\\.\\d{1,3}$")) -> {
-                errors.add("Incomplete IP address (missing two octets)")
+                errors.add(context.getString(R.string.urlerr_ip_missing_two))
             }
             hostPart.matches(Regex("^\\d{1,3}$")) -> {
-                errors.add("Incomplete IP address (only one octet provided)")
+                errors.add(context.getString(R.string.urlerr_ip_only_one))
             }
             else -> {
-                errors.add("Invalid host format. Use IP address, domain name, or localhost")
+                errors.add(context.getString(R.string.urlerr_invalid_host))
             }
         }
     }

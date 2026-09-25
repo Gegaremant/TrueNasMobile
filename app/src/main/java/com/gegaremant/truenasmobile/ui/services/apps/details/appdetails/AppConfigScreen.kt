@@ -49,11 +49,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.JobRepository
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
@@ -180,7 +182,7 @@ fun AppConfigScreen(
                                 modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Discard", fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.common_discard), fontWeight = FontWeight.SemiBold)
                         }
 
                         Button(
@@ -219,7 +221,7 @@ fun AppConfigScreen(
                                         modifier = Modifier.size(20.dp)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Saved!", fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.appconfig_saved), fontWeight = FontWeight.Bold)
                                 }
 
                                 configState.saveFailed -> {
@@ -229,7 +231,7 @@ fun AppConfigScreen(
                                         modifier = Modifier.size(20.dp)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Failed — Retry", fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.appconfig_failed_retry), fontWeight = FontWeight.Bold)
                                 }
 
                                 else -> {
@@ -239,7 +241,7 @@ fun AppConfigScreen(
                                         modifier = Modifier.size(20.dp)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Save Changes", fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.common_save_changes), fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
@@ -250,7 +252,7 @@ fun AppConfigScreen(
     ) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(bottom = innerPadding.calculateBottomPadding())) {
             UnifiedScreenHeader(
-                title = "App Configuration",
+                title = stringResource(R.string.appconfig_title),
                 subtitle = appValues.appName,
                 isLoading = configState.isLoading,
                 isRefreshing = false,
@@ -268,7 +270,7 @@ fun AppConfigScreen(
 
                 configState.config == null && configState.error == null -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No configuration available")
+                        Text(stringResource(R.string.appconfig_no_config))
                     }
                 }
 
@@ -316,19 +318,19 @@ fun AppConfigScreen(
                         if (configState.saveFailed) {
                             Icon(
                                 imageVector = Icons.Default.Error,
-                                contentDescription = "Error",
+                                contentDescription = stringResource(R.string.appconfig_error_cd),
                                 tint = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.size(64.dp)
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Update Failed",
+                                text = stringResource(R.string.appconfig_update_failed),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = configState.saveError ?: "Unknown error occurred.",
+                                text = configState.saveError ?: stringResource(R.string.appconfig_unknown_error),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center
@@ -338,7 +340,7 @@ fun AppConfigScreen(
                                 onClick = { viewModel.clearAppConfigError() },
                                 shape = RoundedCornerShape(14.dp)
                             ) {
-                                Text("Dismiss")
+                                Text(stringResource(R.string.appconfig_dismiss))
                             }
                         } else {
                             val progressValue = (trackedJob?.progress ?: 0) / 100f

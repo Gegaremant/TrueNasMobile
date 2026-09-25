@@ -24,7 +24,7 @@ data class SetupUiState(
 )
 
 sealed class SetupEvent {
-    data class UpdateServerUrl(val url: String) : SetupEvent()
+    data class UpdateServerUrl(val context: Context, val url: String) : SetupEvent()
     data class UpdateInsecure(val insecure: Boolean) : SetupEvent()
     data class Configure(val context: Context) : SetupEvent()
     object ResetError : SetupEvent()
@@ -41,7 +41,7 @@ class SetupScreenViewModel : ViewModel() {
     fun handleEvent(event: SetupEvent) {
         when (event) {
             is SetupEvent.UpdateServerUrl -> {
-                val validation = validateUrl(event.url)
+                val validation = validateUrl(event.context, event.url)
                 _uiState.value = _uiState.value.copy(
                     serverUrl = event.url,
                     urlValidation = validation

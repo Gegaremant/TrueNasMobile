@@ -33,7 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.TrueNASClient
 import com.gegaremant.truenasmobile.data.api.AuthService
@@ -80,18 +82,18 @@ class QuickLaunchConfigActivity : ComponentActivity() {
             selected = existing.map { it.appName }.toSet()
 
             val (serverId, accountId) = MultiAccountPrefs.getLastUsedProfile(context) ?: run {
-                isLoading = false; loadError = "No server configured"; return@LaunchedEffect
+                isLoading = false; loadError = context.getString(R.string.quicklaunch_no_server); return@LaunchedEffect
             }
             val server = MultiAccountPrefs.getServer(context, serverId) ?: run {
-                isLoading = false; loadError = "Server not found"; return@LaunchedEffect
+                isLoading = false; loadError = context.getString(R.string.quicklaunch_server_not_found); return@LaunchedEffect
             }
             val account = MultiAccountPrefs.getAccount(context, accountId) ?: run {
-                isLoading = false; loadError = "Account not found"; return@LaunchedEffect
+                isLoading = false; loadError = context.getString(R.string.quicklaunch_account_not_found); return@LaunchedEffect
             }
 
             val client = TrueNASClient(Config.ClientConfig(serverUrl = server.serverUrl, insecure = server.insecure))
             if (!client.connect()) {
-                isLoading = false; loadError = "Could not connect to server"; return@LaunchedEffect
+                isLoading = false; loadError = context.getString(R.string.quicklaunch_connect_failed); return@LaunchedEffect
             }
 
             val m = TrueNASApiManager(client, context)
@@ -112,7 +114,7 @@ class QuickLaunchConfigActivity : ComponentActivity() {
             }
 
             if (!authed) {
-                isLoading = false; loadError = "Authentication failed"; return@LaunchedEffect
+                isLoading = false; loadError = context.getString(R.string.quicklaunch_auth_failed); return@LaunchedEffect
             }
 
             when (val result = m.apps.getInstalledAppsWithResult()) {
@@ -125,7 +127,7 @@ class QuickLaunchConfigActivity : ComponentActivity() {
 
         ModalBottomSheet(onDismissRequest = onDismiss, containerColor = MaterialTheme.colorScheme.surface) {
             Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)) {
-                Text(text = "Quick Launch Apps", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.quicklaunch_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                 Text(
                     text = "Choose up to $MAX_QUICK_LAUNCH_APPS apps with a web UI to pin to the widget.",
                     style = MaterialTheme.typography.bodyMedium,
@@ -135,8 +137,8 @@ class QuickLaunchConfigActivity : ComponentActivity() {
 
                 when {
                     isLoading -> Box(Modifier.fillMaxWidth().height(200.dp), Alignment.Center) { CircularProgressIndicator() }
-                    loadError != null -> Text(loadError ?: "Something went wrong", color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(vertical = 24.dp))
-                    eligibleApps.isEmpty() -> Text("None of your installed apps expose a web UI yet.", color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(vertical = 24.dp))
+                    loadError != null -> Text(loadError ?: stringResource(R.string.quicklaunch_something_wrong), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(vertical = 24.dp))
+                    eligibleApps.isEmpty() -> Text(stringResource(R.string.quicklaunch_no_web_ui), color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(vertical = 24.dp))
                     else -> {
                         LazyColumn(modifier = Modifier.fillMaxWidth().height(360.dp), contentPadding = PaddingValues(vertical = 4.dp)) {
                             items(eligibleApps, key = { it.name }) { app ->
@@ -148,7 +150,7 @@ class QuickLaunchConfigActivity : ComponentActivity() {
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(text = app.metadata?.title ?: app.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-                                        Text(text = app.portals?.keys?.firstOrNull() ?: "Web UI", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                        Text(text = app.portals?.keys?.firstOrNull() ?: stringResource(R.string.quicklaunch_web_ui), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                     Checkbox(
                                         checked = isChecked,
