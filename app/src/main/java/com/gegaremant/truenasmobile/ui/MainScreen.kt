@@ -25,6 +25,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.filled.Settings
+import com.gegaremant.truenasmobile.data.helpers.PersonalizationManager
+import com.gegaremant.truenasmobile.data.helpers.NavbarDestination
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material.icons.filled.Home
@@ -156,28 +160,41 @@ import com.gegaremant.truenasmobile.ui.utils.AppCache
 
 
 private data class NavItem(
-    val screen: Screen,
+    val destination: NavbarDestination,
     @androidx.annotation.StringRes val titleRes: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 )
 
-private fun destinationToNavItem(destination: Screen): NavItem? {
+/**
+ * Icons for a bottom-bar destination. Labels are not chosen here - they come
+ * from [NavbarDestination.titleRes] so the locale dictionaries stay the single
+ * source of truth.
+ */
+private fun destinationToNavItem(destination: NavbarDestination): NavItem? {
     return when (destination) {
-        Screen.Home -> NavItem(Screen.Home, R.string.nav_statistics, Icons.Filled.Home, Icons.Outlined.Home)
-        Screen.Storage -> NavItem(Screen.Storage, R.string.nav_storage, Icons.Filled.Storage, Icons.Outlined.Storage)
-        Screen.Tasks -> NavItem(Screen.Tasks, R.string.nav_tasks, Icons.Filled.Checklist, Icons.Outlined.Checklist)
-        Screen.Performance -> NavItem(Screen.Performance, R.string.nav_graphs, Icons.Filled.ShowChart, Icons.Outlined.ShowChart)
-        else -> null
+        NavbarDestination.HOME ->
+            NavItem(destination, R.string.nav_statistics, Icons.Filled.Home, Icons.Outlined.Home)
+        NavbarDestination.STORAGE ->
+            NavItem(destination, R.string.nav_storage, Icons.Filled.Storage, Icons.Outlined.Storage)
+        NavbarDestination.APPS ->
+            NavItem(destination, R.string.nav_apps, Icons.Filled.Apps, Icons.Outlined.Apps)
+        NavbarDestination.TASKS ->
+            NavItem(destination, R.string.nav_tasks, Icons.Filled.Checklist, Icons.Outlined.Checklist)
+        NavbarDestination.PERFORMANCE ->
+            NavItem(destination, R.string.nav_graphs, Icons.Filled.ShowChart, Icons.Outlined.ShowChart)
+        NavbarDestination.CONTAINERS ->
+            NavItem(destination, R.string.nav_containers, Icons.Filled.Apps, Icons.Outlined.Apps)
+        NavbarDestination.VMS ->
+            NavItem(destination, R.string.nav_vms, Icons.Filled.Computer, Icons.Outlined.Computer)
+        NavbarDestination.MARKETPLACE ->
+            NavItem(destination, R.string.nav_marketplace, Icons.Filled.Storefront, Icons.Outlined.Storefront)
+        NavbarDestination.INSTANCE_SETTINGS ->
+            NavItem(destination, R.string.nav_instance_settings, Icons.Filled.Settings, Icons.Outlined.Settings)
+        NavbarDestination.UPDATES ->
+            NavItem(destination, R.string.nav_updates, Icons.Filled.SystemUpdateAlt, Icons.Outlined.SystemUpdateAlt)
     }
 }
-
-private val FIXED_NAV_DESTINATIONS = listOf(
-    Screen.Home,
-    Screen.Storage,
-    Screen.Tasks,
-    Screen.Performance
-)
 
 @Composable
 fun MainScreen(
@@ -188,11 +205,14 @@ fun MainScreen(
     val navController = rememberNavController()
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val personalization by PersonalizationManager.state.collectAsState()
 
-    val navItems = remember {
-        FIXED_NAV_DESTINATIONS.mapNotNull { destinationToNavItem(it) }
+    val navItems = remember(personalization.navbarDestinations) {
+        personalization.navbarDestinations.mapNotNull { destinationToNavItem(it) }
     }
-    val navRoutes = remember(navItems) { navItems.map { it.screen.route }.toSet() }
+    val navRoutes = remember(navItems) { navItems.map { it.destination.route }.toSet() }
+    // Compact mode drops the text labels; there is room for more destinations.
+    val compactNav = personalization.compactNav
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -226,12 +246,14 @@ fun MainScreen(
                     header = {}
                 ) {
                     navItems.forEach { item ->
-                        val selected = currentRoute == item.screen.route
+                        val selected = currentRoute == item.destination.route
                         NavigationRailItem(
                             selected = selected,
-                            onClick = { onNavClick(navController, item.screen.route) },
+                            onClick = { onNavClick(navController, item.destination.route) },
                             label = {
-                                Text(stringResource(item.titleRes), fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
+                                if (!compactNav) {
+                                    Text(stringResource(item.titleRes), fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
+                                }
                             },
                             icon = {
                                 Crossfade(targetState = selected, label = "iconFade") { isSelected ->
@@ -266,10 +288,11 @@ fun MainScreen(
                             tonalElevation = 8.dp
                         ) {
                             navItems.forEach { item ->
-                                val selected = currentRoute == item.screen.route
+                                val selected = currentRoute == item.destination.route
                                 NavigationBarItem(
                                     selected = selected,
-                                    onClick = { onNavClick(navController, item.screen.route) },
+                                    onClick = { onNavClick(navController, item.destination.route) },
+                                    alwaysShowLabel = !compactNav,
                                     label = {
                                         Text(
                                             stringResource(item.titleRes),

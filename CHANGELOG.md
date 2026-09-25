@@ -56,6 +56,21 @@ Localisation, security and dead-UI cleanup.
   asks first.
 - The Settings → "Privacy" row (which only showed a "work in progress" toast)
   was removed.
+- **The bottom navigation bar is customizable and no longer hardcoded.** It was
+  a fixed `listOf(Home, Storage, Tasks, Performance)` in `MainScreen`, while a
+  full personalization subsystem around it — save, load, order, toggle — existed
+  with no call sites at all. The theme screen now has a "Bottom navigation"
+  editor: switch destinations on and off, reorder them, reset to defaults.
+  Reordering actually reorders now; the resolver used to throw the user's order
+  away and rebuild the bar from the catalog order. Home stays pinned first.
+  Defaults are Home, Storage, Apps, Tasks, Performance — Apps is new to the bar
+  because it was otherwise reachable only through the search overlay.
+- `Compact navigation` setting now does something: it hides the labels under the
+  bottom-bar icons to fit more destinations on screen. It was saved to disk and
+  read by nothing.
+- `True OLED black` is now reachable: the theme screen has the switch that was
+  missing. The mode was already applied by `AdaptiveTheme` and advertised in two
+  places in the UI, but no code path could ever turn it on.
 - Licenses screen header now says "App License" — it shows this project's GPL-3.0
   licence, not a list of third-party licences.
 

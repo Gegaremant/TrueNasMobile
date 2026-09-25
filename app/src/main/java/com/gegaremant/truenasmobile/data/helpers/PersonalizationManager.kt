@@ -24,6 +24,12 @@ enum class ThemeMode(@StringRes val displayNameRes: Int) {
  *
  * To add a future personalization setting, add a field to [PersonalizationState],
  * a serialized key in [_key], and a read/write in [loadForUser]/[saveForUser].
+ *
+ * The active account is owned by `MainViewModel.setActiveUser` and reaches this
+ * manager as an explicit key - there is deliberately no "guess the current user
+ * from disk" helper. An earlier `currentUserKey(context)` claimed to resolve the
+ * last-used profile but always returned [DEFAULT_USER_KEY], which would have
+ * leaked one account's theme and navbar into another's.
  */
 data class PersonalizationState(
     val theme: AppTheme = AppTheme.TRUENASMOBILE,
@@ -44,13 +50,6 @@ object PersonalizationManager {
 
     // Default user key used when no account is active yet.
     const val DEFAULT_USER_KEY = "default"
-
-    /** Best-effort synchronous lookup of the current user key. */
-    fun currentUserKey(context: Context): String {
-        // Prefer the last-used profile synchronously via the SharedPreferences-backed
-        // MultiAccountPrefs session. Falls back to default if unavailable.
-        return DEFAULT_USER_KEY
-    }
 
     /** Loads personalization for [userKey] and updates the reactive state. */
     fun loadForUser(context: Context, userKey: String) {
@@ -141,30 +140,59 @@ object PersonalizationManager {
 
     /** All destinations a user could opt into, in a sensible default order. */
     val availableDestinations: List<NavbarDestination>
-        get() = listOf(
-            NavbarDestination.HOME,
-            NavbarDestination.APPS,
-            NavbarDestination.CONTAINERS,
-            NavbarDestination.VMS,
-            NavbarDestination.INSTANCE_SETTINGS,
-            NavbarDestination.UPDATES,
-            NavbarDestination.MARKETPLACE
-        )
+        get() = NavbarDestination.entries
 
-    /** Resolve the effective/ordered list: HOME always first, then user-selected optional ones. */
+    /**
+     * Resolve the effective, ordered list of bar destinations.
+     *
+     * Guarantees, in order of importance:
+     *  - [NavbarDestination.HOME] is always present and always first;
+     *  - the user's own order is preserved (this used to be silently discarded,
+     *    which made reordering in the UI do nothing);
+     *  - duplicates are collapsed;
+     *  - an empty or all-optional selection still yields a usable bar (Home).
+     */
     fun effectiveDestinations(selected: List<NavbarDestination>): List<NavbarDestination> {
-        val selectedSet = selected.toSet()
-        val ordered = mutableListOf<NavbarDestination>()
-        // Home is always first and always present.
+        val ordered = LinkedHashSet<NavbarDestination>()
         ordered.add(NavbarDestination.HOME)
-        // Preserve user's chosen order for the optional items, only including enabled ones.
-        for (dest in availableDestinations) {
-            if (dest.isRequired) continue
-            if (selectedSet.contains(dest) && dest !in ordered) {
-                ordered.add(dest)
-            }
+        selected.forEach { dest ->
+            if (dest != NavbarDestination.HOME) ordered.add(dest)
         }
-        return ordered
+        return ordered.toList()
+    }
+
+    /**
+     * Toggles one optional destination on or off in [current], keeping order.
+     * Used by the bottom-navigation editor: switching something off forgets its
+     * position, switching it back on appends it to the end.
+     */
+    fun toggleDestination(
+        current: List<NavbarDestination>,
+        destination: NavbarDestination
+    ): List<NavbarDestination> {
+        if (destination.isRequired) return effectiveDestinations(current)
+        val next = current.toMutableList()
+        if (!next.remove(destination)) next.add(destination)
+        return effectiveDestinations(next)
+    }
+
+    /**
+     * Moves [destination] one step towards the front ([delta] -1) or the back
+     * (+1). Returns the list unchanged when the move is not possible, so the
+     * caller can disable the arrow instead of guessing.
+     */
+    fun moveDestination(
+        current: List<NavbarDestination>,
+        destination: NavbarDestination,
+        delta: Int
+    ): List<NavbarDestination> {
+        val next = effectiveDestinations(current).toMutableList()
+        val index = next.indexOf(destination)
+        val target = index + delta
+        if (index <= 0 || target < 1 || target >= next.size) return next
+        val item = next.removeAt(index)
+        next.add(target, item)
+        return next
     }
 
     private fun loadNavbar(

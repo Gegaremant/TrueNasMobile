@@ -1930,4 +1930,20 @@
     <string name="search_vm_word">VM</string>
     <string name="common_load_failed">Failed to load data</string>
     <string name="about_credit_line">{Podmoskovye City «Retuzovo Grad» © 2026</string>
+    <string name="nav_apps">Apps</string>
+    <string name="nav_containers">Containers</string>
+    <string name="nav_vms">VMs</string>
+    <string name="nav_marketplace">Marketplace</string>
+    <string name="nav_instance_settings">Settings</string>
+    <string name="nav_updates">Updates</string>
+    <string name="theme_navbar_title">Bottom navigation</string>
+    <string name="theme_navbar_desc">Choose which sections appear in the bottom bar and in what order. Home is always first.</string>
+    <string name="theme_navbar_reset">Reset to default</string>
+    <string name="theme_navbar_move_up_cd">Move up</string>
+    <string name="theme_navbar_move_down_cd">Move down</string>
+    <string name="theme_compact_nav">Compact navigation</string>
+    <string name="theme_compact_nav_desc">Hide the labels under the icons to fit more destinations on screen</string>
+    <string name="theme_black_mode">True OLED black</string>
+    <string name="theme_black_mode_desc">Pure black surfaces, so an OLED display can switch its pixels off in dark mode</string>
+    <string name="theme_navbar_home_locked">Always first</string>
 </resources>

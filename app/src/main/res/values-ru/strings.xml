@@ -1942,4 +1942,20 @@
     <string name="search_vm_word">ВМ</string>
     <string name="common_load_failed">Не удалось загрузить данные</string>
     <string name="about_credit_line">{Под\'Московье City «Retuzovo Grad» © 2026}</string>
+    <string name="nav_apps">Приложения</string>
+    <string name="nav_containers">Контейнеры</string>
+    <string name="nav_vms">ВМ</string>
+    <string name="nav_marketplace">Маркетплейс</string>
+    <string name="nav_instance_settings">Настройки</string>
+    <string name="nav_updates">Обновления</string>
+    <string name="theme_navbar_title">Нижняя навигация</string>
+    <string name="theme_navbar_desc">Выберите, какие разделы показывать в нижней панели и в каком порядке. «Главная» всегда первая.</string>
+    <string name="theme_navbar_reset">Сбросить на умолчания</string>
+    <string name="theme_navbar_move_up_cd">Выше</string>
+    <string name="theme_navbar_move_down_cd">Ниже</string>
+    <string name="theme_compact_nav">Компактная навигация</string>
+    <string name="theme_compact_nav_desc">Скрыть подписи под иконками, чтобы поместилось больше разделов</string>
+    <string name="theme_black_mode">Чёрный OLED</string>
+    <string name="theme_black_mode_desc">Полностью чёрные поверхности, чтобы OLED-экран мог гасить пиксели в тёмной теме</string>
+    <string name="theme_navbar_home_locked">Всегда первая</string>
 </resources>
