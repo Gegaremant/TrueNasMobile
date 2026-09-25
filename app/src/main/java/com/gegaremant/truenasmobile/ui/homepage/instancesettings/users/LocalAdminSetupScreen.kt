@@ -37,10 +37,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 
@@ -178,11 +180,11 @@ fun LocalAdminSetupScreen(
                     OutlinedTextField(
                         value = confirmPassword,
                         onValueChange = { confirmPassword = it },
-                        label = { Text("Confirm Password") },
+                        label = { Text(stringResource(R.string.localadmin_confirm_password)) },
                         isError = confirmPassword.isNotEmpty() && password != confirmPassword,
                         supportingText = {
                             if (confirmPassword.isNotEmpty() && password != confirmPassword) {
-                                Text("Passwords do not match")
+                                Text(stringResource(R.string.localadmin_passwords_mismatch))
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -198,7 +200,7 @@ fun LocalAdminSetupScreen(
                 OutlinedButton(
                     onClick = onNavigateBack,
                     modifier = Modifier.weight(1f)
-                ) { Text("Cancel") }
+                ) { Text(stringResource(R.string.common_cancel)) }
                 Button(
                     onClick = {
                         viewModel.setupLocalAdministrator(username, password)
@@ -212,7 +214,7 @@ fun LocalAdminSetupScreen(
                         Icon(Icons.Default.Save, null, Modifier.size(18.dp))
                     }
                     Spacer(Modifier.width(8.dp))
-                    Text("Setup Admin")
+                    Text(stringResource(R.string.localadmin_setup_admin))
                 }
             }
         }

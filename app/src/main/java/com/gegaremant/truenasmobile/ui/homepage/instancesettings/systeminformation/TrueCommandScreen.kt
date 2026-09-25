@@ -36,10 +36,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import com.gegaremant.truenasmobile.ui.components.PullToRefreshContent
@@ -79,7 +81,7 @@ fun TrueCommandScreen(
         topBar = {
             UnifiedScreenHeader(
                 title = "TrueCommand",
-                subtitle = "Centralized instance management",
+                subtitle = stringResource(R.string.truecmd_subtitle),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = uiState.error,
@@ -91,7 +93,7 @@ fun TrueCommandScreen(
     ) { innerPadding ->
         when {
             uiState.isLoading && uiState.config == null ->
-                LoadingScreen("Loading TrueCommand...")
+                LoadingScreen(stringResource(R.string.truecmd_loading))
             else ->
                 PullToRefreshContent(
                     isRefreshing = uiState.isRefreshing,
@@ -107,18 +109,18 @@ fun TrueCommandScreen(
                         val config = uiState.config
                         if (config != null) {
                             item {
-                                ExpressiveSection(title = "Connection", icon = Icons.Default.Dns) {
+                                ExpressiveSection(title = stringResource(R.string.truecmd_section_connection), icon = Icons.Default.Dns) {
                                     InfoCard {
-                                        InfoRow("Status", config.status)
+                                        InfoRow(stringResource(R.string.attr_status), config.status)
                                         HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                        InfoRow("Status Reason", config.statusReason ?: "—")
+                                        InfoRow(stringResource(R.string.truecmd_status_reason), config.statusReason ?: stringResource(R.string.common_dash))
                                         if (config.remoteUrl != null) {
                                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                            InfoRow("Remote URL", config.remoteUrl)
+                                            InfoRow(stringResource(R.string.truecmd_remote_url), config.remoteUrl)
                                         }
                                         if (config.remoteIpAddress != null) {
                                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                            InfoRow("Remote IP", config.remoteIpAddress)
+                                            InfoRow(stringResource(R.string.truecmd_remote_ip), config.remoteIpAddress)
                                         }
                                     }
                                 }
@@ -126,11 +128,11 @@ fun TrueCommandScreen(
                         }
 
                         item {
-                            ExpressiveSection(title = "Configuration", icon = Icons.Default.Key) {
+                            ExpressiveSection(title = stringResource(R.string.truecmd_section_config), icon = Icons.Default.Key) {
                                 InfoCard {
                                     ToggleRow(
-                                        label = "Enable TrueCommand",
-                                        description = "Enable the TrueCommand integration.",
+                                        label = stringResource(R.string.truecmd_enable),
+                                        description = stringResource(R.string.truecmd_enable_desc),
                                         checked = enabled,
                                         onCheckedChange = { enabled = it }
                                     )
@@ -138,7 +140,7 @@ fun TrueCommandScreen(
                                     OutlinedTextField(
                                         value = apiKey,
                                         onValueChange = { if (it.length <= 16) apiKey = it },
-                                        label = { Text("API Key (16 characters)") },
+                                        label = { Text(stringResource(R.string.truecmd_api_key_label)) },
                                         singleLine = true,
                                         shape = RoundedCornerShape(12.dp),
                                         modifier = Modifier.fillMaxWidth()
@@ -152,7 +154,7 @@ fun TrueCommandScreen(
                                     ) {
                                         Icon(Icons.Default.Save, null, modifier = Modifier.size(18.dp))
                                         Spacer(Modifier.width(6.dp))
-                                        Text("Save Configuration", fontWeight = FontWeight.SemiBold)
+                                        Text(stringResource(R.string.truecmd_save_config), fontWeight = FontWeight.SemiBold)
                                     }
                                 }
                             }

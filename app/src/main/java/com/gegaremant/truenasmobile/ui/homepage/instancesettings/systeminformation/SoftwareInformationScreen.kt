@@ -27,10 +27,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import com.gegaremant.truenasmobile.ui.components.PullToRefreshContent
@@ -53,8 +55,8 @@ fun SoftwareInformationScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             UnifiedScreenHeader(
-                title = "Software Information",
-                subtitle = "Version and features",
+                title = stringResource(R.string.sysinfo_title_software),
+                subtitle = stringResource(R.string.sysinfo_subtitle_software),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = uiState.error,
@@ -78,41 +80,41 @@ fun SoftwareInformationScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 item {
-                    ExpressiveSection(title = "Operating System", icon = Icons.Default.Build) {
+                    ExpressiveSection(title = stringResource(R.string.sysinfo_section_os), icon = Icons.Default.Build) {
                         InfoCard {
-                            InfoRow("Version", uiState.versionShort ?: uiState.version ?: "—")
+                            InfoRow(stringResource(R.string.sysinfo_version), uiState.versionShort ?: uiState.version ?: stringResource(R.string.common_dash))
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("Full Version", uiState.version ?: "—")
+                            InfoRow(stringResource(R.string.sysinfo_full_version), uiState.version ?: stringResource(R.string.common_dash))
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("Product Type", uiState.productType ?: "—")
+                            InfoRow(stringResource(R.string.sysinfo_product_type), uiState.productType ?: stringResource(R.string.common_dash))
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("State", uiState.state ?: "—")
+                            InfoRow(stringResource(R.string.sysinfo_state), uiState.state ?: stringResource(R.string.common_dash))
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("Ready", booleanLabel(uiState.ready))
+                            InfoRow(stringResource(R.string.sysinfo_ready), booleanLabel(uiState.ready))
                         }
                     }
                 }
 
                 item {
-                    ExpressiveSection(title = "Features", icon = Icons.Default.Verified) {
+                    ExpressiveSection(title = stringResource(R.string.sysinfo_section_features), icon = Icons.Default.Verified) {
                         InfoCard {
-                            InfoRow("Deduplication", booleanLabel(uiState.dedupEnabled))
+                            InfoRow(stringResource(R.string.sysinfo_deduplication), booleanLabel(uiState.dedupEnabled))
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("Fibre Channel", booleanLabel(uiState.fibreChannelEnabled))
+                            InfoRow(stringResource(R.string.sysinfo_fibre_channel), booleanLabel(uiState.fibreChannelEnabled))
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("Virtual Machines", booleanLabel(uiState.vmEnabled))
+                            InfoRow(stringResource(R.string.sysinfo_vms), booleanLabel(uiState.vmEnabled))
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("Production", booleanLabel(uiState.isProduction))
+                            InfoRow(stringResource(R.string.sysinfo_production), booleanLabel(uiState.isProduction))
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("EULA Accepted", booleanLabel(uiState.isEulaAccepted))
+                            InfoRow(stringResource(R.string.sysinfo_eula), booleanLabel(uiState.isEulaAccepted))
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("Managed by TrueCommand", booleanLabel(uiState.managedByTruecommand))
+                            InfoRow(stringResource(R.string.sysinfo_managed_truecommand), booleanLabel(uiState.managedByTruecommand))
                         }
                     }
                 }
 
                 item {
-                    ExpressiveSection(title = "Release Notes", icon = Icons.Default.Link) {
+                    ExpressiveSection(title = stringResource(R.string.sysinfo_section_release_notes), icon = Icons.Default.Link) {
                         InfoCard {
                             Text(
                                 uiState.releaseNotesUrl ?: "—",
@@ -168,8 +170,9 @@ private fun InfoRow(label: String, value: String) {
     }
 }
 
+@Composable
 private fun booleanLabel(value: Boolean?): String = when (value) {
-    true -> "Yes"
-    false -> "No"
-    null -> "—"
+    true -> stringResource(R.string.common_yes)
+    false -> stringResource(R.string.common_no)
+    null -> stringResource(R.string.common_dash)
 }

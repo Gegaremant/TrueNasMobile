@@ -37,10 +37,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -79,7 +81,7 @@ fun TrueNasConnectScreen(
         topBar = {
             UnifiedScreenHeader(
                 title = "TrueNAS Connect",
-                subtitle = "Cloud connection and registration",
+                subtitle = stringResource(R.string.tnc_subtitle),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = uiState.error,
@@ -91,7 +93,7 @@ fun TrueNasConnectScreen(
     ) { innerPadding ->
         when {
             uiState.isLoading && uiState.config == null ->
-                LoadingScreen("Loading TrueNAS Connect...")
+                LoadingScreen(stringResource(R.string.tnc_loading))
             else ->
                 PullToRefreshContent(
                     isRefreshing = uiState.isRefreshing,
@@ -113,29 +115,29 @@ fun TrueNasConnectScreen(
                             }
 
                             item {
-                                ExpressiveSection(title = "Connection", icon = Icons.Default.Cloud) {
+                                ExpressiveSection(title = stringResource(R.string.tnc_section_connection), icon = Icons.Default.Cloud) {
                                     InfoCard {
-                                        InfoRow("Status", config.status)
+                                        InfoRow(stringResource(R.string.attr_status), config.status)
                                         HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                        InfoRow("Account Base URL", config.accountServiceBaseUrl!!)
+                                        InfoRow(stringResource(R.string.tnc_account_url), config.accountServiceBaseUrl!!)
                                         HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                        InfoRow("TNC Base URL", config.tncBaseUrl!!)
+                                        InfoRow(stringResource(R.string.tnc_tnc_url), config.tncBaseUrl!!)
                                         HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                        InfoRow("Heartbeat URL", config.heartbeatUrl!!)
+                                        InfoRow(stringResource(R.string.tnc_heartbeat_url), config.heartbeatUrl!!)
                                     }
                                 }
                             }
 
                             if (config.interfaces.isNotEmpty()) {
                                 item {
-                                    ExpressiveSection(title = "Interfaces", icon = Icons.Default.Share) {
+                                    ExpressiveSection(title = stringResource(R.string.tnc_section_interfaces), icon = Icons.Default.Share) {
                                         InfoCard {
-                                            InfoRow("Use All Interfaces", if (config.useAllInterfaces!!) "Yes" else "No")
+                                            InfoRow(stringResource(R.string.tnc_use_all_interfaces), if (config.useAllInterfaces!!) stringResource(R.string.common_yes) else stringResource(R.string.common_no))
                                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                            InfoRow("Interfaces", config.interfaces.joinToString(", "))
+                                            InfoRow(stringResource(R.string.tnc_interfaces), config.interfaces.joinToString(", "))
                                             if (config.interfacesIps.isNotEmpty()) {
                                                 HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                                InfoRow("Interface IPs", config.interfacesIps.joinToString(", "))
+                                                InfoRow(stringResource(R.string.tnc_interface_ips), config.interfacesIps.joinToString(", "))
                                             }
                                         }
                                     }
@@ -144,10 +146,10 @@ fun TrueNasConnectScreen(
                         }
 
                         item {
-                            ExpressiveSection(title = "Registration", icon = Icons.Default.Key) {
+                            ExpressiveSection(title = stringResource(R.string.tnc_section_registration), icon = Icons.Default.Key) {
                                 InfoCard {
                                     Text(
-                                        "Generate a claim token, then fetch the registration URI to claim this system.",
+                                        stringResource(R.string.tnc_registration_desc),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -161,7 +163,7 @@ fun TrueNasConnectScreen(
                                         ) {
                                             Icon(Icons.Default.Key, null, modifier = Modifier.size(18.dp))
                                             Spacer(Modifier.width(6.dp))
-                                            Text("Generate Claim", fontWeight = FontWeight.SemiBold)
+                                            Text(stringResource(R.string.tnc_generate_claim), fontWeight = FontWeight.SemiBold)
                                         }
                                         OutlinedButton(
                                             onClick = { vm.loadRegistrationUri() },
@@ -171,16 +173,16 @@ fun TrueNasConnectScreen(
                                         ) {
                                             Icon(Icons.Default.Link, null, modifier = Modifier.size(18.dp))
                                             Spacer(Modifier.width(6.dp))
-                                            Text("Registration", fontWeight = FontWeight.SemiBold)
+                                            Text(stringResource(R.string.tnc_registration), fontWeight = FontWeight.SemiBold)
                                         }
                                     }
                                     uiState.claimToken?.let {
                                         Spacer(Modifier.height(16.dp))
-                                        InfoRow("Claim Token", it)
+                                        InfoRow(stringResource(R.string.tnc_claim_token), it)
                                     }
                                     uiState.registrationUri?.let {
                                         Spacer(Modifier.height(8.dp))
-                                        InfoRow("Registration URI", it)
+                                        InfoRow(stringResource(R.string.tnc_registration_uri), it)
                                     }
                                 }
                             }
@@ -206,7 +208,7 @@ private fun StatusCard(config: System.TNCEntry, enabled: Boolean, onToggleEnable
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    if (config.enabled) "Enabled" else "Disabled",
+                    if (config.enabled) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface

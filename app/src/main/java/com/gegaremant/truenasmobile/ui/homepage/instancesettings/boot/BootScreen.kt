@@ -43,12 +43,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -79,8 +81,8 @@ fun BootScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             UnifiedScreenHeader(
-                title = "Boot",
-                subtitle = "Boot pool and environments",
+                title = stringResource(R.string.bootscreen_title),
+                subtitle = stringResource(R.string.bootscreen_subtitle),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = uiState.error,
@@ -92,7 +94,7 @@ fun BootScreen(
     ) { innerPadding ->
         when {
             uiState.isLoading && uiState.bootState == null ->
-                LoadingScreen("Loading boot info...")
+                LoadingScreen(stringResource(R.string.bootscreen_loading))
             else ->
                 PullToRefreshContent(
                     isRefreshing = uiState.isRefreshing,
@@ -114,7 +116,7 @@ fun BootScreen(
                     }
 
 
-                    ExpressiveSection(title = "Boot Pool", icon = Icons.Default.SdStorage) {
+                    ExpressiveSection(title = stringResource(R.string.bootscreen_section_pool), icon = Icons.Default.SdStorage) {
                         uiState.bootState?.let { state ->
                             PoolHealthCard(state = state)
                             Spacer(Modifier.height(8.dp))
@@ -122,28 +124,28 @@ fun BootScreen(
                         if (uiState.disks.isNotEmpty()) {
                             ClickableEntryCard(
                                 icon = Icons.Default.Storage,
-                                title = "Disks",
+                                title = stringResource(R.string.bootscreen_disks),
                                 subtitle = "${uiState.disks.size} attached · tap to manage",
                                 onClick = onNavigateToBootPool
                             )
                         } else {
                             ClickableEntryCard(
                                 icon = Icons.Default.Storage,
-                                title = "Boot Pool Disks",
-                                subtitle = "Manage, attach, replace or detach disks",
+                                title = stringResource(R.string.bootscreen_pool_disks),
+                                subtitle = stringResource(R.string.bootscreen_pool_disks_desc),
                                 onClick = onNavigateToBootPool
                             )
                         }
                     }
 
 
-                    ExpressiveSection(title = "Boot Environments", icon = Icons.Default.PowerSettingsNew) {
+                    ExpressiveSection(title = stringResource(R.string.bootscreen_section_env), icon = Icons.Default.PowerSettingsNew) {
                         ClickableEntryCard(
                             icon = Icons.Default.PowerSettingsNew,
-                            title = "Environments",
+                            title = stringResource(R.string.bootscreen_environments),
                             subtitle = if (uiState.environments.isNotEmpty())
                                 "${uiState.environments.size} available · tap to manage"
-                            else "Manage, clone, activate or destroy",
+                            else stringResource(R.string.bootscreen_environments_desc),
                             onClick = onNavigateToBootEnvironments
                         )
                         if (uiState.environments.isNotEmpty()) {
@@ -154,14 +156,14 @@ fun BootScreen(
                     }
 
 
-                    ExpressiveSection(title = "Maintenance", icon = Icons.Default.Refresh) {
+                    ExpressiveSection(title = stringResource(R.string.bootscreen_section_maintenance), icon = Icons.Default.Refresh) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             QuickActionButton(
                                 modifier = Modifier.weight(1f),
-                                label = "Scrub Pool",
+                                label = stringResource(R.string.bootscreen_scrub_pool),
                                 icon = Icons.Default.CheckCircle,
                                 enabled = !uiState.isActing,
                                 loading = uiState.isActing,
@@ -169,7 +171,7 @@ fun BootScreen(
                             )
                             QuickActionButton(
                                 modifier = Modifier.weight(1f),
-                                label = "Refresh",
+                                label = stringResource(R.string.common_refresh_cd),
                                 icon = Icons.Default.Refresh,
                                 enabled = !uiState.isActing,
                                 loading = false,
@@ -235,9 +237,9 @@ internal fun PoolHealthCard(state: System.BootGetState) {
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             Spacer(Modifier.height(16.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                InfoCell(label = "Size", value = formatBytes(state.size))
-                InfoCell(label = "Allocated", value = formatBytes(state.allocated))
-                InfoCell(label = "Free", value = formatBytes(state.free))
+                InfoCell(label = stringResource(R.string.attr_size), value = formatBytes(state.size))
+                InfoCell(label = stringResource(R.string.attr_allocated), value = formatBytes(state.allocated))
+                InfoCell(label = stringResource(R.string.attr_free), value = formatBytes(state.free))
             }
         }
     }
@@ -350,7 +352,7 @@ private fun BootEnvironmentRow(env: System.BootEnvironmentQueryResultItem) {
         Spacer(Modifier.width(10.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = env.id ?: "Unknown",
+                text = env.id ?: stringResource(R.string.common_unknown),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -367,7 +369,7 @@ private fun BootEnvironmentRow(env: System.BootEnvironmentQueryResultItem) {
         }
         if (isActive) {
             Text(
-                text = "Active",
+                text = stringResource(R.string.bootscreen_active),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary
@@ -450,7 +452,7 @@ internal fun ActionBanner(text: String, onDismiss: () -> Unit, isError: Boolean)
             IconButton(onClick = onDismiss, modifier = Modifier.size(28.dp)) {
                 Icon(
                     Icons.Filled.Close,
-                    contentDescription = "dismiss",
+                    contentDescription = stringResource(R.string.bootscreen_dismiss_cd),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(16.dp)
                 )

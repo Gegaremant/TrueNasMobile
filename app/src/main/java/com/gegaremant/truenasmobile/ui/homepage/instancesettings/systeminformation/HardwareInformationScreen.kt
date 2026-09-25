@@ -30,11 +30,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import java.text.DecimalFormat
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import com.gegaremant.truenasmobile.ui.components.PullToRefreshContent
@@ -59,8 +61,8 @@ fun HardwareInformationScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             UnifiedScreenHeader(
-                title = "Hardware Information",
-                subtitle = "CPU, memory and platform",
+                title = stringResource(R.string.sysinfo_title_hardware),
+                subtitle = stringResource(R.string.sysinfo_subtitle_hardware),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = uiState.error,
@@ -87,37 +89,37 @@ fun HardwareInformationScreen(
 
                 if (info != null) {
                     item {
-                        ExpressiveSection(title = "CPU", icon = Icons.Default.Build) {
+                        ExpressiveSection(title = stringResource(R.string.sysinfo_section_cpu), icon = Icons.Default.Build) {
                             InfoCard {
-                                InfoRow("Model", info.model.ifEmpty { "—" })
+                                InfoRow(stringResource(R.string.sysinfo_model), info.model.ifEmpty { stringResource(R.string.common_dash) })
                                 HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                InfoRow("Physical Cores", info.physical_cores?.toString() ?: "—")
+                                InfoRow(stringResource(R.string.sysinfo_physical_cores), info.physical_cores?.toString() ?: stringResource(R.string.common_dash))
                                 HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                InfoRow("Total Cores", info.cores.toInt().toString())
+                                InfoRow(stringResource(R.string.sysinfo_total_cores), info.cores.toInt().toString())
                             }
                         }
                     }
 
                     item {
-                        ExpressiveSection(title = "Memory", icon = Icons.Default.Memory) {
+                        ExpressiveSection(title = stringResource(R.string.sysinfo_section_memory), icon = Icons.Default.Memory) {
                             InfoCard {
                                 InfoRow(
-                                    "Total Memory",
+                                    stringResource(R.string.sysinfo_total_memory),
                                     "${DecimalFormat("#.#").format(info.physmem / (1024.0 * 1024.0 * 1024.0))} GB"
                                 )
                                 HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                                InfoRow("ECC", if (info.ecc_memory) "Yes" else "No")
+                                InfoRow(stringResource(R.string.sysinfo_ecc), if (info.ecc_memory) stringResource(R.string.common_yes) else stringResource(R.string.common_no))
                             }
                         }
                     }
                 }
 
                 item {
-                    ExpressiveSection(title = "Storage", icon = Icons.Default.Storage) {
+                    ExpressiveSection(title = stringResource(R.string.sysinfo_section_storage), icon = Icons.Default.Storage) {
                         InfoCard {
-                            InfoRow("Disks", uiState.diskCount.toString())
+                            InfoRow(stringResource(R.string.sysinfo_disks), uiState.diskCount.toString())
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("Pools", if (uiState.poolsHealthy == null) "—" else if (uiState.poolsHealthy == true) "Healthy" else "Issues detected")
+                            InfoRow(stringResource(R.string.sysinfo_pools), if (uiState.poolsHealthy == null) stringResource(R.string.common_dash) else if (uiState.poolsHealthy == true) stringResource(R.string.sysinfo_healthy) else stringResource(R.string.sysinfo_issues))
                             Spacer(Modifier.height(16.dp))
                             androidx.compose.material3.OutlinedButton(
                                 onClick = {
@@ -130,22 +132,22 @@ fun HardwareInformationScreen(
                             ) {
                                 Icon(Icons.Default.Storage, null, modifier = Modifier.size(18.dp))
                                 Spacer(Modifier.padding(start = 6.dp))
-                                Text("View Disks", fontWeight = FontWeight.SemiBold)
+                                Text(stringResource(R.string.sysinfo_view_disks), fontWeight = FontWeight.SemiBold)
                             }
                         }
                     }
                 }
 
                 item {
-                    ExpressiveSection(title = "Platform", icon = Icons.Default.Hardware) {
+                    ExpressiveSection(title = stringResource(R.string.sysinfo_section_platform), icon = Icons.Default.Hardware) {
                         InfoCard {
-                            InfoRow("Chassis", uiState.chassisHardware ?: "—")
+                            InfoRow(stringResource(R.string.sysinfo_chassis), uiState.chassisHardware ?: stringResource(R.string.common_dash))
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("iX Systems Hardware", booleanLabel(uiState.isIxHardware))
+                            InfoRow(stringResource(R.string.sysinfo_ix_hardware), booleanLabel(uiState.isIxHardware))
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("Host ID", uiState.hostId ?: "—")
+                            InfoRow(stringResource(R.string.sysinfo_host_id), uiState.hostId ?: stringResource(R.string.common_dash))
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                            InfoRow("Boot ID", uiState.bootId ?: "—")
+                            InfoRow(stringResource(R.string.sysinfo_boot_id), uiState.bootId ?: stringResource(R.string.common_dash))
                         }
                     }
                 }
@@ -193,8 +195,9 @@ private fun InfoRow(label: String, value: String) {
     }
 }
 
+@Composable
 private fun booleanLabel(value: Boolean?): String = when (value) {
-    true -> "Yes"
-    false -> "No"
-    null -> "—"
+    true -> stringResource(R.string.common_yes)
+    false -> stringResource(R.string.common_no)
+    null -> stringResource(R.string.common_dash)
 }

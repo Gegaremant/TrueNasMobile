@@ -384,7 +384,7 @@ class SearchViewModel(
                             SearchResult.DiskResult(
                                 id = "disk_${disk.name}",
                                 title = disk.name,
-                                subtitle = "Disk • ${disk.model ?: "Unknown"}",
+                                subtitle = ToastManager.resolveString(R.string.search_disk_fmt, disk.model ?: ToastManager.resolveString(R.string.common_unknown)),
                                 relevanceScore = relevance,
                                 disk = disk
                             )
@@ -401,7 +401,7 @@ class SearchViewModel(
                                 SearchResult.ShareResult(
                                     id = "share_${share.id}",
                                     title = share.name,
-                                    subtitle = "SMB Share • ${share.path}",
+                                    subtitle = ToastManager.resolveString(R.string.search_share_fmt, share.path),
                                     relevanceScore = relevance,
                                     share = share
                                 )
@@ -418,7 +418,7 @@ class SearchViewModel(
                         "hostname" to info.hostname,
                         "version" to info.version,
                         "uptime" to info.uptime,
-                        "cpu cores" to "${info.cores.toInt()} cores"
+                        "cpu cores" to ToastManager.resolveString(R.string.search_cores_fmt, info.cores.toInt())
                     ).forEach { (key, value) ->
                         val relevance = calculateRelevance(lowerQuery, key, value)
                         if (relevance > 0) {
@@ -426,7 +426,7 @@ class SearchViewModel(
                                 SearchResult.SystemInfoResult(
                                     id = "system_$key",
                                     title = key.replaceFirstChar { it.uppercase() },
-                                    subtitle = "System • $value",
+                                    subtitle = ToastManager.resolveString(R.string.search_system_fmt, value),
                                     relevanceScore = relevance,
                                     info = value
                                 )
