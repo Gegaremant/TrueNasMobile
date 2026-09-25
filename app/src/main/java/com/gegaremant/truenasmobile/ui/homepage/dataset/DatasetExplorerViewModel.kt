@@ -53,6 +53,22 @@ class DatasetExplorerViewModel(private val manager: TrueNASApiManager) : ViewMod
     }
 
     /**
+     * Dismiss the error banner shown in the header.
+     *
+     * If we still have a cached tree, fall back to it so the user keeps their
+     * view instead of an empty screen. With no cache, the only sensible action
+     * is to try loading again.
+     */
+    fun dismissError(poolName: String) {
+        val cached = _cache
+        if (cached != null) {
+            _uiState.value = UiState.Success(cached)
+        } else {
+            loadDatasets(poolName)
+        }
+    }
+
+    /**
      * 2. Core function to fetch data and update the state and cache.
      * @param poolName The name of the root pool to build the tree from.
      * @param updateIfCached Set to true if the UI should update even if a cache is currently shown (for background refresh).

@@ -55,6 +55,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
@@ -63,6 +64,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.alerts.AlertsBellButton
 import kotlinx.coroutines.delay
@@ -117,7 +119,7 @@ fun UnifiedScreenHeader(
                         ExpressiveIconButton(
                             onClick = onBackPressed,
                             icon = Icons.Default.ArrowBackIosNew,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.cd_back_cd),
                             enabled = !isLoading && !isRefreshing,
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                         )
@@ -170,7 +172,7 @@ fun UnifiedScreenHeader(
                         ExpressiveIconButton(
                             onClick = onSearchClick,
                             icon = Icons.Default.Search,
-                            contentDescription = "Search",
+                            contentDescription = stringResource(R.string.search_cd),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -182,7 +184,7 @@ fun UnifiedScreenHeader(
                         ExpressiveIconButton(
                             onClick = onRefresh,
                             icon = Icons.Default.Refresh,
-                            contentDescription = "Refresh",
+                            contentDescription = stringResource(R.string.cd_refresh_cd),
                             enabled = !isLoading && !isRefreshing,
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -192,7 +194,7 @@ fun UnifiedScreenHeader(
                         ExpressiveIconButton(
                             onClick = settingsCallback,
                             icon = Icons.Default.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = stringResource(R.string.cd_settings_cd),
                             tint = MaterialTheme.colorScheme.secondary
                         )
                     }
@@ -201,7 +203,7 @@ fun UnifiedScreenHeader(
                         ExpressiveIconButton(
                             onClick = shutdownCallback,
                             icon = Icons.Default.PowerSettingsNew,
-                            contentDescription = "Power",
+                            contentDescription = stringResource(R.string.cd_power_cd),
                             tint = MaterialTheme.colorScheme.onErrorContainer
                         )
                     }
@@ -329,7 +331,7 @@ fun MinimalBackHeader(
             ExpressiveIconButton(
                 onClick = onBackPressed,
                 icon = Icons.Default.ArrowBackIosNew,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.cd_back_cd),
                 enabled = enabled,
                 containerColor = Color.Transparent,
                 modifier = Modifier.fillMaxSize()

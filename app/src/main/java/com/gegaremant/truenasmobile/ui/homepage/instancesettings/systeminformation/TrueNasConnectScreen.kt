@@ -80,7 +80,7 @@ fun TrueNasConnectScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             UnifiedScreenHeader(
-                title = "TrueNAS Connect",
+                title = stringResource(R.string.tnc_title),
                 subtitle = stringResource(R.string.tnc_subtitle),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,

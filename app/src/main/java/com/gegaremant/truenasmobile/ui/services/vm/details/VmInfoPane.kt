@@ -134,9 +134,9 @@ fun VmInfoPane(
                 }
             }
 
-            ExpressiveSection(title = "Display", icon = Icons.Default.Monitor) {
+            ExpressiveSection(title = stringResource(R.string.vm_info_display), icon = Icons.Default.Monitor) {
                 ExpressiveInfoCard {
-                    InfoRow(label = "Type", value = "Available")
+                    InfoRow(label = stringResource(R.string.attr_type), value = stringResource(R.string.vm_info_available))
                 }
             }
 

@@ -88,8 +88,17 @@ class AlertsViewModel(private val manager: TrueNASApiManager) : ViewModel() {
     fun dismissAlert(uuid: String) {
         viewModelScope.launch {
             val result = try {
-                manager.system.dismissAlertWithResult(uuid)
-                ApiResult.Success(Unit)
+                // Use the real API result: a failed dismiss must not be
+                // reported to the user as a success.
+                when (val apiResult = manager.system.dismissAlertWithResult(uuid)) {
+                    is ApiResult.Success -> ApiResult.Success(Unit)
+                    is ApiResult.Error -> ApiResult.Error(
+                        apiResult.message ?: ToastManager.resolveString(R.string.toast_alert_dismiss_failed)
+                    )
+                    is ApiResult.Loading -> ApiResult.Error(
+                        ToastManager.resolveString(R.string.common_processing)
+                    )
+                }
             } catch (e: Exception) {
                 ApiResult.Error(e.message ?: ToastManager.resolveString(R.string.toast_alert_dismiss_failed))
             }
@@ -112,8 +121,16 @@ class AlertsViewModel(private val manager: TrueNASApiManager) : ViewModel() {
     fun restoreAlert(uuid: String) {
         viewModelScope.launch {
             val result = try {
-                manager.system.restoreAlertWithResult(uuid)
-                ApiResult.Success(Unit)
+                // Same as dismissAlert: never fabricate success.
+                when (val apiResult = manager.system.restoreAlertWithResult(uuid)) {
+                    is ApiResult.Success -> ApiResult.Success(Unit)
+                    is ApiResult.Error -> ApiResult.Error(
+                        apiResult.message ?: ToastManager.resolveString(R.string.toast_alert_restore_failed)
+                    )
+                    is ApiResult.Loading -> ApiResult.Error(
+                        ToastManager.resolveString(R.string.common_processing)
+                    )
+                }
             } catch (e: Exception) {
                 ApiResult.Error(e.message ?: ToastManager.resolveString(R.string.toast_alert_restore_failed))
             }

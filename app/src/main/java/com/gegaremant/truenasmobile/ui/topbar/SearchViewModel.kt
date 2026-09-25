@@ -445,7 +445,10 @@ class SearchViewModel(
                             SearchResult.ServiceResult(
                                 id = "svc_${svc.id}",
                                 title = svc.service.replaceFirstChar { it.uppercase() },
-                                subtitle = "Service • ${if (svc.enable) "Running" else "Stopped"}",
+                                subtitle = ToastManager.resolveString(
+                                    R.string.search_service_fmt,
+                                    ToastManager.resolveString(if (svc.enable) R.string.search_state_running else R.string.search_state_stopped)
+                                ),
                                 relevanceScore = relevance,
                                 service = svc
                             )
@@ -472,7 +475,10 @@ class SearchViewModel(
                             SearchResult.InstalledAppResult(
                                 id = "installed_${app.id}",
                                 title = metadata?.title ?: app.name,
-                                subtitle = "Installed App • v${app.version ?: "?"}",
+                                subtitle = ToastManager.resolveString(
+                                    R.string.search_installed_app_fmt,
+                                    app.version ?: ToastManager.resolveString(R.string.search_unknown_value)
+                                ),
                                 relevanceScore = relevance,
                                 app = app
                             )
@@ -494,12 +500,18 @@ class SearchViewModel(
                         app.categories?.joinToString(" ") ?: ""
                     )
                     if (relevance > 0) {
-                        val installedTag = if (app.installed) " • Installed" else ""
+                        val installedTag = if (app.installed) ToastManager.resolveString(R.string.search_marketplace_tag_installed) else ""
                         results.add(
                             SearchResult.MarketplaceAppResult(
                                 id = "marketplace_${app.name}",
                                 title = app.title.ifBlank { app.name },
-                                subtitle = "Marketplace$installedTag • ${app.categories?.firstOrNull()?.replaceFirstChar { it.uppercase() } ?: "App"}",
+                                subtitle = ToastManager.resolveString(
+                                    R.string.search_marketplace_fmt,
+                                    ToastManager.resolveString(R.string.marketplace_title) +
+                                        (if (installedTag.isEmpty()) "" else " • $installedTag"),
+                                    app.categories?.firstOrNull()?.replaceFirstChar { it.uppercase() }
+                                        ?: ToastManager.resolveString(R.string.search_app_fallback)
+                                ),
                                 relevanceScore = relevance,
                                 app = app
                             )
@@ -520,15 +532,15 @@ class SearchViewModel(
                     )
                     if (relevance > 0) {
                         val statusEmoji = when (container.status) {
-                            Virt.Status.RUNNING -> " ● Running"
-                            Virt.Status.STOPPED -> " ○ Stopped"
+                            Virt.Status.RUNNING -> " " + ToastManager.resolveString(R.string.search_state_running)
+                            Virt.Status.STOPPED -> " " + ToastManager.resolveString(R.string.search_state_stopped)
                             else -> " • ${container.status.name}"
                         }
                         results.add(
                             SearchResult.ContainerResult(
                                 id = "container_${container.id}",
                                 title = container.name,
-                                subtitle = "Container$statusEmoji",
+                                subtitle = ToastManager.resolveString(R.string.search_container_word) + statusEmoji,
                                 relevanceScore = relevance,
                                 container = container
                             )
@@ -555,7 +567,12 @@ class SearchViewModel(
                             SearchResult.VmResult(
                                 id = "vm_${vm.id}",
                                 title = vm.name,
-                                subtitle = "VM • $state • ${vm.vcpus}vCPU, ${vm.memory}MB",
+                                subtitle = ToastManager.resolveString(
+                                    R.string.search_vm_fmt,
+                                    state,
+                                    vm.vcpus.toString(),
+                                    vm.memory.toString()
+                                ),
                                 relevanceScore = relevance,
                                 vm = vm
                             )
@@ -565,27 +582,12 @@ class SearchViewModel(
             }
 
             // ── 8. Actions ────────────────────────────────────
-            if (selectedCategory == SearchCategory.ALL || selectedCategory == SearchCategory.ACTIONS) {
-                val actions = listOf(
-                    Triple("shutdown", "Shutdown system", AppAction.SHUTDOWN),
-                    Triple("restart", "Restart system", AppAction.RESTART),
-                    Triple("refresh", "Refresh data", AppAction.REFRESH_DATA)
-                )
-                actions.forEach { (key, description, action) ->
-                    val relevance = calculateRelevance(lowerQuery, key, description)
-                    if (relevance > 0) {
-                        results.add(
-                            SearchResult.ActionResult(
-                                id = "action_$key",
-                                title = description,
-                                subtitle = "Action",
-                                relevanceScore = relevance,
-                                action = action
-                            )
-                        )
-                    }
-                }
-            }
+            // NOTE: system actions (shutdown / restart / refresh-all) are
+            // intentionally NOT exposed through search yet. They were returned
+            // as results but nothing ever handled the tap, and triggering a
+            // shutdown from a search overlay with no confirmation dialog is
+            // dangerous. They stay available from the Home header, which does
+            // ask for confirmation. See TODO.md.
 
             // Sort by relevance descending
             val sortedResults = results.sortedByDescending { it.relevanceScore }

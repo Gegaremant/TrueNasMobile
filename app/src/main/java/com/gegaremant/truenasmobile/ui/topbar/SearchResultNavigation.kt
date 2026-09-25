@@ -100,9 +100,9 @@ object SearchResultNavigation {
             }
 
             is SearchResult.ActionResult -> {
-                // Actions (shutdown, restart, refresh) — handled by the caller
-                // since they require ViewModel access. The caller should check
-                // for ActionResult and handle accordingly.
+                // Not reachable: system actions were removed from the search
+                // index (see SearchViewModel). Kept as a no-op so that an
+                // unexpected ActionResult can never crash navigation.
             }
         }
     }

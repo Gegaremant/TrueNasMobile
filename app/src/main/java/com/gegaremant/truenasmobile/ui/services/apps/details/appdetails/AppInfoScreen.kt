@@ -1264,7 +1264,7 @@ private fun ServiceMaintainerCard(maintainer: Apps.Maintainer) {
                 IconButton(onClick = { uriHandler.openUri(url) }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                        contentDescription = "Open URL",
+                        contentDescription = stringResource(R.string.appinfo_open_url_cd),
                         modifier = Modifier.size(18.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1315,7 +1315,7 @@ fun SimilarAppsSection(
             )
             if (!isLoading) {
                 TextButton(onClick = onSeeMoreClick) {
-                    Text(text = "See More", fontWeight = FontWeight.SemiBold)
+                    Text(text = stringResource(R.string.app_see_more), fontWeight = FontWeight.SemiBold)
                 }
             }
         }
@@ -1443,25 +1443,25 @@ fun DeleteAppConfigDialog(
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 DeleteOptionToggle(
-                    title = "Remove Docker/Container Images",
+                    title = stringResource(R.string.apps_opt_remove_images),
                     description = "Wipes cached containers from the system storage pool if no other apps rely on them.",
                     checked = removeImages,
                     onCheckedChange = { removeImages = it }
                 )
                 DeleteOptionToggle(
-                    title = "Delete ixVolumes Data",
+                    title = stringResource(R.string.apps_opt_delete_ixvolumes),
                     description = "Permanently deletes application persistent datasets provisioned internally by ix-volumes.",
                     checked = removeIxVolumes,
                     onCheckedChange = { removeIxVolumes = it }
                 )
                 DeleteOptionToggle(
-                    title = "Force Remove ixVolumes Data",
+                    title = stringResource(R.string.apps_opt_force_ixvolumes),
                     description = "Forces data dataset unmounting/destruction even if active locking files are busy.",
                     checked = forceRemoveIxVolumes,
                     onCheckedChange = { forceRemoveIxVolumes = it }
                 )
                 DeleteOptionToggle(
-                    title = "Force Remove Custom App Context",
+                    title = stringResource(R.string.apps_opt_force_custom_app),
                     description = "Overrides safety validations to force uninstallation of unmanaged custom charts.",
                     checked = forceRemoveCustomApp,
                     onCheckedChange = { forceRemoveCustomApp = it }
@@ -1473,7 +1473,7 @@ fun DeleteAppConfigDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel", fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.common_cancel), fontWeight = FontWeight.SemiBold)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
@@ -1493,7 +1493,7 @@ fun DeleteAppConfigDialog(
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("Confirm Uninstall", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.apps_uninstall_selected), fontWeight = FontWeight.Bold)
                     }
                 }
             }

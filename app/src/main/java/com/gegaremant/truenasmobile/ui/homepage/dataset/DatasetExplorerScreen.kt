@@ -107,6 +107,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Storage
+import com.gegaremant.truenasmobile.ui.components.LoadErrorContent
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 
@@ -208,7 +209,7 @@ fun DatasetExplorerScreen(
                     isRefreshing = false,
                     error = (uiState as? DatasetExplorerViewModel.UiState.Error)?.message,
                     onRefresh = { viewModel.loadDatasets(poolName) },
-                    onDismissError = { },
+                    onDismissError = { viewModel.dismissError(poolName) },
                     manager = manager,
                     onBackPressed = onNavigateBack
                 )
@@ -225,7 +226,10 @@ fun DatasetExplorerScreen(
                 )
                 when (val state = uiState) {
                     is DatasetExplorerViewModel.UiState.Loading -> LoadingScreen(stringResource(R.string.dataset_loading))
-                    is DatasetExplorerViewModel.UiState.Error -> {}
+                    is DatasetExplorerViewModel.UiState.Error -> LoadErrorContent(
+                        message = state.message,
+                        onRetry = { viewModel.loadDatasets(poolName) }
+                    )
                     is DatasetExplorerViewModel.UiState.Success,
                     is DatasetExplorerViewModel.UiState.LoadingWithCache -> {
                         val rootNode = when (val s = uiState) {

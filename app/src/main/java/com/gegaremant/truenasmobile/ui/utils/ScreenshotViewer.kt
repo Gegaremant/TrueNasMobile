@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -42,6 +43,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import kotlin.math.abs
+import com.gegaremant.truenasmobile.R
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -94,7 +96,7 @@ fun ScreenshotViewer(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close Viewer",
+                        contentDescription = stringResource(R.string.cd_close_viewer_cd),
                         tint = Color.White
                     )
                 }
@@ -173,7 +175,7 @@ private fun ZoomableImage(url: String) {
     ) {
         AsyncImage(
             model = url,
-            contentDescription = "Zoomable preview image",
+            contentDescription = stringResource(R.string.cd_zoomable_image_cd),
             contentScale = ContentScale.Fit,
             modifier = Modifier
                 .fillMaxSize()

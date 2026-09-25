@@ -716,7 +716,7 @@ private fun RecentSearchItem(
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Remove from history",
+                contentDescription = stringResource(R.string.search_remove_history_cd),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                 modifier = Modifier.size(16.dp)
             )

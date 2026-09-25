@@ -183,7 +183,7 @@ private fun PoolsWideShortWidget(pools: List<System.Pool>, currentIndex: Int, co
             modifier = GlanceModifier.fillMaxSize().background(GlanceTheme.colors.widgetBackground).cornerRadius(16.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "No pools configured", style = TextStyle(fontSize = 12.sp, color = GlanceTheme.colors.onSurfaceVariant))
+            Text(text = context.getString(R.string.widget_no_pools_configured), style = TextStyle(fontSize = 12.sp, color = GlanceTheme.colors.onSurfaceVariant))
         }
         return
     }

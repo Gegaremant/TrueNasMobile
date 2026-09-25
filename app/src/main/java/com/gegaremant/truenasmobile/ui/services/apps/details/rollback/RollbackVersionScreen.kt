@@ -462,7 +462,7 @@ private fun RollingBackView(
                     onClick = onNavigateBack,
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text("Go Back")
+                    Text(stringResource(R.string.rollback_go_back))
                 }
             }
         }

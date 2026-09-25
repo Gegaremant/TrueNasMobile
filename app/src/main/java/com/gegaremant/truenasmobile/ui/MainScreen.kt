@@ -9,6 +9,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -304,7 +312,7 @@ fun MainScreen(
         // Full-screen search overlay
         if (showSearch) {
             ExpressiveSearchAppBar(
-                title = "Search",
+                title = stringResource(R.string.search_cd),
                 manager = manager,
                 startSearchActive = true,
                 onCloseSearch = {
@@ -889,12 +897,15 @@ private fun TrueNasMobileNavGraph(
 
         composable(Screen.AppDetailsScreen.route) {
             val app = AppDataHolder.selectedApp
+            if (app == null) {
+                MissingSelectionScreen(onNavigateBack = { navController.popBackStack() })
+            } else {
             val appsViewModel: AppsScreenViewModel = viewModel(factory = AppsScreenViewModel.AppsScreenViewModelFactory(manager))
             LaunchedEffect(Unit) {
                 if (appsViewModel.uiState.value.marketplaceApps.isEmpty()) appsViewModel.loadMarketplaceApps()
             }
             AppInfoScreen(
-                app = app!!,
+                app = app,
                 manager = manager,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToMarketplaceCategory = { categoryName -> navController.navigate(Screen.MarketplaceCategory.createRoute(categoryName)) },
@@ -919,6 +930,7 @@ private fun TrueNasMobileNavGraph(
                     navController.navigate(Screen.AppAdvancedInfoScreen.createRoute(appId))
                 }
             )
+            }
         }
 
         composable(
@@ -1008,7 +1020,11 @@ private fun TrueNasMobileNavGraph(
 
         composable(Screen.ContainerInfo.route) {
             val container = ContainerDataHolder.selectedContainer
-            ContainerInfoScreen(manager = manager, container = container!!, onNavigateBack = { navController.popBackStack() })
+            if (container == null) {
+                MissingSelectionScreen(onNavigateBack = { navController.popBackStack() })
+            } else {
+                ContainerInfoScreen(manager = manager, container = container, onNavigateBack = { navController.popBackStack() })
+            }
         }
 
         composable(Screen.Vms.route) {
@@ -1021,7 +1037,11 @@ private fun TrueNasMobileNavGraph(
 
         composable(Screen.VmDetails.route) {
             val vm = VmDataHolder.selectedVm
-            VmInfoScreen(vm = vm!!, manager = manager, onNavigateBack = { navController.popBackStack() })
+            if (vm == null) {
+                MissingSelectionScreen(onNavigateBack = { navController.popBackStack() })
+            } else {
+                VmInfoScreen(vm = vm, manager = manager, onNavigateBack = { navController.popBackStack() })
+            }
         }
 
         composable(route = Screen.DatasetExplorer.route, arguments = listOf(navArgument("poolName") { type = NavType.StringType })) { backStackEntry ->
@@ -1036,5 +1056,52 @@ private fun onNavClick(navController: NavController, route: String) {
         popUpTo(navController.graph.findStartDestination().id) { saveState = true }
         launchSingleTop = true
         restoreState = true
+    }
+}
+
+/**
+ * Shown when a detail screen is opened without its backing data.
+ *
+ * Detail screens are fed from in-memory holders (AppDataHolder,
+ * ContainerDataHolder, VmDataHolder) that are seeded right before navigation.
+ * After process death (or via a restored back stack) the holder is empty, and
+ * dereferencing it would crash. We tell the user what happened and send them
+ * back instead of showing a blank screen or throwing.
+ */
+@Composable
+private fun MissingSelectionScreen(onNavigateBack: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.Info,
+            contentDescription = null,
+            modifier = Modifier.size(48.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.selection_expired_title),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.selection_expired_hint),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        OutlinedButton(onClick = onNavigateBack) {
+            Text(stringResource(R.string.common_back))
+        }
     }
 }

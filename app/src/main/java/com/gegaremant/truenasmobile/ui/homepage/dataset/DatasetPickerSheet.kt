@@ -292,7 +292,7 @@ private fun PickerHeader(title: String, selectedCount: Int, onClose: () -> Unit)
             }
         }
         IconButton(onClick = onClose) {
-            Icon(Icons.Default.Close, contentDescription = "Close")
+            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.common_close))
         }
     }
 }
@@ -307,12 +307,12 @@ private fun PickerSearchBar(
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
-        placeholder = { Text("Search datasets...") },
+        placeholder = { Text(stringResource(R.string.dataset_picker_search)) },
         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, modifier = Modifier.size(20.dp)) },
         trailingIcon = {
             if (query.isNotBlank()) {
                 IconButton(onClick = { onQueryChange("") }) {
-                    Icon(Icons.Default.Close, contentDescription = "Clear", modifier = Modifier.size(18.dp))
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.common_clear), modifier = Modifier.size(18.dp))
                 }
             }
         },
@@ -339,7 +339,7 @@ private fun PickerSearchResults(
     val filtered = if (filterPredicate != null) results.filter(filterPredicate) else results
     if (filtered.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No matching datasets", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.dataset_picker_no_match), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         return
     }
@@ -592,7 +592,7 @@ private fun PickerFooter(
             onClick = onCancel,
             modifier = Modifier.weight(1f)
         ) {
-            Text("Cancel")
+            Text(stringResource(R.string.common_cancel))
         }
         Button(
             onClick = onConfirm,

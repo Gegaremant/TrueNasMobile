@@ -218,7 +218,7 @@ class PoolDetailsViewModel(
                                     _jobStates.update {
                                         it - "scrub_$scrubId"
                                     }
-                                    ToastManager.showToast("Switching scrub tasks failed")
+                                    ToastManager.showToast(ToastManager.resolveString(R.string.pool_scrub_switch_failed))
                                 }
                             }
                         )
@@ -247,7 +247,7 @@ class PoolDetailsViewModel(
                         if (result.data){
                             getScrubTasks()
                         }else{
-                            ToastManager.showToast("Could not delete scrub task")
+                            ToastManager.showToast(ToastManager.resolveString(R.string.pool_scrub_delete_failed))
                         }
                     }
                     is ApiResult.Error -> {

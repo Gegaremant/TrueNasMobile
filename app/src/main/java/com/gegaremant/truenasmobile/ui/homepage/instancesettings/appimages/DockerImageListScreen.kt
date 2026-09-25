@@ -321,7 +321,7 @@ private fun PullImageDialog(onSubmit: (String) -> Unit, onDismiss: () -> Unit) {
             }
         },
         confirmButton = { Button(onClick = { onSubmit(ref) }, enabled = ref.isNotBlank()) { Text(stringResource(R.string.docker_pull)) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } }
     )
 }
 
@@ -345,7 +345,7 @@ private fun ImageDetailOrDeleteDialog(manager: TrueNASApiManager, imageId: Strin
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Image Details") },
+        title = { Text(stringResource(R.string.docker_image_details)) },
         text = {
             when {
                 loading -> Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) { CircularProgressIndicator(Modifier.size(32.dp)) }
@@ -353,12 +353,12 @@ private fun ImageDetailOrDeleteDialog(manager: TrueNASApiManager, imageId: Strin
                 detail != null -> Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     val d = detail!!
                     Text(d.parsedRepoTags?.firstOrNull()?.completeTag ?: d.repoTags.firstOrNull() ?: d.id, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Text("ID: ${d.id}", style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Monospace)
-                    Text("Size: ${formatSize(d.size)}", style = MaterialTheme.typography.bodySmall)
-                    d.created?.let { Text("Created: $it", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
-                    d.author?.takeIf { it.isNotBlank() }?.let { Text("Author: $it", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
-                    if (d.updateAvailable) Text("Update available", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
-                    if (d.repoTags.isNotEmpty()) Text("Tags: ${d.repoTags.joinToString(", ")}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.docker_id_fmt, d.id), style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Monospace)
+                    Text(stringResource(R.string.docker_size_fmt, formatSize(d.size)), style = MaterialTheme.typography.bodySmall)
+                    d.created?.let { Text(stringResource(R.string.docker_created_fmt, it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                    d.author?.takeIf { it.isNotBlank() }?.let { Text(stringResource(R.string.docker_author_fmt, it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                    if (d.updateAvailable) Text(stringResource(R.string.appinfo_update_available), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                    if (d.repoTags.isNotEmpty()) Text(stringResource(R.string.docker_tags_fmt, d.repoTags.joinToString(", ")), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         },
@@ -373,9 +373,9 @@ private fun ImageDetailOrDeleteDialog(manager: TrueNASApiManager, imageId: Strin
                         is ApiResult.Loading -> {}
                     }
                 }
-            }) { Text("Delete") }
+            }) { Text(stringResource(R.string.common_delete)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Close") } }
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_close)) } }
     )
 }
 

@@ -74,7 +74,7 @@ fun ServicesScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         UnifiedScreenHeader(
-            title = "Services",
+            title = stringResource(R.string.services_title),
             subtitle = "${uiState.services.size} Services",
             isLoading = uiState.isLoading,
             isRefreshing = uiState.isRefreshing,

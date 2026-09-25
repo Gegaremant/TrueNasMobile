@@ -93,7 +93,7 @@ private fun EmptyState(context: Context) {
                 )
             }
             Spacer(GlanceModifier.height(8.dp))
-            Text(text = "No apps configured", style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant))
+            Text(text = context.getString(R.string.widget_no_apps_configured), style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant))
         }
     }
 }

@@ -35,7 +35,7 @@ fun ContainerInfoScreen(
         topBar = {
             UnifiedScreenHeader(
                 title = container.name,
-                subtitle = "Container Details",
+                subtitle = stringResource(R.string.container_title_details),
                 isLoading = false,
                 isRefreshing = false,
                 error = null,

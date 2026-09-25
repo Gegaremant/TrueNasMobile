@@ -94,7 +94,7 @@ fun ServiceDetailScreen(
         topBar = {
             UnifiedScreenHeader(
                 title = current.service,
-                subtitle = "Service Details",
+                subtitle = stringResource(R.string.service_title_details),
                 isLoading = uiState.isLoading,
                 isRefreshing = false,
                 error = null,
@@ -232,7 +232,7 @@ fun ServiceDetailScreen(
                 ) {
                     Icon(Icons.Default.PlayArrow, null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Start")
+                    Text(stringResource(R.string.common_start))
                 }
                 OutlinedButton(
                     onClick = { viewModel.controlService(System.ServiceControlOptions.STOP) },
@@ -245,7 +245,7 @@ fun ServiceDetailScreen(
                 ) {
                     Icon(Icons.Default.Stop, null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Stop")
+                    Text(stringResource(R.string.common_stop))
                 }
             }
 
@@ -261,7 +261,7 @@ fun ServiceDetailScreen(
                 ) {
                     Icon(Icons.Default.Refresh, null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Restart")
+                    Text(stringResource(R.string.common_restart))
                 }
                 OutlinedButton(
                     onClick = { viewModel.controlService(System.ServiceControlOptions.RELOAD) },
@@ -271,7 +271,7 @@ fun ServiceDetailScreen(
                 ) {
                     Icon(Icons.Default.Refresh, null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Reload")
+                    Text(stringResource(R.string.service_reload))
                 }
             }
 

@@ -88,7 +88,7 @@ fun IxVolumeListScreen(
             )
     ) {
         UnifiedScreenHeader(
-            title = "iX Volumes",
+            title = stringResource(R.string.ixvol_title),
             subtitle = "${volumes?.size ?: 0} volume(s)",
             isLoading = isLoading && volumes == null,
             isRefreshing = false,
@@ -164,7 +164,7 @@ private fun IxVolumeRow(volume: Apps.AppIxVolumeQueryResultItem) {
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(volume.name ?: "Unknown", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Medium)
-                volume.appName?.let { Text("App: $it", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                volume.appName?.let { Text(stringResource(R.string.ixvol_app_fmt, it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
             }
         }
     }

@@ -489,7 +489,7 @@ private fun PowerManagementCard(disk: System.DiskDetails) {
         ) {
             PowerManagementRow(
                 icon = Icons.Default.Bolt,
-                label = "Transfer Mode",
+                label = stringResource(R.string.smart_transfer_mode),
                 value = disk.transfermode
             )
             HorizontalDivider(
@@ -498,7 +498,7 @@ private fun PowerManagementCard(disk: System.DiskDetails) {
             )
             PowerManagementRow(
                 icon = Icons.Default.Settings,
-                label = "Standby Mode",
+                label = stringResource(R.string.smart_standby_mode),
                 value = disk.hddstandby
             )
             HorizontalDivider(
@@ -507,7 +507,7 @@ private fun PowerManagementCard(disk: System.DiskDetails) {
             )
             PowerManagementRow(
                 icon = Icons.Default.Memory,
-                label = "APM Level",
+                label = stringResource(R.string.smart_apm_level),
                 value = disk.advpowermgmt
             )
         }

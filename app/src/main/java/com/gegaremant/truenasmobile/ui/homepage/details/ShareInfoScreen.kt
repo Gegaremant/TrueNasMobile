@@ -594,14 +594,14 @@ private fun FeatureChip(text: String, icon: ImageVector) {
 private fun ShareFeatureChips(share: Shares.SmbShare) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (share.browsable) FeatureChip("Browsable", Icons.Default.Visibility)
-            if (share.guestok == true) FeatureChip("Guest Access", Icons.Default.PersonOutline)
-            if (share.ro == true) FeatureChip("Read-Only", Icons.Default.Lock)
+            if (share.browsable) FeatureChip(stringResource(R.string.share_feat_browsable), Icons.Default.Visibility)
+            if (share.guestok == true) FeatureChip(stringResource(R.string.share_feat_guest_access), Icons.Default.PersonOutline)
+            if (share.ro == true) FeatureChip(stringResource(R.string.share_feat_read_only), Icons.Default.Lock)
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (share.home == true) FeatureChip("Home Share", Icons.Default.Home)
-            if (share.recyclebin == true) FeatureChip("Recycle Bin", Icons.Default.Delete)
-            if (share.shadowcopy == true) FeatureChip("Shadow Copy", Icons.Default.ContentCopy)
+            if (share.home == true) FeatureChip(stringResource(R.string.share_feat_home_share), Icons.Default.Home)
+            if (share.recyclebin == true) FeatureChip(stringResource(R.string.share_feat_recycle_bin), Icons.Default.Delete)
+            if (share.shadowcopy == true) FeatureChip(stringResource(R.string.share_feat_shadow_copy), Icons.Default.ContentCopy)
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (share.acl == true) FeatureChip("ACL", Icons.Default.AdminPanelSettings)

@@ -411,9 +411,6 @@ private fun AppNavigation(
         composable(Screen.Settings.route) {
             SettingsScreen(
                 manager = manager,
-                onDummyAction = { settingAction ->
-                    ToastManager.showInfoRes(R.string.startup_work_in_progress, settingAction)
-                },
                 onNavigateToTheme = {
                     navController.navigate(Screen.Theme.route)
                 },

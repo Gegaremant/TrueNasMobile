@@ -75,7 +75,6 @@ fun SettingsScreen(
     onNavigateToLicenses: () -> Unit = {},
     onNavigateToAbout: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
-    onDummyAction: (String) -> Unit = {},
     onNavigateToTheme : () -> Unit = {},
     onNavigateToChangePassword : () -> Unit = {},
     onNavigateToLogging: () -> Unit = {},
@@ -158,12 +157,6 @@ fun SettingsScreen(
                         name = stringResource(R.string.settings_theme),
                         description = stringResource(R.string.settings_theme_desc),
                         onClick = { onNavigateToTheme() }
-                    ),
-                    SettingItem(
-                        icon = Icons.Default.PrivacyTip,
-                        name = stringResource(R.string.settings_privacy),
-                        description = stringResource(R.string.settings_privacy_desc),
-                        onClick = { onDummyAction("Privacy") }
                     ),
                     SettingItem(
                         icon = Icons.Default.Fingerprint,

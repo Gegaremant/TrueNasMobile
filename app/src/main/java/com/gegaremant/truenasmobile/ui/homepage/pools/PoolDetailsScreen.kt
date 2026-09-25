@@ -79,6 +79,7 @@ import com.gegaremant.truenasmobile.data.models.System.PoolDevice
 import com.gegaremant.truenasmobile.data.models.System.PoolScan
 import com.gegaremant.truenasmobile.data.models.System.PoolTopology
 import com.gegaremant.truenasmobile.ui.background.WavyGradientBackground
+import com.gegaremant.truenasmobile.ui.components.LoadErrorContent
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 import java.text.DecimalFormat
@@ -143,7 +144,10 @@ fun PoolDetailsScreen(
 
             when (val state = uiState) {
                 is PoolDetailsUiState.Loading -> LoadingScreen(stringResource(R.string.pooldetails_loading))
-                is PoolDetailsUiState.Error -> {}
+                is PoolDetailsUiState.Error -> LoadErrorContent(
+                    message = state.message,
+                    onRetry = { viewModel.refresh() }
+                )
                 is PoolDetailsUiState.Success -> PoolDetailsContent(
                     pool = state.pool,
                     scrubTasks = state.scrubTasks,
@@ -767,12 +771,12 @@ private fun CreateScrubTaskDialog(
                     OutlinedTextField(value = dayOfMonth, onValueChange = { dayOfMonth = it }, label = { Text(stringResource(R.string.pool_day_m)) }, modifier = Modifier.weight(1f))
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(value = month, onValueChange = { month = it }, label = { Text("Month") }, modifier = Modifier.weight(1f))
-                    OutlinedTextField(value = dayOfWeek, onValueChange = { dayOfWeek = it }, label = { Text("Day (W)") }, modifier = Modifier.weight(1f))
+                    OutlinedTextField(value = month, onValueChange = { month = it }, label = { Text(stringResource(R.string.pool_cron_month)) }, modifier = Modifier.weight(1f))
+                    OutlinedTextField(value = dayOfWeek, onValueChange = { dayOfWeek = it }, label = { Text(stringResource(R.string.pool_cron_day_w)) }, modifier = Modifier.weight(1f))
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = enabled, onCheckedChange = { enabled = it })
-                    Text("Enabled")
+                    Text(stringResource(R.string.common_enabled))
                 }
             }
         },
@@ -799,7 +803,7 @@ private fun CreateScrubTaskDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         }
     )
 }

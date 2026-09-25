@@ -100,7 +100,7 @@ class ContainerScreenViewModel(
             when (val result = manager.virtService.getAllInstancesWithResult()) {
                 is ApiResult.Success -> {
                     AppCache.updateContainers(result.data)
-                    ToastManager.showSuccess("Refreshed ${result.data.size} containers")
+                    ToastManager.showSuccess(ToastManager.resolveString(R.string.containers_refreshed_fmt, result.data.size))
                     _uiState.update {
                         it.copy(
                             containers = result.data,

@@ -35,7 +35,7 @@ fun VmInfoScreen(
         topBar = {
             UnifiedScreenHeader(
                 title = vm.name,
-                subtitle = "VM Details",
+                subtitle = stringResource(R.string.vm_title_vm_details),
                 isLoading = false,
                 isRefreshing = false,
                 error = null,

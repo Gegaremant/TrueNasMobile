@@ -1,19 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Backup / device-transfer rules for TrueNasMobile.
+
+   This app stores TrueNAS API keys, passwords and session tokens on the
+   device. Those MUST never leave the device through cloud backup or
+   device-to-device transfer, so every secret-bearing store is excluded
+   below. Safe, non-secret state (theme, logging prefs) is still backed up.
+
+   Secret stores (see data/helpers/EncryptedPrefs.kt, MultiAccountPrefs.kt,
+   data/push/PushPrefs.kt):
+     - secure_preferences        : encrypted API keys, passwords, tokens
+     - multi_account_preferences : saved servers incl. credentials
+     - push_preferences          : push registration tokens
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <exclude domain="file" path="datastore/secure_preferences.preferences_pb" />
+        <exclude domain="file" path="datastore/multi_account_preferences.preferences_pb" />
+        <exclude domain="file" path="datastore/push_preferences.preferences_pb" />
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <exclude domain="file" path="datastore/secure_preferences.preferences_pb" />
+        <exclude domain="file" path="datastore/multi_account_preferences.preferences_pb" />
+        <exclude domain="file" path="datastore/push_preferences.preferences_pb" />
     </device-transfer>
-    -->
 </data-extraction-rules>

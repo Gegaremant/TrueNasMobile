@@ -584,7 +584,7 @@ private fun VmCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                DetailItem(label = "vCPUs", value = "${vm.vcpus}")
+                DetailItem(label = stringResource(R.string.vm_vcpus_label), value = "${vm.vcpus}")
                 DetailItem(label = stringResource(R.string.vm_detail_cores), value = "${vm.cores}")
                 DetailItem(label = stringResource(R.string.vm_detail_memory), value = "${vm.memory} MB")
             }
@@ -1029,18 +1029,18 @@ private fun DeleteConfirmationDialog(
     var forceDelete by remember { mutableStateOf(false) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Delete Virtual Machine") },
+        title = { Text(text = stringResource(R.string.vm_delete_title)) },
         text = {
             Column {
-                Text(text = "Are you sure you want to delete '$vmName'? This action cannot be undone.")
+                Text(text = stringResource(R.string.vm_delete_message, vmName))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Delete Zvols")
+                    Text(text = stringResource(R.string.vm_delete_zvols))
                     Spacer(modifier = Modifier.width(8.dp))
                     Switch(checked = deleteZvol, onCheckedChange = { deleteZvol = it })
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Force Delete")
+                    Text(text = stringResource(R.string.vm_force_delete))
                     Spacer(modifier = Modifier.width(8.dp))
                     Switch(checked = forceDelete, onCheckedChange = { forceDelete = it })
                 }
@@ -1050,10 +1050,10 @@ private fun DeleteConfirmationDialog(
             TextButton(
                 onClick = { onConfirm(deleteZvol, forceDelete) },
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
-            ) { Text("Delete") }
+            ) { Text(stringResource(R.string.common_delete)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         }
     )
 }
@@ -1068,19 +1068,19 @@ private fun StopConfirmationDialog(
     var forceShutoffAfterTimeoutChecked by remember { mutableStateOf(false) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Stop Virtual Machine") },
+        title = { Text(text = stringResource(R.string.vm_stop_title)) },
         text = {
             Column {
-                Text(text = "Are you sure you want to stop '$vmName'?")
+                Text(text = stringResource(R.string.vm_stop_message, vmName))
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Force shutoff")
+                    Text(text = stringResource(R.string.vm_force_shutoff))
                     Spacer(modifier = Modifier.width(8.dp))
                     Switch(checked = forceShutoffChecked, onCheckedChange = { forceShutoffChecked = it })
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Force shutoff after timeout")
+                    Text(text = stringResource(R.string.vm_force_shutoff_timeout))
                     Spacer(modifier = Modifier.width(8.dp))
                     Switch(checked = forceShutoffAfterTimeoutChecked, onCheckedChange = { forceShutoffAfterTimeoutChecked = it })
                 }
@@ -1090,10 +1090,10 @@ private fun StopConfirmationDialog(
             TextButton(
                 onClick = { onConfirm(forceShutoffChecked, forceShutoffAfterTimeoutChecked) },
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
-            ) { Text("Stop") }
+            ) { Text(stringResource(R.string.common_stop)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         }
     )
 }
@@ -1107,13 +1107,13 @@ private fun StartConfirmationDialog(
     var overcommit by remember { mutableStateOf(false) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Start Virtual Machine") },
+        title = { Text(text = stringResource(R.string.vm_start_title)) },
         text = {
             Column {
-                Text(text = "Are you sure you want to start '$vmName'?")
+                Text(text = stringResource(R.string.vm_start_message, vmName))
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Overcommit")
+                    Text(text = stringResource(R.string.vm_overcommit))
                     Spacer(modifier = Modifier.width(8.dp))
                     Switch(checked = overcommit, onCheckedChange = { overcommit = it })
                 }
@@ -1124,10 +1124,10 @@ private fun StartConfirmationDialog(
             TextButton(
                 onClick = { onConfirm(overcommit) },
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary)
-            ) { Text("Start") }
+            ) { Text(stringResource(R.string.common_start)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         }
     )
 }
@@ -1165,7 +1165,7 @@ private fun MorphingRefreshIndicator(
                 } else {
                     Icon(
                         imageVector = Icons.Default.Settings,
-                        contentDescription = "Refresh",
+                        contentDescription = stringResource(R.string.cd_refresh_cd),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.size(24.dp)
                     )

@@ -203,7 +203,7 @@ class QuickLaunchConfigActivity : ComponentActivity() {
                         CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                         Spacer(modifier = Modifier.width(8.dp))
                     }
-                    Text("Save (${selected.size}/$MAX_QUICK_LAUNCH_APPS)")
+                    Text(stringResource(R.string.quicklaunch_save_fmt, selected.size, MAX_QUICK_LAUNCH_APPS))
                 }
             }
         }

@@ -456,7 +456,7 @@ private fun ConfigEditorRow(
                             listText = newText
                             onValueChange(newText.split(",").map { it.trim() })
                         },
-                        label = { Text("List (comma separated)") },
+                        label = { Text(stringResource(R.string.app_list_comma_hint)) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = false
                     )
@@ -467,7 +467,7 @@ private fun ConfigEditorRow(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Enabled", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.common_enabled), style = MaterialTheme.typography.bodyMedium)
                         Switch(
                             checked = value,
                             onCheckedChange = onValueChange

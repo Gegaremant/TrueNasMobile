@@ -175,7 +175,7 @@ private fun startSystemUpdateJob(
 ) {
     kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
         try {
-            ToastManager.showInfo("Starting update to ${update.version.version}...")
+            ToastManager.showInfo(ToastManager.resolveString(R.string.sysupdate_starting_fmt, update.version.version ?: ""))
             val result = manager.system.runSystemUpdate(
                 System.UpdateRunDefaults(
                     train = update.train,
@@ -329,7 +329,7 @@ private fun UpdateVersionCard(
                 IconButton(onClick = onInfoClick) {
                     Icon(
                         imageVector = Icons.Default.Info,
-                        contentDescription = "View release notes for ${update.version.version}",
+                        contentDescription = ToastManager.resolveString(R.string.sysupdate_notes_cd_fmt, update.version.version ?: ""),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }

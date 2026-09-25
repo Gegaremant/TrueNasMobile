@@ -1,6 +1,5 @@
 package com.gegaremant.truenasmobile.ui.homepage
 
-// import com.gegaremant.truenasmobile.ui.components.HalfCircleGauge
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -146,7 +145,6 @@ fun HomeScreen(
                     onRefresh = { viewModel.refresh() },
                     onShutdown = { reason -> viewModel.shutdownSystem(reason) },
                     isConnectedStatus = isConnected,
-                    // loadAveragesState = loadAveragesState,
                     onPoolClick = onPoolClick,
                     onDiskClick = { onDisksClick() },
                     onNavigateToShareInfo = onNavigateToShareInfo,
@@ -245,7 +243,6 @@ private fun ErrorScreen(
 private fun HomeContent(
     isConnectedStatus: Boolean,
     state: HomeUiState.Success,
-    // loadAveragesState: LoadAveragesState,
     onRefresh: () -> Unit,
     onPoolClick: (System.Pool) -> Unit,
     onShutdown: (String) -> Unit,
@@ -288,24 +285,13 @@ private fun HomeContent(
             AdaptiveGridLayout(
                 columnCount = columnCount,
                 state = state,
-                // loadAveragesState = loadAveragesState,
-                // onCpuClick = { AppDataHolder.cpuData = state.cpuData; onNavigateToPerformance(MetricType.CPU) },
-                // onMemoryClick = { AppDataHolder.memoryData = state.memoryData;onNavigateToPerformance(MetricType.MEMORY) },
-                // onLoadClick = { onNavigateToPerformance(MetricType.ALL)},
-                // onTempClick = {AppDataHolder.temperatureData = state.temperatureData; onNavigateToPerformance(MetricType.TEMPERATURE)},
                 onDiskClick = { AppDataHolder.disks = state.diskDetails; onDiskClick() },
                 onPoolClick = onPoolClick,
                 onSmbShareClick = { share -> onNavigateToShareInfo(ShareType.Smb(share)) },
                 onNfsShareClick = { share -> onNavigateToShareInfo(ShareType.Nfs(share)) }
             )
         } else {
-            // LoadAveragesGrid commented out
-            // LoadAveragesGrid(
-            //     loadAveragesState = loadAveragesState,
             //     modifier = Modifier.padding(bottom = 16.dp),
-            //     onCpuClick = { AppDataHolder.cpuData = state.cpuData;onNavigateToPerformance(MetricType.CPU) },
-            //     onMemoryClick = {AppDataHolder.memoryData = state.memoryData; onNavigateToPerformance(MetricType.MEMORY) },
-            //     onTempClick = { AppDataHolder.temperatureData = state.temperatureData;onNavigateToPerformance(MetricType.TEMPERATURE) }
             // )
 
             if (state.poolDetails.isNotEmpty()) {
@@ -330,11 +316,6 @@ private fun HomeContent(
 private fun AdaptiveGridLayout(
     columnCount: Int,
     state: HomeUiState.Success,
-    // loadAveragesState: LoadAveragesState,
-    // onCpuClick: () -> Unit,
-    // onMemoryClick: () -> Unit,
-    // onLoadClick: () -> Unit,
-    // onTempClick: () -> Unit,
     onDiskClick: () -> Unit,
     onPoolClick: (System.Pool) -> Unit,
     onSmbShareClick: (Shares.SmbShare) -> Unit,
@@ -343,7 +324,6 @@ private fun AdaptiveGridLayout(
     val spacing = AdaptiveLayoutHelper.getHorizontalSpacing()
 
     val sections = buildList {
-        // add(SectionItem.LoadAverages(loadAveragesState, onCpuClick, onMemoryClick, onLoadClick, onTempClick))
         if (state.poolDetails.isNotEmpty()) {
             state.poolDetails.forEach { pool -> add(SectionItem.StoragePool(pool, onPoolClick)) }
         } else {
@@ -361,11 +341,6 @@ private fun AdaptiveGridLayout(
         sections.forEach { section ->
             Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 when (section) {
-                    // is SectionItem.LoadAverages -> LoadAveragesGrid(
-                    //     loadAveragesState = section.state,
-                    //     onCpuClick = section.onCpuClick,
-                    //     onMemoryClick = section.onMemoryClick,
-                    //     onTempClick = section.onTempClick
                     // )
                     is SectionItem.StoragePool -> StorageCard(pool = section.pool, onClick = { section.onPoolClick(section.pool) })
                     is SectionItem.NoStorage -> NoStorageCard()
@@ -560,109 +535,6 @@ fun String.toShortUptime(): String {
     }
 }
 
-/*
-@Composable
-private fun LoadAveragesGrid(
-    loadAveragesState: LoadAveragesState,
-    modifier: Modifier = Modifier,
-    onCpuClick: () -> Unit,
-    onMemoryClick: () -> Unit,
-    onTempClick: () -> Unit
-) {
-    Column(modifier = modifier) {
-        Text(
-            text = "System Metrics",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(horizontal = 4.dp, vertical = 6.dp)
-        )
-
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            when (loadAveragesState) {
-                is LoadAveragesState.Loading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.5.dp
-                        )
-                    }
-                }
-                is LoadAveragesState.Success -> {
-                    val cpuVal = loadAveragesState.cpuAverage
-                    val memVal = loadAveragesState.memoryAverage
-                    val tempVal = loadAveragesState.tempAverage
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 4.dp, vertical = 6.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        HalfCircleGauge(
-                            progress = cpuVal?.let { (it / 100.0).toFloat() } ?: 0f,
-                            valueText = cpuVal?.let { "${DecimalFormat("#.#").format(it)}%" } ?: "N/A",
-                            label = "CPU",
-                            icon = Icons.Default.Memory,
-                            gaugeColor = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.weight(1f),
-                            onClick = onCpuClick
-                        )
-
-                        HalfCircleGauge(
-                            progress = memVal?.let { (it / 100.0).toFloat() } ?: 0f,
-                            valueText = memVal?.let { "${DecimalFormat("#.#").format(it)}%" } ?: "N/A",
-                            label = "Memory",
-                            icon = Icons.Default.Memory,
-                            gaugeColor = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.weight(1f),
-                            onClick = onMemoryClick
-                        )
-
-                        HalfCircleGauge(
-                            progress = tempVal?.let { (it / 100.0).toFloat() } ?: 0f,
-                            valueText = tempVal?.let { "${DecimalFormat("#.#").format(it)}°C" } ?: "N/A",
-                            label = "Temperature",
-                            icon = Icons.Default.Thermostat,
-                            gaugeColor = if ((tempVal ?: 0.0) > 75.0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier.weight(1f),
-                            onClick = onTempClick
-                        )
-                    }
-                }
-                is LoadAveragesState.Error -> {
-                    Row(
-                        modifier = Modifier.padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Error,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                        Text(
-                            text = "Failed to load metrics",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-*/
 
 @Composable
 fun StorageCard(modifier: Modifier = Modifier, pool: System.Pool, onClick: () -> Unit) {
@@ -1180,7 +1052,6 @@ private fun PillChip(
 }
 
 private sealed class SectionItem {
-    // data class LoadAverages(val state: LoadAveragesState, val onCpuClick: () -> Unit, val onMemoryClick: () -> Unit, val onLoadClick: () -> Unit, val onTempClick: () -> Unit) : SectionItem()
     data class StoragePool(val pool: System.Pool, val onPoolClick: (System.Pool) -> Unit) : SectionItem()
     object NoStorage : SectionItem()
     data class Shares(val smbShares: List<Shares.SmbShare>, val nfsShares: List<Shares.NfsShare>, val onSmbShareClick: (Shares.SmbShare) -> Unit, val onNfsShareClick: (Shares.NfsShare) -> Unit) : SectionItem()

@@ -506,7 +506,7 @@ private fun MetricHeroCard(
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     MetricBadge(
-                        label = "Live",
+                        label = stringResource(R.string.perf_live),
                         containerColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.15f),
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     )

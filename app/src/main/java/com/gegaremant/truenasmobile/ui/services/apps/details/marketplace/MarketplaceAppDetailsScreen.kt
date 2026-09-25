@@ -778,7 +778,7 @@ private fun AppActionSection(
             ) {
                 Icon(Icons.Default.Download, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Install Application", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.app_install_button), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
             }
         } else {
             OutlinedButton(
@@ -803,11 +803,11 @@ private fun AppActionSection(
                         strokeWidth = 2.dp
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Uninstalling...", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.app_uninstalling), fontWeight = FontWeight.Bold)
                 } else {
                     Icon(Icons.Default.DeleteOutline, contentDescription = null)
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Uninstall", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.app_uninstall_button), fontWeight = FontWeight.Bold)
                 }
             }
 
@@ -825,7 +825,7 @@ private fun AppActionSection(
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Install Another", fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(stringResource(R.string.app_install_another), fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
     }

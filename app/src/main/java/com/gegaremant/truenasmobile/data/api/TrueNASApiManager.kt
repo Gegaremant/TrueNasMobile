@@ -111,7 +111,10 @@ class TrueNASApiManager(
                 )
                 return true
             } else {
-                return true
+                // Token generation failed: recovery did NOT succeed.
+                // Reporting success here would retry the original RPC with
+                // the stale session and surface a misleading error to the user.
+                return false
             }
 
         } catch (e: Exception) {

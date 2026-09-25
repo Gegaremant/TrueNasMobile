@@ -284,7 +284,7 @@ class VmsScreenViewModel(
         viewModelScope.launch {
             when (val result = manager.vmService.deleteVmInstanceWithResult(id,deleteZvols,forceDelete)) {
                 is ApiResult.Success -> {
-                    ToastManager.showSuccess("Deleted Virtual Machine")
+                    ToastManager.showSuccess(ToastManager.resolveString(R.string.vm_deleted_toast))
                     refresh()
                 }
                 is ApiResult.Error -> {

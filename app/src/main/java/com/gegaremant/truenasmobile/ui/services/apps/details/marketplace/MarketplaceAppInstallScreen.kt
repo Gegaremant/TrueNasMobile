@@ -988,7 +988,7 @@ private fun InstallProgressView(
                 when (state) {
                     "error" -> Icon(
                         imageVector = Icons.Default.Error,
-                        contentDescription = "Failed",
+                        contentDescription = stringResource(R.string.install_failed_cd),
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(56.dp)
                     )
@@ -1058,7 +1058,7 @@ private fun InstallProgressView(
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
-                Text("Dismiss", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.cd_dismiss_cd), fontWeight = FontWeight.Bold)
             }
         }
     }

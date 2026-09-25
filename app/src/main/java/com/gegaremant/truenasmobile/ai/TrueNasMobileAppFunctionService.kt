@@ -167,10 +167,11 @@ abstract class BaseTrueNasMobileAppFunctionService : AppFunctionService() {
                         )
                     }
                     is ApiResult.Loading -> {
-                        AppUpgradeResult(
-                            appName = appName,
-                            success = true,
-                            jobId = null,
+                        // No job was submitted: reporting success here would
+                        // tell the caller (Gemini / agent) the upgrade started
+                        // when nothing actually happened.
+                        throw AppFunctionAppUnknownException(
+                            "Upgrade for '$appName' did not return a job id"
                         )
                     }
                 }

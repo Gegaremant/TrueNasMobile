@@ -586,8 +586,8 @@ private fun ContainerCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                DetailItem(label = "CPU", value = container.cpu ?: "N/A")
-                DetailItem(label = "Memory", value = container.memory?.let { "$it MB" } ?: "N/A")
+                DetailItem(label = stringResource(R.string.container_label_cpu), value = container.cpu ?: stringResource(R.string.common_na))
+                DetailItem(label = stringResource(R.string.container_label_memory), value = container.memory?.let { "$it MB" } ?: stringResource(R.string.common_na))
                 DetailItem(label = stringResource(R.string.container_detail_autostart), value = if (container.autostart) stringResource(R.string.common_yes) else stringResource(R.string.common_no))
             }
 
