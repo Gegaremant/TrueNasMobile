@@ -55,6 +55,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -62,6 +63,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -119,7 +121,7 @@ fun AuditLogsScreen(
     Scaffold(
         topBar = {
             UnifiedScreenHeader(
-                title = "Audit Logs",
+                title = stringResource(R.string.auditlogs_title),
                 subtitle = "${uiState.logs.size} entries · $selectedService",
                 isLoading = uiState.isLoading && uiState.logs.isEmpty(),
                 isRefreshing = uiState.isRefreshing,
@@ -154,10 +156,10 @@ fun AuditLogsScreen(
                             CircularProgressIndicator(modifier = Modifier.size(22.dp), strokeWidth = 4.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         DownloadState.Success -> {
-                            Icon(Icons.Default.CheckCircle, contentDescription = "Export complete")
+                            Icon(Icons.Default.CheckCircle, contentDescription = stringResource(R.string.auditlogs_export_complete_cd))
                         }
                         else -> {
-                            Icon(Icons.Default.Download, contentDescription = "Export logs")
+                            Icon(Icons.Default.Download, contentDescription = stringResource(R.string.auditlogs_export_cd))
                         }
                     }
                 }
@@ -174,7 +176,7 @@ fun AuditLogsScreen(
         ) {
             when {
                 uiState.logs.isEmpty() && uiState.isLoading && !uiState.isRefreshing -> {
-                    LoadingScreen("Loading audit logs…")
+                    LoadingScreen(stringResource(R.string.auditlogs_loading))
                 }
                 uiState.logs.isEmpty() && !uiState.isLoading && uiState.error != null -> {
                     Column(
@@ -190,7 +192,7 @@ fun AuditLogsScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = uiState.error ?: "Couldn't load audit logs",
+                            text = uiState.error ?: stringResource(R.string.auditlogs_load_failed),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -210,7 +212,7 @@ fun AuditLogsScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "No audit entries found",
+                            text = stringResource(R.string.auditlogs_empty),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -264,7 +266,7 @@ private fun ServiceFilterBar(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Filter by service",
+                text = stringResource(R.string.auditlogs_filter_service),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -321,7 +323,7 @@ private fun AuditLogCard(item: System.AuditQueryResultItem) {
             ) {
                 Icon(
                     imageVector = statusIcon,
-                    contentDescription = item.username ?: "event",
+                    contentDescription = item.username ?: stringResource(R.string.auditlogs_event_cd),
                     tint = statusColor,
                     modifier = Modifier.size(22.dp)
                 )
@@ -346,7 +348,7 @@ private fun AuditLogCard(item: System.AuditQueryResultItem) {
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            text = item.username ?: "—",
+                            text = item.username ?: stringResource(R.string.common_dash),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface,
@@ -381,7 +383,7 @@ private fun AuditLogCard(item: System.AuditQueryResultItem) {
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
-                        text = item.event ?: "—",
+                        text = item.event ?: stringResource(R.string.common_dash),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
@@ -405,7 +407,7 @@ private fun AuditLogCard(item: System.AuditQueryResultItem) {
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            text = item.address ?: "—",
+                            text = item.address ?: stringResource(R.string.common_dash),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
@@ -421,7 +423,7 @@ private fun AuditLogCard(item: System.AuditQueryResultItem) {
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            text = item.timestamp?.take(19)?.replace("T", " ") ?: "—",
+                            text = item.timestamp?.take(19)?.replace("T", " ") ?: stringResource(R.string.common_dash),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -436,7 +438,7 @@ private fun AuditLogCard(item: System.AuditQueryResultItem) {
                 Spacer(Modifier.height(10.dp))
 
                 Text(
-                    text = if (item.success == true) "✓ Success" else "✗ Failed",
+                    text = if (item.success == true) stringResource(R.string.auditlogs_success) else stringResource(R.string.auditlogs_failed),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = statusColor

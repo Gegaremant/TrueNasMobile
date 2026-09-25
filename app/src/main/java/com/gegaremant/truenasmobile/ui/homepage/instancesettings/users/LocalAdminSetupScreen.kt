@@ -78,8 +78,8 @@ fun LocalAdminSetupScreen(
             )
     ) {
         UnifiedScreenHeader(
-            title = "Setup Local Administrator",
-            subtitle = "Configure initial admin account",
+            title = stringResource(R.string.localadmin_title),
+            subtitle = stringResource(R.string.localadmin_subtitle),
             isLoading = false,
             isRefreshing = false,
             error = uiState.error,
@@ -115,15 +115,13 @@ fun LocalAdminSetupScreen(
                     )
                     Column {
                         Text(
-                            "About Local Administrator Setup",
+                            stringResource(R.string.localadmin_about_title),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            "Use this to set up or reset the local administrator account. " +
-                                    "This is typically done on first login when no admin password is set. " +
-                                    "Choose 'root' or 'truenas_admin' as the username.",
+                            stringResource(R.string.localadmin_about_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -153,7 +151,7 @@ fun LocalAdminSetupScreen(
                             modifier = Modifier.size(18.dp)
                         )
                         Text(
-                            "Administrator Account",
+                            stringResource(R.string.localadmin_account_section),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.primary
@@ -166,14 +164,14 @@ fun LocalAdminSetupScreen(
                     OutlinedTextField(
                         value = username,
                         onValueChange = { username = it },
-                        label = { Text("Username") },
+                        label = { Text(stringResource(R.string.common_username)) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Password") },
+                        label = { Text(stringResource(R.string.common_password)) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )

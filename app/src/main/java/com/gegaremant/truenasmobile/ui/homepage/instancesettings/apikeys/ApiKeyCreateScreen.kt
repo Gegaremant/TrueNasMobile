@@ -34,12 +34,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
@@ -71,8 +73,8 @@ fun ApiKeyCreateScreen(
         Brush.verticalGradient(listOf(MaterialTheme.colorScheme.surface, MaterialTheme.colorScheme.surfaceContainer))
     )) {
         UnifiedScreenHeader(
-            title = "Create API Key",
-            subtitle = "Generate a new API access key",
+            title = stringResource(R.string.apikey_create_title),
+            subtitle = stringResource(R.string.apikey_create_subtitle),
             isLoading = false, isRefreshing = false,
             error = uiState.error, onDismissError = { vm.clearCreateError() },
             manager = manager, onBackPressed = onNavigateBack
@@ -96,24 +98,24 @@ fun ApiKeyCreateScreen(
                     Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             Icon(Icons.Default.VpnKey, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                            Text("New API Key", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold,
+                            Text(stringResource(R.string.apikey_create_new), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.primary)
                         }
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                         OutlinedTextField(value = name, onValueChange = { name = it },
-                            label = { Text("Key Name") }, placeholder = { Text("e.g. My App Key") },
+                            label = { Text(stringResource(R.string.apikey_create_name_label)) }, placeholder = { Text(stringResource(R.string.apikey_create_name_hint)) },
                             modifier = Modifier.fillMaxWidth(), singleLine = true)
                         OutlinedTextField(value = username, onValueChange = { username = it },
-                            label = { Text("Username *") }, placeholder = { Text("e.g. admin") },
+                            label = { Text(stringResource(R.string.apikey_create_username_label)) }, placeholder = { Text(stringResource(R.string.apikey_create_username_hint)) },
                             modifier = Modifier.fillMaxWidth(), singleLine = true)
                         OutlinedTextField(value = expiresAt, onValueChange = { expiresAt = it },
-                            label = { Text("Expires At (optional)") }, placeholder = { Text("YYYY-MM-DD or leave empty") },
+                            label = { Text(stringResource(R.string.apikey_create_expires_label)) }, placeholder = { Text(stringResource(R.string.apikey_create_expires_hint)) },
                             modifier = Modifier.fillMaxWidth(), singleLine = true)
                     }
                 }
 
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedButton(onClick = onNavigateBack, modifier = Modifier.weight(1f)) { Text("Cancel") }
+                    OutlinedButton(onClick = onNavigateBack, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.common_cancel)) }
                     Button(
                         onClick = { vm.createKey(System.ApiKeyCreate(
                             name = name.ifBlank { "nobody" },
@@ -124,7 +126,7 @@ fun ApiKeyCreateScreen(
                         modifier = Modifier.weight(1f)) {
                         if (uiState.isCreating) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                         else Icon(Icons.Default.VpnKey, null, Modifier.size(18.dp))
-                        Spacer(Modifier.width(8.dp)); Text("Create Key")
+                        Spacer(Modifier.width(8.dp)); Text(stringResource(R.string.apikey_create_button))
                     }
                 }
             }

@@ -28,10 +28,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 
@@ -50,8 +52,8 @@ fun AppImageManagementScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             UnifiedScreenHeader(
-                title = "App Image Management",
-                subtitle = "iX volumes and Docker images",
+                title = stringResource(R.string.appimages_title),
+                subtitle = stringResource(R.string.appimages_subtitle),
                 isLoading = false,
                 isRefreshing = false,
                 error = null,
@@ -71,14 +73,14 @@ fun AppImageManagementScreen(
         ) {
             AppImageEntryCard(
                 icon = Icons.Default.Storage,
-                title = "iX Volumes",
-                subtitle = "Persistent application volumes",
+                title = stringResource(R.string.appimages_ix_volumes),
+                subtitle = stringResource(R.string.appimages_ix_volumes_desc),
                 onClick = onNavigateToIxVolumes
             )
             AppImageEntryCard(
                 icon = Icons.Default.Image,
-                title = "Docker Images",
-                subtitle = "View, pull, and delete container images",
+                title = stringResource(R.string.appimages_docker_images),
+                subtitle = stringResource(R.string.appimages_docker_images_desc),
                 onClick = onNavigateToDockerImages
             )
             Spacer(Modifier.height(8.dp))

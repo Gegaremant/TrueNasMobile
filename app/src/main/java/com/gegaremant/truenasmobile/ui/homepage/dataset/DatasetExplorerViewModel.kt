@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Storage
@@ -95,7 +96,7 @@ class DatasetExplorerViewModel(private val manager: TrueNASApiManager) : ViewMod
                     }
                 }
             } catch (e: Exception) {
-                val message = e.localizedMessage ?: "Failed to refresh datasets"
+                val message = e.localizedMessage ?: ToastManager.resolveString(R.string.datasets_refresh_failed)
                 if (_cache == null || !updateIfCached) {
                     _uiState.value = UiState.Error(message)
                 } else {
@@ -122,7 +123,7 @@ class DatasetExplorerViewModel(private val manager: TrueNASApiManager) : ViewMod
                     }
                 }
             } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.localizedMessage ?: "Failed to create dataset")
+                _uiState.value = UiState.Error(e.localizedMessage ?: ToastManager.resolveString(R.string.datasets_create_failed))
             }
         }
     }
@@ -138,12 +139,12 @@ class DatasetExplorerViewModel(private val manager: TrueNASApiManager) : ViewMod
                         _uiState.value = UiState.Error(result.message)
                     }
                     is ApiResult.Success -> {
-                        ToastManager.showSuccess("Successfully deleted dataset")
+                        ToastManager.showSuccess(ToastManager.resolveString(R.string.datasets_delete_success))
                         refreshDatasets(poolName)
                     }
                 }
             } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.localizedMessage ?: "Failed to create dataset")
+                _uiState.value = UiState.Error(e.localizedMessage ?: ToastManager.resolveString(R.string.datasets_create_failed))
             }
         }
     }

@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gegaremant.truenasmobile.R
+import com.gegaremant.truenasmobile.ui.components.ToastManager
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.helpers.EncryptedPrefs
@@ -33,12 +35,12 @@ class ProfileViewModel(
                     EncryptedPrefs.saveUsername(application, user.data.pw_name.toString())
                     _uiState.value = UiState.Success(user.data, system.data)
                 } else if (user is ApiResult.Error || system is ApiResult.Error) {
-                    _uiState.value = UiState.Error("Failed to fetch data: Api error probably")
+                    _uiState.value = UiState.Error(ToastManager.resolveString(R.string.profile_fetch_failed_api))
                 } else {
-                    _uiState.value = UiState.Error("Failed to fetch data: Unknown error")
+                    _uiState.value = UiState.Error(ToastManager.resolveString(R.string.profile_fetch_failed_unknown))
                 }
             } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.message ?: "Unknown error")
+                _uiState.value = UiState.Error(e.message ?: ToastManager.resolveString(R.string.common_unknown_error))
             }
         }
     }

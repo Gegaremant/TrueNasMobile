@@ -30,10 +30,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 
@@ -51,8 +53,8 @@ fun SystemInformationScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             UnifiedScreenHeader(
-                title = "System Information",
-                subtitle = "Software and hardware details",
+                title = stringResource(R.string.sysinfo_main_title),
+                subtitle = stringResource(R.string.sysinfo_main_subtitle),
                 isLoading = false,
                 isRefreshing = false,
                 error = null,
@@ -72,14 +74,14 @@ fun SystemInformationScreen(
         ) {
             InfoEntryCard(
                 icon = Icons.Default.Build,
-                title = "Software Information",
-                subtitle = "Version, features, product type and release notes",
+                title = stringResource(R.string.sysinfo_title_software),
+                subtitle = stringResource(R.string.sysinfo_software_subtitle),
                 onClick = onNavigateToSoftwareInformation
             )
             InfoEntryCard(
                 icon = Icons.Default.Hardware,
-                title = "Hardware Information",
-                subtitle = "CPU, memory, storage, chassis and identifiers",
+                title = stringResource(R.string.sysinfo_title_hardware),
+                subtitle = stringResource(R.string.sysinfo_hardware_subtitle),
                 onClick = onNavigateToHardwareInformation
             )
             Spacer(Modifier.height(8.dp))

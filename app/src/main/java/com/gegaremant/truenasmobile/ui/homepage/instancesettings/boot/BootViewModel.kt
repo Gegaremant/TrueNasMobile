@@ -3,6 +3,8 @@ package com.gegaremant.truenasmobile.ui.homepage.instancesettings.boot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gegaremant.truenasmobile.R
+import com.gegaremant.truenasmobile.ui.components.ToastManager
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
@@ -75,7 +77,7 @@ class BootViewModel(private val manager: TrueNASApiManager) : ViewModel() {
             when (val result = manager.system.scrubBootPool()) {
                 is ApiResult.Success -> {
                     _uiState.update {
-                        it.copy(isActing = false, actionMessage = "Scrub started on boot pool")
+                        it.copy(isActing = false, actionMessage = ToastManager.resolveString(R.string.boot_scrub_started))
                     }
                 }
                 is ApiResult.Error -> {
@@ -112,7 +114,7 @@ class BootViewModel(private val manager: TrueNASApiManager) : ViewModel() {
             when (val result = manager.system.attachBootDisk(dev, expand)) {
                 is ApiResult.Success -> {
                     cachedDisks = null
-                    _uiState.update { it.copy(isActing = false, actionMessage = "Disk attached") }
+                    _uiState.update { it.copy(isActing = false, actionMessage = ToastManager.resolveString(R.string.boot_disk_attached)) }
                     loadAll(forceRefresh = true)
                 }
                 is ApiResult.Error -> {
@@ -129,7 +131,7 @@ class BootViewModel(private val manager: TrueNASApiManager) : ViewModel() {
             when (val result = manager.system.replaceBootDisk(label, dev)) {
                 is ApiResult.Success -> {
                     _uiState.update {
-                        it.copy(isActing = false, actionMessage = "Disk replacement initiated")
+                        it.copy(isActing = false, actionMessage = ToastManager.resolveString(R.string.boot_disk_replacement))
                     }
                     cachedDisks = null
                     loadAll(forceRefresh = true)
@@ -148,7 +150,7 @@ class BootViewModel(private val manager: TrueNASApiManager) : ViewModel() {
             when (val result = manager.system.detachBootDisk(dev)) {
                 is ApiResult.Success -> {
                     cachedDisks = null
-                    _uiState.update { it.copy(isActing = false, actionMessage = "Disk detached") }
+                    _uiState.update { it.copy(isActing = false, actionMessage = ToastManager.resolveString(R.string.boot_disk_detached)) }
                     loadAll(forceRefresh = true)
                 }
                 is ApiResult.Error -> {

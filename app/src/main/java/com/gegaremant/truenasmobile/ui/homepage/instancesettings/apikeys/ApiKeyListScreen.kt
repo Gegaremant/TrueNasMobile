@@ -62,6 +62,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -70,6 +71,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
@@ -94,7 +96,7 @@ fun ApiKeyListScreen(
         Brush.verticalGradient(listOf(MaterialTheme.colorScheme.surface, MaterialTheme.colorScheme.surfaceContainer))
     )) {
         UnifiedScreenHeader(
-            title = "API Keys",
+            title = stringResource(R.string.apikeys_title),
             subtitle = "${uiState.filteredKeys.size} / ${uiState.keys.size} key(s)",
             isLoading = uiState.isLoading, isRefreshing = uiState.isRefreshing,
             error = uiState.error, onDismissError = { vm.clearListError() },
@@ -115,7 +117,7 @@ fun ApiKeyListScreen(
                         TooltipBox(
                             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
                                 if (expanded) TooltipAnchorPosition.Start else TooltipAnchorPosition.Above),
-                            tooltip = { PlainTooltip { Text(if (expanded) "Close" else "Add key") } },
+                            tooltip = { PlainTooltip { Text(if (expanded) stringResource(R.string.common_close) else stringResource(R.string.apikeys_add_key)) } },
                             state = rememberTooltipState()
                         ) {
                             ToggleFloatingActionButton(
@@ -131,11 +133,11 @@ fun ApiKeyListScreen(
                 ) {
                     FloatingActionButtonMenuItem(
                         onClick = { expanded = false; onNavigateToCreate() },
-                        icon = { Icon(Icons.Default.Add, null) }, text = { Text("New API Key") })
+                        icon = { Icon(Icons.Default.Add, null) }, text = { Text(stringResource(R.string.apikeys_new_key)) })
                     FloatingActionButtonMenuItem(
                         onClick = { expanded = false; vm.toggleMyKeys() },
                         icon = { Icon(Icons.Default.Key, null) },
-                        text = { Text(if (uiState.showMyKeys) "All Keys" else "My Keys") })
+                        text = { Text(if (uiState.showMyKeys) stringResource(R.string.apikeys_all_keys) else stringResource(R.string.apikeys_my_keys)) })
                 }
             }
         ) { innerPadding ->
@@ -143,7 +145,7 @@ fun ApiKeyListScreen(
                 modifier = Modifier.fillMaxSize().padding(innerPadding)) {
                 Column(Modifier.fillMaxSize()) {
                     OutlinedTextField(value = uiState.searchQuery, onValueChange = { vm.setSearchQuery(it) },
-                        placeholder = { Text("Search keys…") },
+                        placeholder = { Text(stringResource(R.string.apikeys_search_placeholder)) },
                         leadingIcon = { Icon(Icons.Default.Search, null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                         trailingIcon = { if (uiState.searchQuery.isNotEmpty()) IconButton(onClick = { vm.setSearchQuery("") }) { Icon(Icons.Default.Clear, null) } },
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
@@ -155,29 +157,29 @@ fun ApiKeyListScreen(
                         item { FilterChip(selected = allSel, onClick = {
                             if (uiState.showMyKeys) vm.toggleMyKeys()
                             vm.setFilterRevoked(null); vm.setFilterLocal(null)
-                        }, label = { Text("All") }) }
-                        item { FilterChip(selected = uiState.showMyKeys, onClick = { vm.toggleMyKeys() }, label = { Text("My Keys") }) }
+                        }, label = { Text(stringResource(R.string.users_filter_all)) }) }
+                        item { FilterChip(selected = uiState.showMyKeys, onClick = { vm.toggleMyKeys() }, label = { Text(stringResource(R.string.apikeys_my_keys)) }) }
                         item { FilterChip(selected = uiState.filterRevoked == false && !uiState.showMyKeys,
                             onClick = {
                                 if (uiState.showMyKeys) vm.toggleMyKeys()
                                 vm.setFilterRevoked(if (uiState.filterRevoked == false) null else false)
-                            }, label = { Text("Active") }, enabled = !uiState.showMyKeys) }
+                            }, label = { Text(stringResource(R.string.common_active)) }, enabled = !uiState.showMyKeys) }
                         item { FilterChip(selected = uiState.filterRevoked == true && !uiState.showMyKeys,
                             onClick = {
                                 if (uiState.showMyKeys) vm.toggleMyKeys()
                                 vm.setFilterRevoked(if (uiState.filterRevoked == true) null else true)
-                            }, label = { Text("Revoked") }, enabled = !uiState.showMyKeys) }
+                            }, label = { Text(stringResource(R.string.apikey_revoked)) }, enabled = !uiState.showMyKeys) }
                         item { FilterChip(selected = uiState.filterLocal == true && !uiState.showMyKeys,
                             onClick = {
                                 if (uiState.showMyKeys) vm.toggleMyKeys()
                                 vm.setFilterLocal(if (uiState.filterLocal == true) null else true)
-                            }, label = { Text("Local") }, enabled = !uiState.showMyKeys) }
+                            }, label = { Text(stringResource(R.string.attr_local)) }, enabled = !uiState.showMyKeys) }
                     }
 
 
 
                     when {
-                        uiState.isLoading -> LoadingScreen("Loading API keys...")
+                        uiState.isLoading -> LoadingScreen(stringResource(R.string.apikeys_loading))
                         uiState.filteredKeys.isEmpty() -> Unit // Empty state
                         else -> LazyColumn(Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 88.dp),
@@ -215,7 +217,7 @@ private fun KeyCard(key: System.ApiKeyEntry, onClick: () -> Unit) {
                 Text(key.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Spacer(Modifier.height(2.dp))
-                Text(key.username ?: "System", style = MaterialTheme.typography.bodySmall,
+                Text(key.username ?: stringResource(R.string.apikeys_system), style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             Spacer(Modifier.width(8.dp))
@@ -223,7 +225,7 @@ private fun KeyCard(key: System.ApiKeyEntry, onClick: () -> Unit) {
                 Row(Modifier.padding(horizontal = 10.dp, vertical = 5.dp), verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.size(6.dp).clip(CircleShape).background(sc.value))
                     Spacer(Modifier.width(6.dp))
-                    Text(if (key.revoked) "Revoked" else "Active",
+                    Text(if (key.revoked) stringResource(R.string.apikey_revoked) else stringResource(R.string.common_active),
                         style = MaterialTheme.typography.labelSmall, color = sc.value, fontWeight = FontWeight.Bold)
                 }
             }
