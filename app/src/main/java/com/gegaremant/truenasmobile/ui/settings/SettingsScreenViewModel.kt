@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
+import com.gegaremant.truenasmobile.data.helpers.AccountSessionRegistry
 import com.gegaremant.truenasmobile.data.helpers.EncryptedPrefs
 import com.gegaremant.truenasmobile.data.helpers.MultiAccountPrefs
 import com.gegaremant.truenasmobile.data.helpers.dataStore
@@ -221,6 +222,7 @@ class SettingsScreenViewModel(
                     MultiAccountPrefs.deleteAccount(application, accountId)
                 }
                 AppCache.clearAllCache()
+                AccountSessionRegistry.forgetAll()
 
                 // Disconnect manager
                 manager?.disconnect()
@@ -250,6 +252,7 @@ class SettingsScreenViewModel(
             try {
                 manager?.disconnect()
                 AppCache.clearAllCache()
+                AccountSessionRegistry.forgetAll()
 
                 _uiState.value = _uiState.value.copy(
                     isLoggingOut = false,

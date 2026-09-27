@@ -7,6 +7,7 @@ import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.TrueNASClient
 import com.gegaremant.truenasmobile.data.api.AuthService
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
+import com.gegaremant.truenasmobile.data.helpers.AccountSessionRegistry
 import com.gegaremant.truenasmobile.data.helpers.MultiAccountPrefs
 import com.gegaremant.truenasmobile.data.helpers.NetworkConnectivityObserver
 import com.gegaremant.truenasmobile.data.helpers.PersonalizationManager
@@ -18,6 +19,8 @@ import com.gegaremant.truenasmobile.data.models.SavedAccount
 import com.gegaremant.truenasmobile.data.models.SavedServer
 import com.gegaremant.truenasmobile.data.workers.AppsRefreshWorker
 import com.gegaremant.truenasmobile.ui.Screen
+import com.gegaremant.truenasmobile.ui.utils.AppCache
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,6 +44,18 @@ enum class TotpResult { OTP_REQUIRED, SUCCESS }
 
 class MainViewModel : ViewModel() {
 
+    private companion object {
+        /** Pause between warming one profile and the next, so warming is not a burst. */
+        const val WARM_PROFILE_GAP_MILLIS = 1500L
+
+        /**
+         * Shorter than the interactive path: a warmed profile that is not ready
+         * in ten seconds is not going to make anybody's switch faster, and the
+         * user may be tapping a third profile meanwhile.
+         */
+        const val WARM_CONNECT_TIMEOUT_MILLIS = 10_000L
+    }
+
     private val _appState = MutableStateFlow<AppState>(AppState.Initializing)
     val appState: StateFlow<AppState> = _appState.asStateFlow()
 
@@ -52,6 +67,9 @@ class MainViewModel : ViewModel() {
     val currentUserKey: StateFlow<String?> = _currentUserKey.asStateFlow()
 
     private var hasInitialized = false
+
+    /** Guards against a second warming pass while the first is still running. */
+    private var warmJob: Job? = null
     private val _pendingNavigation = MutableStateFlow<String?>(null)
     val pendingNavigation: StateFlow<String?> = _pendingNavigation.asStateFlow()
 
@@ -157,7 +175,15 @@ class MainViewModel : ViewModel() {
                     val currentManager = _manager.value
 
                     if (authToken != null && currentManager?.isConnected() == true) {
-                        currentManager.connection.pingConnectionWithResult()
+                        val result = currentManager.connection.pingConnectionWithResult()
+                        // A successful ping is proof of life for the registry, so
+                        // switching back to this profile later stays free instead
+                        // of spending a round trip re-checking the same socket.
+                        if (result is ApiResult.Success) {
+                            MultiAccountPrefs.getLastUsedProfile(context)?.let { (_, accountId) ->
+                                AccountSessionRegistry.markAlive(accountId)
+                            }
+                        }
                     }
                 } catch (_: Exception) {
                 }
@@ -171,6 +197,13 @@ class MainViewModel : ViewModel() {
         server: SavedServer,
         account: SavedAccount
     ): TrueNASApiManager? {
+        // Fast path: this account is already connected, either because the user
+        // was just here or because warming got there first. No handshake, no
+        // login, no token generation.
+        AccountSessionRegistry.acquire(account.id)?.let { warm ->
+            return activateProfile(context, server, account, warm)
+        }
+
         return try {
             val config = ClientConfig(
                 serverUrl = server.serverUrl,
@@ -217,13 +250,139 @@ class MainViewModel : ViewModel() {
                         account.id,
                         tokenResult.data
                     )
-                    setActiveUser(context, account.id)
-                    manager
-                } else null
-            } else null
+                    activateProfile(context, server, account, manager)
+                } else {
+                    client.disconnect()
+                    null
+                }
+            } else {
+                client.disconnect()
+                null
+            }
 
         } catch (_: Exception) {
             null
+        }
+    }
+
+    /**
+     * Makes [account] the active profile, whichever way its manager was obtained.
+     *
+     * The last-used pointer is the app's idea of "who is logged in": seventeen
+     * places read it - app start, both widgets, the AI app functions, the alert
+     * and job workers, session recovery. The switcher used to skip it, so after
+     * switching accounts the app still considered the *previous* profile active:
+     * a relaunch logged back into the old NAS, the background workers polled its
+     * pools and sent its alerts, and an expired session recovered with the wrong
+     * credentials.
+     *
+     * The cache is one process-wide bucket, so it has to be dropped as well -
+     * the data in it belongs to the server we just left.
+     */
+    private suspend fun activateProfile(
+        context: Context,
+        server: SavedServer,
+        account: SavedAccount,
+        manager: TrueNASApiManager
+    ): TrueNASApiManager {
+        MultiAccountPrefs.saveLastUsedProfile(context, server.id, account.id)
+        setActiveUser(context, account.id)
+        AppCache.clearAllCache()
+        AccountSessionRegistry.remember(account.id, manager)
+        return manager
+    }
+
+    /**
+     * Logs the other saved profiles in while the user is busy on this one.
+     *
+     * The point is that tapping a profile the user has visited before costs
+     * nothing; without this, only the profile they happen to log into first is
+     * ever warm.
+     *
+     * Deliberately side-effect free: no session is written, no last-used
+     * pointer is moved and no active user is changed. Warming a profile must not
+     * be able to make it the current one. Accounts are warmed one at a time with
+     * a gap, so a user with ten saved NASes does not open ten sockets at once,
+     * and a failure is per-account - an unreachable NAS costs its own entry
+     * nothing else.
+     */
+    fun warmOtherProfiles(context: Context) {
+        if (warmJob?.isActive == true) return
+        warmJob = viewModelScope.launch {
+            try {
+                val (lastServerId, lastAccountId) =
+                    MultiAccountPrefs.getLastUsedProfile(context) ?: return@launch
+
+                // The manager that is live right now belongs to the active
+                // profile; without this the login screen's manager would be
+                // warmed again as if it were somebody else's.
+                _manager.value?.let { AccountSessionRegistry.remember(lastAccountId, it) }
+
+                for (account in MultiAccountPrefs.getAccounts(context)) {
+                    if (account.id == lastAccountId) continue
+                    if (AccountSessionRegistry.trackedAccountIds.contains(account.id) &&
+                        AccountSessionRegistry.acquire(account.id) != null
+                    ) continue
+                    val server = MultiAccountPrefs.getServer(context, account.serverId) ?: continue
+                    warmProfile(context, server, account)
+                    delay(WARM_PROFILE_GAP_MILLIS)
+                }
+            } catch (_: Exception) {
+                // Warming is an optimisation; it must never surface an error.
+            }
+        }
+    }
+
+    private suspend fun warmProfile(
+        context: Context,
+        server: SavedServer,
+        account: SavedAccount
+    ) {
+        var client: TrueNASClient? = null
+        try {
+            val config = ClientConfig(
+                serverUrl = server.serverUrl,
+                insecure = server.insecure,
+                connectionTimeoutMs = WARM_CONNECT_TIMEOUT_MILLIS,
+                // Same client configuration as the interactive path: the warm
+                // socket has to behave like the one the user would have got.
+                enablePing = true,
+                enableDebugLogging = false
+            )
+            val newClient = TrueNASClient(config)
+            client = newClient
+            val manager = TrueNASApiManager(newClient, context.applicationContext)
+            if (!manager.connect()) return
+
+            val (cred1, cred2) = MultiAccountPrefs.getAccountCredentials(
+                context,
+                account.id,
+                account.loginMethod
+            )
+            val authenticated = when (account.loginMethod) {
+                LoginMethod.API_KEY -> {
+                    cred1?.let {
+                        val result = manager.auth.loginWithApiKeyWithResult(it)
+                        result is ApiResult.Success && result.data
+                    } ?: false
+                }
+                LoginMethod.PASSWORD, LoginMethod.TOTP -> {
+                    if (cred1 != null && cred2 != null) {
+                        val result = manager.auth.loginUserWithResult(
+                            AuthService.DefaultAuth(cred1, cred2)
+                        )
+                        result is ApiResult.Success && result.data
+                    } else false
+                }
+            }
+
+            if (authenticated) {
+                AccountSessionRegistry.remember(account.id, manager)
+            } else {
+                newClient.disconnect()
+            }
+        } catch (_: Exception) {
+            client?.disconnect()
         }
     }
 

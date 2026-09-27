@@ -9,6 +9,21 @@ versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
 Localisation, security and dead-UI cleanup.
 
 ### Added
+- **Instant profile switching, with the other profiles warmed in the background.**
+  Every switch used to cost three round trips before anything could be drawn: a
+  fresh WebSocket handshake, a full `auth.login`, and an `auth.generate_token` —
+  repeated on every visit to the same NAS, because nothing was ever reused.
+  `AccountSessionRegistry` now keeps one already-authenticated manager per
+  account for the life of the process, and `MainViewModel.warmOtherProfiles`
+  logs the remaining saved profiles in behind the user's back: one at a time,
+  with a pause, a shorter connect timeout, and no side effects at all — warming a
+  profile must not be able to make it the current one. An entry idle for more
+  than three minutes is verified with a single `core.ping` before it is handed
+  out, because a socket's local state does not prove the path is still alive;
+  the ping costs far less than the login it avoids. Sessions are closed on
+  sign-out and when a profile is deleted, and a successful ping of the active
+  account keeps its entry fresh so returning to it is free too.
+  `AccountSwitchingTest` guards the invariants.
 - English + Russian locale dictionaries with full key parity
   (`res/values/strings.xml` / `res/values-ru/strings.xml`).
 - `LocalizationTest` — build-time guard: EN/RU key parity, no duplicate keys,
@@ -37,6 +52,15 @@ Localisation, security and dead-UI cleanup.
   that one exists — the check that was also dead, since nothing called it.
 
 ### Fixed
+- **Switching profiles left the app logged into the previous one.** The switcher
+  wrote the session but never moved the "last used profile" pointer, which is
+  what seventeen places read: app start, both widget activities, the AI app
+  functions, the alert, job and sync workers, and session recovery. In practice a
+  relaunch went back to the old NAS, the background workers polled its pools and
+  sent its alerts, and an expired session recovered with another account's
+  credentials — none of it visible on the switcher screen. The pointer now moves
+  with the switch, and the shared `AppCache` is dropped with it so the previous
+  server's pools and apps cannot be rendered for the new one.
 - **The cached dashboard survived signing out.** `AppCache` is a process-wide
   object, and `clearAllCache()` had no call sites at all — so signing out of one
   TrueNAS and into another kept the first server's pools, disks, shares,

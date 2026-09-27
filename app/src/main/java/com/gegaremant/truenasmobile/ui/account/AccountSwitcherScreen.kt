@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gegaremant.truenasmobile.R
+import com.gegaremant.truenasmobile.data.helpers.AccountSessionRegistry
 import com.gegaremant.truenasmobile.data.helpers.MultiAccountPrefs
 import com.gegaremant.truenasmobile.data.helpers.PersonalizationManager
 import com.gegaremant.truenasmobile.data.models.AccountProfile
@@ -198,6 +199,9 @@ fun AccountSwitcherScreen(
                             scope.launch {
                                 MultiAccountPrefs.deleteAccount(context, profile.account.id)
                                 PersonalizationManager.deleteForUser(context, profile.account.id)
+                                // The registry may hold a live socket to a server
+                                // the user just removed the credentials for.
+                                AccountSessionRegistry.forget(profile.account.id)
                                 reload()
                                 showDeleteDialog = null
                             }
@@ -231,7 +235,9 @@ fun AccountSwitcherScreen(
                                 accounts.forEach { account ->
                                     MultiAccountPrefs.deleteAccount(context, account.id)
                                     PersonalizationManager.deleteForUser(context, account.id)
+                                    AccountSessionRegistry.forget(account.id)
                                 }
+                                AccountSessionRegistry.forgetAll()
                                 reload()
                             }
                         }

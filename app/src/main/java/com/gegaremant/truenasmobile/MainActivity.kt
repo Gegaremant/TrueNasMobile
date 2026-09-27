@@ -240,6 +240,9 @@ fun MainActivityContent(
         manager?.let {
             viewModel.startPeriodicPing(context)
             viewModel.startPeriodicAppSync(context)
+            // Log the other saved profiles in behind the user's back, so
+            // switching to one of them later costs nothing.
+            viewModel.warmOtherProfiles(context)
         }
     }
     LaunchedEffect(Unit) {
