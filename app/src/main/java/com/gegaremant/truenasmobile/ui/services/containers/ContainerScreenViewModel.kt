@@ -37,8 +37,19 @@ class ContainerScreenViewModel(
         if (cachedData.isNotEmpty()) {
             _uiState.update { it.copy(containers = cachedData, isLoading = false) }
         }
-        loadContainers()
+        // The poller below already refreshes this list every 30 s, so opening a
+        // second screen inside that window would only re-ask the server for rows
+        // that are seconds old. A cold or stale cache still fetches, and
+        // pull-to-refresh always goes to the network.
+        if (!AppCache.isFresh(AppCache.Entry.CONTAINERS, CACHE_TTL_MILLIS)) {
+            loadContainers()
+        }
         startPeriodicRefresh()
+    }
+
+    private companion object {
+        /** Matches the poll interval below, so an entry inside it costs nothing. */
+        const val CACHE_TTL_MILLIS = 30_000L
     }
     private fun startPeriodicRefresh() {
         viewModelScope.launch {
@@ -53,7 +64,18 @@ class ContainerScreenViewModel(
     }
 
 
-    fun loadContainers() {
+    fun loadContainers() = fetchContainers(notifyUser = false)
+
+    fun refresh() = fetchContainers(notifyUser = true)
+
+    /**
+     * One code path for the initial load, the 30 s poll and pull-to-refresh.
+     *
+     * [refresh] used to be a byte-for-byte second copy of the same RPC, the
+     * same cache write and the same state updates as [loadContainers], so the
+     * two could only ever agree by accident.
+     */
+    private fun fetchContainers(notifyUser: Boolean) {
         viewModelScope.launch {
             if (_uiState.value.containers.isEmpty()) {
                 _uiState.update { it.copy(isLoading = true) }
@@ -63,6 +85,9 @@ class ContainerScreenViewModel(
             when (val result = manager.virtService.getAllInstancesWithResult()) {
                 is ApiResult.Success -> {
                     AppCache.updateContainers(result.data)
+                    if (notifyUser) {
+                        ToastManager.showSuccess(ToastManager.resolveString(R.string.containers_refreshed_fmt, result.data.size))
+                    }
                     _uiState.update {
                         it.copy(
                             containers = result.data,
@@ -89,40 +114,6 @@ class ContainerScreenViewModel(
                             error = null
                         )
                     }
-                }
-            }
-        }
-    }
-
-    fun refresh() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isRefreshing = true, error = null) }
-
-            when (val result = manager.virtService.getAllInstancesWithResult()) {
-                is ApiResult.Success -> {
-                    AppCache.updateContainers(result.data)
-                    ToastManager.showSuccess(ToastManager.resolveString(R.string.containers_refreshed_fmt, result.data.size))
-                    _uiState.update {
-                        it.copy(
-                            containers = result.data,
-                            isRefreshing = false,
-                            error = null
-                        )
-                    }
-                }
-                is ApiResult.Error -> {
-                    _uiState.update {
-                        it.copy(
-                            isRefreshing = false,
-                            error = if (it.containers.isEmpty()) result.message else null
-                        )
-                    }
-                }
-                ApiResult.Loading -> _uiState.update {
-                    it.copy(
-                        isLoading = true,
-                        error = null
-                    )
                 }
             }
         }

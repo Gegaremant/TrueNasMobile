@@ -8,8 +8,26 @@ import com.gegaremant.truenasmobile.data.models.Vm
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.concurrent.ConcurrentHashMap
 
 object AppCache {
+
+    /**
+     * Names of the cache entries, for [isFresh].
+     *
+     * Spelled out rather than derived from the property names so that a rename
+     * cannot silently make a freshness check always answer "stale".
+     */
+    object Entry {
+        const val APPS = "apps"
+        const val MARKETPLACE_APPS = "marketplace_apps"
+        const val CONTAINERS = "containers"
+        const val VMS = "vms"
+        const val SERVICES = "services"
+    }
+
+    private val updatedAt = ConcurrentHashMap<String, Long>()
+
     private val _cachedApps = MutableStateFlow<List<Apps.AppQueryResponse>>(emptyList())
     val cachedApps: StateFlow<List<Apps.AppQueryResponse>> = _cachedApps.asStateFlow()
     private val _cachedSystemUpdateVersions = MutableStateFlow<List<System.UpdateAvailableVersionsResponse>>(emptyList())
@@ -43,6 +61,7 @@ object AppCache {
 
     fun updateApps(apps: List<Apps.AppQueryResponse>) {
         _cachedApps.value = apps
+        markUpdated(Entry.APPS)
     }
     fun updateSystemUpdateVersions(versions : List<System.UpdateAvailableVersionsResponse>){
         _cachedSystemUpdateVersions.value = versions
@@ -54,6 +73,7 @@ object AppCache {
 
     fun updateMarketplaceApps(apps : List<Apps.AppAvailableItem>){
         _cachedMarketplaceApps.value = apps
+        markUpdated(Entry.MARKETPLACE_APPS)
     }
 
     fun updatePools(pools: List<System.Pool>) {
@@ -74,14 +94,17 @@ object AppCache {
 
     fun updateContainers(containers: List<Virt.ContainerResponse>) {
         _cachedContainers.value = containers
+        markUpdated(Entry.CONTAINERS)
     }
 
     fun updateVms(vms: List<Vm.VmQueryResponse>) {
         _cachedVms.value = vms
+        markUpdated(Entry.VMS)
     }
 
     fun updateServices(services: List<System.ServiceQueryResponse>) {
         _cachedServices.value = services
+        markUpdated(Entry.SERVICES)
     }
 
     /**
@@ -105,5 +128,31 @@ object AppCache {
         _cachedContainers.value = emptyList()
         _cachedVms.value = emptyList()
         _cachedServices.value = emptyList()
+        updatedAt.clear()
+    }
+
+    // java.lang.System is spelled out because the file imports the System
+    // *models* object, which would otherwise shadow it.
+    private fun now() = java.lang.System.currentTimeMillis()
+
+    private fun markUpdated(entry: String) {
+        updatedAt[entry] = now()
+    }
+
+    /**
+     * Whether [entry] was written less than [ttlMillis] ago.
+     *
+     * The cache has no invalidation story of its own: every write is a fresh
+     * server answer, and the screens that read these lists also poll them every
+     * thirty seconds. So "somebody asked recently" is a good enough answer to
+     * "is it worth asking again", and it is what lets a screen opening inside a
+     * poll interval skip a request it would only repeat moments later.
+     *
+     * False for an entry that was never written, and false after a clear, so a
+     * cold start always goes to the network.
+     */
+    fun isFresh(entry: String, ttlMillis: Long): Boolean {
+        val writtenAt = updatedAt[entry] ?: return false
+        return now() - writtenAt < ttlMillis
     }
 }

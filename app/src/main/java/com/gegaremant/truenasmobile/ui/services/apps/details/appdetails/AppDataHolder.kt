@@ -17,4 +17,23 @@ object AppDataHolder {
     var selectedAppValues : AppConfigPageValues = AppConfigPageValues()
     var selectedService: System.ServiceQueryResponse? = null
 
+    /**
+     * Drops the selection.
+     *
+     * These are process-wide objects, so the value outlives the session it was
+     * set in: without this, a detail screen reached after switching accounts can
+     * render the previous server's pool, app or container.
+     */
+    fun clear() {
+        selectedApp = null
+        selectedMarketplaceApp = null
+        disks = emptyList()
+        selectedShareType = null
+        cpuData = null
+        memoryData = null
+        temperatureData = null
+        initialMetricType = MetricType.ALL
+        selectedAppValues = AppConfigPageValues()
+        selectedService = null
+    }
 }

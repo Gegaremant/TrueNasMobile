@@ -83,9 +83,17 @@ Output:
 **Build the bundle as a separate command.** A manual ABI split and an AAB cannot
 coexist: AGP fails with *"Multiple shrunk-resources files found… Please disable
 building multiple APKs when building an Android app bundle"*. `app/build.gradle.kts`
-detects bundle tasks and turns the split off for them, but a single
-`./gradlew assembleGithubRelease bundlePlaystoreRelease` invocation enables the
-split and breaks the bundle.
+detects bundle tasks and turns the split off for them, so the two must not share
+an invocation.
+
+Note which way that fails, because the APK side is the quiet one. A single
+`./gradlew assembleGithubRelease bundlePlaystoreRelease` enables the bundle
+detection for *both* tasks, so `assembleGithubRelease` happily produces one
+universal `app-github-release.apk` instead of the three per-ABI files, and the
+bundle fails. The APK build does not error — it just hands you a different
+artifact set, and step 5 then cannot find
+`app-github-arm64-v8a-release.apk` at all. Always check the file list in step 4,
+not just the exit code.
 
 There is deliberately no universal APK: `isUniversalApk = false` in
 `splits.abi`. Keep the `output:` list in the F-Droid recipe in sync with
@@ -107,6 +115,29 @@ $BT/aapt2 dump configurations "$APK" | grep -c ru     # the ru locale is present
 Expected signer: `CN=TrueNasMobile, OU=Gegaremant Labs, O=Gegaremant Labs`.
 The APK is signed with scheme v3 only. That is correct for the Android 10
 floor: API 24 and above verify v3 signatures, so AGP drops v1/v2 on its own.
+
+Check the two things that decide whether existing users get an update instead of
+a fresh install — a mismatch in either one means the release has to be
+re-versioned before it ships:
+
+```bash
+# versionCode must be strictly greater than the published one, and the
+# applicationId and signer must be unchanged
+$BT/aapt2 dump badging "$APK" | head -1
+$BT/apksigner verify --print-certs "$APK" | grep "SHA-256 digest"
+
+# compare against the previous release's asset
+curl -sSL -o prev.apk \
+  "https://api.github.com/repos/<owner>/<repo>/releases/assets/<asset id>" \
+  -H "Authorization: token $TOKEN" -H "Accept: application/octet-stream"
+$BT/apksigner verify --print-certs prev.apk | grep "SHA-256 digest"
+```
+
+For 1.0.1 → 1.0.2 the reference values are: `versionCode` 10001 → 10002,
+`applicationId com.gegaremant.truenasmobile` unchanged, signer SHA-256
+`757ae97a85fc63689e5941f31884c3ac60ddcfca5059369c2b48053dc0f31bad`. Lowering
+`minSdk` (33 → 29) is safe in this direction — it can only widen the set of
+devices that accept the update.
 
 ## 6. Tag and publish
 

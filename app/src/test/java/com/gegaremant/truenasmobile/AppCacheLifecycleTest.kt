@@ -1,5 +1,6 @@
 package com.gegaremant.truenasmobile
 
+import com.gegaremant.truenasmobile.data.models.Apps
 import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.utils.AppCache
 import org.junit.Assert.assertTrue
@@ -22,6 +23,11 @@ import java.io.File
  * reset, which is why the completeness check reads the source.
  */
 class AppCacheLifecycleTest {
+
+    private companion object {
+        /** Any window the screens use; the point is that the flag tracks writes. */
+        const val FRESH_WINDOW_MILLIS = 60_000L
+    }
 
     private val cacheFile = File("src/main/java/com/gegaremant/truenasmobile/ui/utils/Appcache.kt")
 
@@ -61,6 +67,64 @@ class AppCacheLifecycleTest {
                 "leak into the next account's session: $missing",
             missing.isEmpty()
         )
+    }
+
+    @Test
+    fun `a write makes an entry fresh and a clear makes it stale again`() {
+        assertTrue(
+            "an entry nobody wrote must not be fresh, or a cold start would " +
+                "skip the network and show nothing",
+            !AppCache.isFresh(AppCache.Entry.APPS, FRESH_WINDOW_MILLIS)
+        )
+
+        AppCache.updateApps(
+            listOf(Apps.AppQueryResponse(name = "plex", id = "abc", state = "RUNNING"))
+        )
+        assertTrue(
+            "a write has to make the entry fresh, or every screen opening would " +
+                "re-fetch a list the poller just refreshed",
+            AppCache.isFresh(AppCache.Entry.APPS, FRESH_WINDOW_MILLIS)
+        )
+
+        AppCache.clearAllCache()
+
+        assertTrue(
+            "a clear has to make the entry stale, or the next account would open " +
+                "on the previous server's rows",
+            !AppCache.isFresh(AppCache.Entry.APPS, FRESH_WINDOW_MILLIS)
+        )
+    }
+
+    @Test
+    fun `the navigation holders are dropped with the session too`() {
+        val holders = listOf(
+            "ui/services/apps/details/appdetails/AppDataHolder.kt",
+            "ui/homepage/pools/PoolDataHolder.kt",
+            "ui/services/containers/details/ContainerDataHolder.kt",
+            "ui/services/vm/details/VmDataHolder.kt"
+        )
+        for (path in holders) {
+            val text = File("src/main/java/com/gegaremant/truenasmobile/$path").readText()
+            assertTrue(
+                "$path has no clear(), so a pool, app, container or VM picked on " +
+                    "one TrueNAS stays in a global after switching to another",
+                text.contains("fun clear()")
+            )
+        }
+
+        val aggregator = File("src/main/java/com/gegaremant/truenasmobile/ui/utils/NavigationHolders.kt")
+        assertTrue("NavigationHolders is missing", aggregator.exists())
+
+        for (path in listOf("ui/login/LoginScreenViewModel.kt", "ui/settings/SettingsScreenViewModel.kt")) {
+            val text = File("src/main/java/com/gegaremant/truenasmobile/$path").readText()
+            val clears = text.split("NavigationHolders.clearAll()").size - 1
+            assertTrue(
+                "$path clears the cache but not the navigation holders, so the " +
+                    "next account can still be handed the previous one's data " +
+                    "(found $clears call sites)",
+                clears >= 1
+            )
+        }
     }
 
     @Test

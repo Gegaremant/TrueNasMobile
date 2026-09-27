@@ -4,8 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.graphics.drawable.toBitmap
-import coil.ImageLoader
-import coil.decode.SvgDecoder
+import coil.imageLoader
 import coil.request.ImageRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -19,14 +18,15 @@ object IconCache {
     suspend fun cacheIcon(context: Context, appName: String, iconUrl: String?): String? {
         if (iconUrl.isNullOrBlank()) return null
         return try {
-            val loader = ImageLoader(context)
+            // The app-wide loader, not a private one: a fresh ImageLoader brings
+            // its own default caches and misses the shared 200 MB disk cache, so
+            // every widget icon was downloaded again from scratch.
             val request = ImageRequest.Builder(context)
                 .data(iconUrl)
-                .decoderFactory(SvgDecoder.Factory())
                 .size(ICON_PX, ICON_PX)
                 .build()
 
-            val drawable = loader.execute(request).drawable ?: return null
+            val drawable = context.imageLoader.execute(request).drawable ?: return null
             val bitmap = drawable.toBitmap(width = ICON_PX, height = ICON_PX)
 
             val dir = File(context.filesDir, DIR_NAME).apply { mkdirs() }

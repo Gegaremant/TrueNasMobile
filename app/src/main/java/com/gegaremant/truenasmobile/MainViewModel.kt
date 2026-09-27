@@ -20,6 +20,7 @@ import com.gegaremant.truenasmobile.data.models.SavedServer
 import com.gegaremant.truenasmobile.data.workers.AppsRefreshWorker
 import com.gegaremant.truenasmobile.ui.Screen
 import com.gegaremant.truenasmobile.ui.utils.AppCache
+import com.gegaremant.truenasmobile.ui.utils.NavigationHolders
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -288,6 +289,7 @@ class MainViewModel : ViewModel() {
         MultiAccountPrefs.saveLastUsedProfile(context, server.id, account.id)
         setActiveUser(context, account.id)
         AppCache.clearAllCache()
+        NavigationHolders.clearAll()
         AccountSessionRegistry.remember(account.id, manager)
         return manager
     }

@@ -80,8 +80,19 @@ class AppsScreenViewModel(private val manager: TrueNASApiManager) : ViewModel() 
         if (cachedData.isNotEmpty()) {
             _uiState.update { it.copy(apps = cachedData, isLoading = false) }
         }
-        loadApps()
+        // The poller below already refreshes this list every 30 s, so opening a
+        // second screen inside that window would only re-ask the server for rows
+        // that are seconds old. A cold or stale cache still fetches, and
+        // pull-to-refresh always goes to the network.
+        if (!AppCache.isFresh(AppCache.Entry.APPS, CACHE_TTL_MILLIS)) {
+            loadApps()
+        }
         startPeriodicRefresh()
+    }
+
+    private companion object {
+        /** Matches the poll interval below, so an entry inside it costs nothing. */
+        const val CACHE_TTL_MILLIS = 30_000L
     }
 
 

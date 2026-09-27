@@ -20,6 +20,7 @@ import com.gegaremant.truenasmobile.data.models.SavedAccount
 import com.gegaremant.truenasmobile.data.models.SavedServer
 import com.gegaremant.truenasmobile.ui.components.ToastManager
 import com.gegaremant.truenasmobile.ui.utils.AppCache
+import com.gegaremant.truenasmobile.ui.utils.NavigationHolders
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -502,6 +503,7 @@ class LoginScreenViewModel(
         // been a different server or a different account. Every login path
         // funnels through here, so this is the one place that has to drop it.
         AppCache.clearAllCache()
+        NavigationHolders.clearAll()
 
         // Check if server already exists
         val existingServers = MultiAccountPrefs.getServers(context)

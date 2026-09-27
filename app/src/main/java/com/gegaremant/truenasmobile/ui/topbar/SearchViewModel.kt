@@ -240,8 +240,10 @@ class SearchViewModel(
 
     private val _searchQuery = MutableStateFlow("")
 
-    // Cached marketplace data loaded once
-    private var cachedMarketplaceApps: List<Apps.AppAvailableItem> = emptyList()
+    // Whether the marketplace catalogue has been consulted at least once. The
+    // list itself is read straight from AppCache on every search: a snapshot
+    // taken here went stale for the lifetime of this ViewModel, and the only
+    // method that could refresh it had no callers.
     private var marketplaceLoaded = false
 
     init {
@@ -254,16 +256,7 @@ class SearchViewModel(
                     performSearch(query)
                 }
         }
-        // Read from AppCache immediately; lazy-load marketplace on first search
-        refreshFromCache()
-    }
-
-    private fun refreshFromCache() {
-        val cached = AppCache.cachedMarketplaceApps.value
-        if (cached.isNotEmpty()) {
-            cachedMarketplaceApps = cached
-            marketplaceLoaded = true
-        }
+        marketplaceLoaded = AppCache.cachedMarketplaceApps.value.isNotEmpty()
     }
 
     private fun ensureMarketplaceLoaded() {
@@ -272,7 +265,10 @@ class SearchViewModel(
             try {
                 val result = apiManager.apps.queryMarketplaceAvailableItems()
                 if (result is ApiResult.Success) {
-                    cachedMarketplaceApps = result.data
+                    // Into the shared cache, not a local field: the marketplace
+                    // screen reads the same list and this was a second copy of
+                    // app.available per session.
+                    AppCache.updateMarketplaceApps(result.data)
                     marketplaceLoaded = true
                 }
             } catch (_: Exception) { /* keep going */ }
@@ -319,14 +315,6 @@ class SearchViewModel(
 
     fun clearRecentSearches() {
         _searchState.value = _searchState.value.copy(recentSearches = emptyList())
-    }
-
-    /**
-     * Flush caches and re-fetch from AppCache (called when data changes).
-     */
-    fun refreshCaches() {
-        cachedMarketplaceApps = AppCache.cachedMarketplaceApps.value
-        marketplaceLoaded = cachedMarketplaceApps.isNotEmpty()
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -490,7 +478,7 @@ class SearchViewModel(
             // ── 5. Marketplace Apps ───────────────────────────
             if (selectedCategory == SearchCategory.ALL || selectedCategory == SearchCategory.MARKETPLACE) {
                 ensureMarketplaceLoaded()
-                cachedMarketplaceApps.forEach { app ->
+                AppCache.cachedMarketplaceApps.value.forEach { app ->
                     val relevance = calculateRelevance(
                         lowerQuery,
                         app.name,

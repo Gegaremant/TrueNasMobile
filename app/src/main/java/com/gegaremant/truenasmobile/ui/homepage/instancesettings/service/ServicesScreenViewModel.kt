@@ -29,7 +29,22 @@ class ServicesScreenViewModel(private val manager: TrueNASApiManager) : ViewMode
     val uiState: StateFlow<ServicesScreenUiState> = _uiState.asStateFlow()
 
     init {
-        loadServices(isInitial = true)
+        // The only screen that wrote the service cache without ever reading it:
+        // the search overlay indexes services from there, so this list was
+        // fetched again on every visit even when it was seconds old.
+        val cached = AppCache.cachedServices.value
+        val servedFromCache =
+            cached.isNotEmpty() && AppCache.isFresh(AppCache.Entry.SERVICES, CACHE_TTL_MILLIS)
+        if (cached.isNotEmpty()) {
+            _uiState.update { it.copy(services = cached, isLoading = false) }
+        }
+        if (!servedFromCache) {
+            loadServices(isInitial = true)
+        }
+    }
+
+    private companion object {
+        const val CACHE_TTL_MILLIS = 60_000L
     }
 
     fun refresh() = loadServices(isInitial = false)

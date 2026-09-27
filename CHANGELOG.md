@@ -52,6 +52,30 @@ Localisation, security and dead-UI cleanup.
   that one exists — the check that was also dead, since nothing called it.
 
 ### Fixed
+- **Opening a list screen re-fetched a list the app had just fetched.** Apps,
+  containers, VMs and services each seeded themselves from the cache and then
+  asked the server anyway, even though a poller had refreshed the same rows
+  seconds earlier. `AppCache` now records when each entry was written and
+  exposes `isFresh(entry, ttl)`; a screen opening inside its own poll interval
+  shows the cached rows and skips the request. A cold or stale cache still
+  loads, and pull-to-refresh always goes to the network.
+- **Six image call sites silently showed nothing.** Most TrueNAS app icons are
+  SVG, and an `AsyncImage` with a bare url and no decoder fails the request
+  rather than falling back — the marketplace tiles, app screenshots and the
+  zoomable viewer all had it. `SvgDecoder` is now configured once on the
+  app-wide `ImageLoader`, which covers those and every future call.
+- **Widget icons bypassed the app's image cache.** `IconCache` built a private
+  `ImageLoader` per download, so every home-screen icon missed the shared
+  200 MB disk cache and came off the network again. It uses the app-wide loader
+  now.
+- **The search overlay kept its own copy of the marketplace catalogue**, which
+  went stale for the life of its ViewModel; the one method that could refresh it
+  had no callers. It reads the shared cache directly and writes its own fetch
+  there, so the catalogue is fetched once per session instead of twice.
+- Container and VM refresh were byte-for-byte second copies of the same RPC,
+  cache write and state updates, and could only agree by accident. One code
+  path each now serves the initial load, the poll, pull-to-refresh and the
+  re-read after a start or stop.
 - **Switching profiles left the app logged into the previous one.** The switcher
   wrote the session but never moved the "last used profile" pointer, which is
   what seventeen places read: app start, both widget activities, the AI app

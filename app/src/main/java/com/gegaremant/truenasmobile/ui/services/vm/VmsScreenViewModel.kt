@@ -37,8 +37,19 @@ class VmsScreenViewModel(
         if (cachedData.isNotEmpty()) {
             _uiState.update { it.copy(vms = cachedData, isLoading = false) }
         }
-        loadVms()
+        // The poller below already refreshes this list every 30 s, so opening a
+        // second screen inside that window would only re-ask the server for rows
+        // that are seconds old. A cold or stale cache still fetches, and
+        // pull-to-refresh always goes to the network.
+        if (!AppCache.isFresh(AppCache.Entry.VMS, CACHE_TTL_MILLIS)) {
+            loadVms()
+        }
         startPeriodicRefresh()
+    }
+
+    private companion object {
+        /** Matches the poll interval below, so an entry inside it costs nothing. */
+        const val CACHE_TTL_MILLIS = 30_000L
     }
 
     private fun startPeriodicRefresh() {
@@ -53,7 +64,17 @@ class VmsScreenViewModel(
         }
     }
 
-    fun loadVms() {
+    fun loadVms() = fetchVms()
+
+    fun refresh() = fetchVms()
+
+    /**
+     * One code path for the initial load, the 30 s poll, pull-to-refresh and the
+     * re-read after a start/stop. [refresh] used to be a second copy of the same
+     * RPC, cache write and state updates, which the two could only agree on by
+     * accident.
+     */
+    private fun fetchVms() {
         viewModelScope.launch {
             if (_uiState.value.vms.isEmpty()) {
                 _uiState.update { it.copy(isLoading = true) }
@@ -94,40 +115,6 @@ class VmsScreenViewModel(
         }
     }
 
-    fun refresh() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isRefreshing = true, error = null) }
-
-            when (val result = manager.vmService.queryAllVmsWithResult()) {
-                is ApiResult.Success -> {
-                    AppCache.updateVms(result.data)
-                    _uiState.update {
-                        it.copy(
-                            vms = result.data,
-                            isRefreshing = false,
-                            error = null
-                        )
-                    }
-                }
-                is ApiResult.Error -> {
-                    _uiState.update {
-                        it.copy(
-                            isRefreshing = false,
-                            error = if (it.vms.isEmpty()) result.message else null
-                        )
-                    }
-                }
-                ApiResult.Loading -> {
-                    _uiState.update {
-                        it.copy(
-                            isLoading = true,
-                            error = null
-                        )
-                    }
-                }
-            }
-        }
-    }
     // TODO: Find a way also to show user dialog option to overcommit
     fun startVm(id: Int, overcommit: Boolean = true) {
         viewModelScope.launch {
