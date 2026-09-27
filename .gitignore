@@ -1111,3 +1111,6 @@ DEV-RULES.md
 *.keystore
 *.p12
 *.pfx
+
+# Scratch notes, session transcripts, internal reports - not part of the project
+/other/
