@@ -1,6 +1,7 @@
 package com.gegaremant.truenasmobile.ui
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Spring
@@ -334,21 +335,25 @@ fun MainScreen(
 
         // Full-screen search overlay
         if (showSearch) {
+            // The overlay is drawn on top of the NavHost, not routed through it,
+            // so nothing else would consume the system back gesture: without
+            // this the screen *behind* the search would pop while the search
+            // stayed on screen, and the next back press would leave the app.
+            BackHandler {
+                showSearch = false
+            }
             ExpressiveSearchAppBar(
                 title = stringResource(R.string.search_cd),
                 manager = manager,
                 startSearchActive = true,
                 onCloseSearch = {
+                    // Just reveal the screen the search was opened from. It is
+                    // still in the back stack - navigating anywhere here used
+                    // to dump the user on Home and pop their tab away.
                     showSearch = false
-                    // Navigate to Home tab on search close
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
                 },
                 onSearchResultClick = { result ->
-                    SearchResultNavigation.navigate(result, navController)
+                    SearchResultNavigation.navigate(result, navController, rootNavController)
                     showSearch = false
                 }
             )

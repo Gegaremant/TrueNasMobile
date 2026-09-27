@@ -21,14 +21,24 @@ object SearchResultNavigation {
      *
      * @param result    The search result to navigate to.
      * @param navController The NavController for the MainScreen's internal NavHost.
+     * @param rootNavController The NavController for the whole activity, which owns
+     *   the pre-login and account-level screens. Two search results point there:
+     *   account switcher and change password are registered in the root graph
+     *   only, and navigating to them on [navController] throws "destination
+     *   cannot be found in the NavController's graph" - a crash on tap.
      */
-    fun navigate(result: SearchResult, navController: NavController) {
+    fun navigate(
+        result: SearchResult,
+        navController: NavController,
+        rootNavController: NavController
+    ) {
         when (result) {
             is SearchResult.NavigationResult -> {
                 // Static screen/subsection — just navigate to the route
-                navController.navigate(result.destinationRoute) {
-                    launchSingleTop = true
-                }
+                controllerFor(result.destinationRoute, navController, rootNavController)
+                    .navigate(result.destinationRoute) {
+                        launchSingleTop = true
+                    }
             }
 
             is SearchResult.PoolResult -> {
@@ -94,9 +104,10 @@ object SearchResultNavigation {
             }
 
             is SearchResult.InstanceSettingsResult -> {
-                navController.navigate(result.route) {
-                    launchSingleTop = true
-                }
+                controllerFor(result.route, navController, rootNavController)
+                    .navigate(result.route) {
+                        launchSingleTop = true
+                    }
             }
 
             is SearchResult.ActionResult -> {
@@ -106,4 +117,19 @@ object SearchResultNavigation {
             }
         }
     }
+
+    /**
+     * The two NavHosts are siblings, not parent and child, so neither graph can
+     * see the other's destinations. Ask both which one actually knows the route
+     * instead of hardcoding a list that the next registration would invalidate.
+     *
+     * Falls back to [navController] so an unknown route still fails the way
+     * `navigate` normally does, with its own message.
+     */
+    private fun controllerFor(
+        route: String,
+        navController: NavController,
+        rootNavController: NavController
+    ): NavController =
+        if (rootNavController.graph.findNode(route) != null) rootNavController else navController
 }

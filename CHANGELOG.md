@@ -37,6 +37,21 @@ Localisation, security and dead-UI cleanup.
   that one exists — the check that was also dead, since nothing called it.
 
 ### Fixed
+- **Search threw on two of its own results, and the system back button broke
+  the screen behind it.** The search overlay is drawn on top of the NavHost
+  rather than routed through it, so nothing consumed the back gesture: pressing
+  back popped the screen *underneath* while the search stayed on screen, and the
+  next press left the app. It now has a `BackHandler`.
+- **Closing search threw away the tab you opened it from.** `onCloseSearch`
+  navigated to Home with `popUpTo(startDestination)`, so dismissing the search
+  from Storage, Apps, Tasks or Performance dumped you on the dashboard. Closing
+  now just reveals the screen that is still sitting in the back stack.
+- **Tapping "Account" or "Change password" in the search crashed the app.** Both
+  are registered in the root NavHost only, while `SearchResultNavigation` sent
+  every result to the inner one — "Navigation destination that cannot be found in
+  the NavController's graph". The controller is now resolved by asking both
+  graphs which one knows the route. `SearchRouteTest` fails the build if the
+  search index ever points at a screen no NavHost registers again.
 - **Credentials were included in cloud backup and device transfer.**
   `data_extraction_rules.xml` and `backup_rules.xml` shipped as Android Studio
   boilerplate with the exclusions commented out, so the `secure_preferences`,
