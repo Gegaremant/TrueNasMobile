@@ -68,14 +68,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Shares
@@ -93,6 +91,7 @@ import java.text.DecimalFormat
 @Composable
 fun HomeScreen(
     manager: TrueNASApiManager,
+    viewModel: HomeViewModel,
     onNavigateToSettings: () -> Unit = {},
     onPoolClick: (System.Pool) -> Unit,
     onDisksClick: () -> Unit,
@@ -103,10 +102,6 @@ fun HomeScreen(
     onNavigateToShareInfo: (ShareType) -> Unit = {},
     onSearchClick: (() -> Unit)? = null
 ) {
-    val viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModel.HomeViewModelFactory(manager, LocalContext.current.applicationContext)
-    )
-
     val uiState by viewModel.uiState.collectAsState()
     val isConnected by viewModel.isConnected.collectAsState()
     var showShutdownDialog by remember { mutableStateOf(false) }

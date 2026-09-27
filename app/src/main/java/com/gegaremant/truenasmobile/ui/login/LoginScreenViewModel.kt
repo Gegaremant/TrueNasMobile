@@ -19,6 +19,7 @@ import com.gegaremant.truenasmobile.data.models.LoginMethod
 import com.gegaremant.truenasmobile.data.models.SavedAccount
 import com.gegaremant.truenasmobile.data.models.SavedServer
 import com.gegaremant.truenasmobile.ui.components.ToastManager
+import com.gegaremant.truenasmobile.ui.utils.AppCache
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -496,6 +497,11 @@ class LoginScreenViewModel(
             ToastManager.showErrorRes(R.string.toast_server_url_not_configured)
             return
         }
+
+        // Whatever is in memory belongs to the previous session, which may have
+        // been a different server or a different account. Every login path
+        // funnels through here, so this is the one place that has to drop it.
+        AppCache.clearAllCache()
 
         // Check if server already exists
         val existingServers = MultiAccountPrefs.getServers(context)

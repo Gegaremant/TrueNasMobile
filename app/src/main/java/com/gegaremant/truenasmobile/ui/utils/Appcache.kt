@@ -84,14 +84,26 @@ object AppCache {
         _cachedServices.value = services
     }
 
+    /**
+     * Drops everything.
+     *
+     * The cache is process-wide, so it outlives the session it was filled for:
+     * without this, signing out of one TrueNAS and into another leaves the first
+     * server's pools, apps, shares, services and system info in memory for the
+     * search overlay and the dashboard to render. Called on sign-out and on
+     * every successful login.
+     */
     fun clearAllCache() {
         _cachedApps.value = emptyList()
+        _cachedSystemUpdateVersions.value = emptyList()
         _cachedSystemInfo.value = null
+        _cachedMarketplaceApps.value = emptyList()
         _cachedPools.value = emptyList()
         _cachedDisks.value = emptyList()
         _cachedSmbShares.value = emptyList()
         _cachedNfsShares.value = emptyList()
         _cachedContainers.value = emptyList()
         _cachedVms.value = emptyList()
+        _cachedServices.value = emptyList()
     }
 }

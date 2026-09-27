@@ -108,6 +108,9 @@ fun PerformanceScreen(
     onNavigateBack: (() -> Unit)? = null,
     onRefresh: () -> Unit
 ) {
+    // The poll is a no-op unless the dashboard actually loaded, and the caller
+    // wires it to a graphs-only refresh - this screen shows three charts, not
+    // the eight RPCs a full dashboard reload costs.
     LaunchedEffect(Unit) {
         while (true) {
             delay(10000)

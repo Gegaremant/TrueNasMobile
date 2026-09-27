@@ -11,11 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
@@ -30,15 +28,13 @@ import com.gegaremant.truenasmobile.ui.homepage.details.ShareType
 @Composable
 fun StorageScreen(
     manager: TrueNASApiManager,
+    viewModel: HomeViewModel,
     onNavigateToSettings: () -> Unit = {},
     onPoolClick: (System.Pool) -> Unit,
     onNavigateToShareInfo: (ShareType) -> Unit = {},
-    onDisksClick: () -> Unit = {},
+    onDisksClick: () -> Unit,
     onSearchClick: (() -> Unit)? = null
 ) {
-    val viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModel.HomeViewModelFactory(manager, LocalContext.current.applicationContext)
-    )
     val uiState by viewModel.uiState.collectAsState()
     val isRefreshing = (uiState as? HomeUiState.Success)?.isRefreshing ?: false
 

@@ -369,6 +369,17 @@ private fun TrueNasMobileNavGraph(
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Home, Storage and Performance are three views of one dashboard, and each
+    // of them used to build its own HomeViewModel - three identical eight-RPC
+    // batches on first open, plus three 30 s connectivity polls, all for the
+    // same data. One instance, owned by the Screen.Main back stack entry so it
+    // is still torn down when the user signs out and Main leaves the graph.
+    val mainEntry = remember(navController) { navController.getBackStackEntry(Screen.Main.route) }
+    val dashboardViewModel: HomeViewModel = viewModel(
+        viewModelStoreOwner = mainEntry,
+        factory = HomeViewModel.HomeViewModelFactory(manager, LocalContext.current.applicationContext)
+    )
+
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route,
@@ -389,6 +400,7 @@ private fun TrueNasMobileNavGraph(
         composable(Screen.Home.route) {
             HomeScreen(
                 manager,
+                dashboardViewModel,
                 onNavigateToSettings = { rootNavController.navigate(Screen.Settings.route) },
                 onPoolClick = { pool: System.Pool ->
                     PoolDataHolder.currentPool = pool
@@ -420,6 +432,7 @@ private fun TrueNasMobileNavGraph(
         composable(Screen.Storage.route) {
             StorageScreen(
                 manager = manager,
+                viewModel = dashboardViewModel,
                 onNavigateToSettings = { rootNavController.navigate(Screen.Settings.route) },
                 onPoolClick = { pool: System.Pool ->
                     PoolDataHolder.currentPool = pool
@@ -849,13 +862,7 @@ private fun TrueNasMobileNavGraph(
             }
         }
         composable(Screen.Performance.route) {
-            val performanceViewModel: HomeViewModel = viewModel(
-                factory = HomeViewModel.HomeViewModelFactory(
-                    manager,
-                    LocalContext.current.applicationContext
-                )
-            )
-            val performanceState by performanceViewModel.uiState.collectAsState()
+            val performanceState by dashboardViewModel.uiState.collectAsState()
             val performanceSuccess = performanceState as? HomeUiState.Success
             LaunchedEffect(performanceSuccess) {
                 if (performanceSuccess != null) {
@@ -872,7 +879,7 @@ private fun TrueNasMobileNavGraph(
                 isLoading = performanceState is HomeUiState.Loading,
                 manager = manager,
                 onNavigateBack = null,
-                onRefresh = { performanceViewModel.refresh() }
+                onRefresh = { dashboardViewModel.refreshGraphs() }
             )
         }
 

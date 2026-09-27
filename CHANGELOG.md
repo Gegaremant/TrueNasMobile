@@ -37,6 +37,28 @@ Localisation, security and dead-UI cleanup.
   that one exists — the check that was also dead, since nothing called it.
 
 ### Fixed
+- **The cached dashboard survived signing out.** `AppCache` is a process-wide
+  object, and `clearAllCache()` had no call sites at all — so signing out of one
+  TrueNAS and into another kept the first server's pools, disks, shares,
+  services, apps and system info in memory for the dashboard and the search
+  overlay to render. Every successful login now clears it (all three login paths
+  funnel through one function) and both sign-out paths clear it too.
+  `clearAllCache()` also skipped the marketplace catalogue and the service list,
+  so even a call would have left those behind.
+- **The performance screen reloaded the whole dashboard every 10 seconds.**
+  Its poll went through the dashboard refresh, which re-ran all eight RPCs —
+  `system.info`, `pool.query`, `disk.query`, both share queries, the update
+  list, the version string and the graphs — to redraw three charts. Pools, disks,
+  shares and the update list do not move on that cadence, so the poll now reads
+  the graph data only.
+- **The dashboard was fetched three times over.** Home, Storage and Performance
+  each built their own `HomeViewModel`, so opening the app fired three identical
+  eight-RPC batches and started three 30-second connectivity polls for one
+  dataset. All three screens now share one instance, owned by the `Screen.Main`
+  back stack entry so it is still discarded on sign-out.
+- `AppCacheLifecycleTest` guards the invariants: the clear reaches every cache
+  flow (a new field that forgets its reset fails the build), and both the login
+  and the sign-out path call it.
 - **Pulling a Docker image looked like it did nothing.** `app.image.pull` only
   returns a job id — the image appears in the list once the server finishes —
   but the screen reloaded the list immediately, so it kept showing the old

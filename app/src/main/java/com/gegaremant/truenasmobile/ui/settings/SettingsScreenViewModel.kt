@@ -12,6 +12,7 @@ import com.gegaremant.truenasmobile.data.helpers.MultiAccountPrefs
 import com.gegaremant.truenasmobile.data.helpers.dataStore
 import com.gegaremant.truenasmobile.data.security.BiometricLockPrefs
 import com.gegaremant.truenasmobile.ui.components.ToastManager
+import com.gegaremant.truenasmobile.ui.utils.AppCache
 import androidx.biometric.BiometricManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -219,6 +220,7 @@ class SettingsScreenViewModel(
                 if (accountId != null) {
                     MultiAccountPrefs.deleteAccount(application, accountId)
                 }
+                AppCache.clearAllCache()
 
                 // Disconnect manager
                 manager?.disconnect()
@@ -247,6 +249,7 @@ class SettingsScreenViewModel(
         viewModelScope.launch {
             try {
                 manager?.disconnect()
+                AppCache.clearAllCache()
 
                 _uiState.value = _uiState.value.copy(
                     isLoggingOut = false,

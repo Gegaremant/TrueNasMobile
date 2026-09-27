@@ -67,6 +67,9 @@ class HomeViewModel(
     private val _isConnected = MutableStateFlow(false)
     val isConnected: StateFlow<Boolean> = _isConnected.asStateFlow()
 
+    /** Guards [refreshGraphs] against overlapping ticks from several screens. */
+    private var graphRefreshInFlight = false
+
     // private val _loadAverages = MutableStateFlow<LoadAveragesState>(LoadAveragesState.Loading)
     // val loadAverages: StateFlow<LoadAveragesState> = _loadAverages.asStateFlow()
 
@@ -197,6 +200,56 @@ class HomeViewModel(
         if (_uiState.value is HomeUiState.Error) {
             _uiState.value = HomeUiState.Loading
             loadDashboardData()
+        }
+    }
+
+    /**
+     * Refreshes only the performance graphs.
+     *
+     * The performance screen polls every 10 seconds, and it used to do that
+     * through [refresh] - which re-ran the whole dashboard batch: `system.info`,
+     * `pool.query`, `disk.query`, both share queries, the update list and the
+     * version string, eight RPCs to redraw three charts. Pools, disks, shares
+     * and the update list do not move on a ten second cadence, so they are left
+     * alone here and only the graph data is re-read.
+     *
+     * Returns without touching the state when the dashboard is not loaded yet
+     * (nothing to update) or a refresh is already running (it will bring
+     * fresher data anyway).
+     */
+    fun refreshGraphs() {
+        if (graphRefreshInFlight) return
+        val currentState = _uiState.value as? HomeUiState.Success ?: return
+        graphRefreshInFlight = true
+        viewModelScope.launch {
+            try {
+                val graphResult = apiManager.system.getReportingDataWithResult(
+                    listOf(
+                        System.ReportingGraphRequest(System.ReportingGraphName.CPU),
+                        System.ReportingGraphRequest(System.ReportingGraphName.MEMORY),
+                        System.ReportingGraphRequest(System.ReportingGraphName.CPUTEMP)
+                    ),
+                    System.ReportingGraphQuery(unit = System.ReportingUnit.HOUR, aggregate = true)
+                )
+                val graphData = (graphResult as? ApiResult.Success)?.data
+                if (graphData == null) return@launch
+
+                val cpuData = graphData.find { it.name == System.ReportingGraphName.CPU.name.lowercase() }
+                val memoryData = graphData.find { it.name == System.ReportingGraphName.MEMORY.name.lowercase() }
+                val tempData = graphData.find { it.name == System.ReportingGraphName.CPUTEMP.name.lowercase() }
+
+                // Only publish if nothing else replaced the state meanwhile.
+                if (_uiState.value !== currentState) return@launch
+                _uiState.value = currentState.copy(
+                    cpuData = if (cpuData != null) listOf(cpuData) else currentState.cpuData,
+                    memoryData = if (memoryData != null) listOf(memoryData) else currentState.memoryData,
+                    temperatureData = if (tempData != null) listOf(tempData) else currentState.temperatureData
+                )
+            } catch (_: Exception) {
+                // A missed sample must not take the screen down; the next tick retries.
+            } finally {
+                graphRefreshInFlight = false
+            }
         }
     }
 
