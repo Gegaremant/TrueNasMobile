@@ -250,6 +250,8 @@
     <string name="settings_title">Settings</string>
     <string name="settings_subtitle">Account &amp; preferences</string>
     <string name="settings_section_account">Account</string>
+    <string name="settings_profile">Profile</string>
+    <string name="settings_profile_desc">Signed-in account and system summary</string>
     <string name="settings_password">Password</string>
     <string name="settings_change_password">Change password</string>
     <string name="settings_section_app">App</string>

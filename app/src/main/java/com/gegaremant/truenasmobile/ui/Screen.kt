@@ -37,6 +37,7 @@ sealed class Screen(val route: String) {
     object ContainerInfo : Screen("container_info")
     object VmDetails : Screen("vm_details")
     object ChangePassword : Screen("change_password")
+    object Profile : Screen("profile")
     object DiskInfo : Screen("disk_info")
     object AppConfigScreen : Screen("app_config")
     object InstanceConfigScreen : Screen("instance_config")

@@ -20,6 +20,7 @@ data class UserListUiState(
     val filterSmb: Boolean? = null,
     val filterBuiltin: Boolean? = null,
     val filterRole: String? = null,
+    val hasLocalAdmin: Boolean? = null,
     val error: String? = null
 ) {
     val filteredUsers: List<System.UserCreateUpdateResult>
@@ -108,13 +109,24 @@ class UserSettingsViewModel(
             _listState.value = _listState.value.copy(isLoading = true, error = null)
             when (val result = manager.system.queryUsersWithResult()) {
                 is ApiResult.Success -> _listState.value = _listState.value.copy(
-                    isLoading = false, users = result.data
+                    isLoading = false, users = result.data, hasLocalAdmin = hasLocalAdmin()
                 )
                 is ApiResult.Error -> _listState.value = _listState.value.copy(
                     isLoading = false, error = result.message
                 )
                 is ApiResult.Loading -> { /* no-op */ }
             }
+        }
+    }
+
+    /**
+     * Null when the server would not answer - the caller then keeps offering the
+     * local-admin setup rather than hiding an action that may still be needed.
+     */
+    private suspend fun hasLocalAdmin(): Boolean? {
+        return when (val result = manager.system.hasLocalAdministratorSetUpWithResult()) {
+            is ApiResult.Success -> result.data
+            is ApiResult.Error, is ApiResult.Loading -> null
         }
     }
     fun setupLocalAdministrator(username: String, password: String) {
@@ -146,7 +158,7 @@ class UserSettingsViewModel(
             _listState.value = _listState.value.copy(isRefreshing = true, error = null)
             when (val result = manager.system.queryUsersWithResult()) {
                 is ApiResult.Success -> _listState.value = _listState.value.copy(
-                    isRefreshing = false, users = result.data
+                    isRefreshing = false, users = result.data, hasLocalAdmin = hasLocalAdmin()
                 )
                 is ApiResult.Error -> _listState.value = _listState.value.copy(
                     isRefreshing = false, error = result.message

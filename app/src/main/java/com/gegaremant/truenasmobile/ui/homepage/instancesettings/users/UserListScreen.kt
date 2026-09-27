@@ -135,7 +135,8 @@ fun UserListScreen(
             floatingActionButton = {
                 UserFabMenu(
                     onCreateUserClick = onNavigateToCreateUser,
-                    onSetupAdminClick = onNavigateToSetupAdmin
+                    onSetupAdminClick = onNavigateToSetupAdmin,
+                    showSetupAdmin = uiState.hasLocalAdmin != true
                 )
             }
         ) { innerPadding ->
@@ -321,7 +322,8 @@ fun UserListScreen(
 @Composable
 private fun UserFabMenu(
     onCreateUserClick: () -> Unit,
-    onSetupAdminClick: () -> Unit
+    onSetupAdminClick: () -> Unit,
+    showSetupAdmin: Boolean = true
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val colorScheme = MaterialTheme.colorScheme
@@ -393,11 +395,13 @@ private fun UserFabMenu(
             icon = { Icon(Icons.Default.PersonAdd, contentDescription = null) },
             text = { Text(stringResource(R.string.users_create_user)) }
         )
-        FloatingActionButtonMenuItem(
-            onClick = { expanded = false; onSetupAdminClick() },
-            icon = { Icon(Icons.Default.AdminPanelSettings, contentDescription = null) },
-            text = { Text(stringResource(R.string.users_setup_local_admin)) }
-        )
+        if (showSetupAdmin) {
+            FloatingActionButtonMenuItem(
+                onClick = { expanded = false; onSetupAdminClick() },
+                icon = { Icon(Icons.Default.AdminPanelSettings, contentDescription = null) },
+                text = { Text(stringResource(R.string.users_setup_local_admin)) }
+            )
+        }
     }
 }
 

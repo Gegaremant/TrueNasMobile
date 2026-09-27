@@ -105,8 +105,8 @@ $BT/aapt2 dump configurations "$APK" | grep -c ru     # the ru locale is present
 ```
 
 Expected signer: `CN=TrueNasMobile, OU=Gegaremant Labs, O=Gegaremant Labs`.
-At minSdk 33 the APK is signed with scheme v3 only; that is normal, AGP drops
-v1/v2.
+The APK is signed with scheme v3 only. That is correct for the Android 10
+floor: API 24 and above verify v3 signatures, so AGP drops v1/v2 on its own.
 
 ## 6. Tag and publish
 

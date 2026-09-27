@@ -4,7 +4,7 @@
 
 **A native Android client for managing TrueNAS. Simple, fast, right from your phone.**
 
-**⬇️ [Download the latest release](https://github.com/Gegaremant/TrueNasMobile/releases/latest)** · Android 14+
+**⬇️ [Download the latest release](https://github.com/Gegaremant/TrueNasMobile/releases/latest)** · Android 10+
 
 TrueNAS is a great system for storage and home servers. But there is one big injustice: it never got a proper native app. Keeping an eye on your server through a browser on a small screen is awkward, and the two existing client versions (NasDesk and TrueHub) simply don't cover all the capabilities.
 
@@ -53,7 +53,7 @@ Requirements:
 
 - JDK 17+
 - Android SDK (compileSdk 37 / targetSdk 37)
-- Minimum Android: 14 (minSdk 33)
+- Minimum Android: 10 (minSdk 29)
 
 Build:
 

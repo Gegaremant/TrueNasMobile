@@ -76,6 +76,7 @@ fun SettingsScreen(
     onNavigateToAbout: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
     onNavigateToTheme : () -> Unit = {},
+    onNavigateToProfile : () -> Unit = {},
     onNavigateToChangePassword : () -> Unit = {},
     onNavigateToLogging: () -> Unit = {},
     onNavigateToPushSettings: () -> Unit = {},
@@ -136,6 +137,14 @@ fun SettingsScreen(
             SettingsSection(
                 title = stringResource(R.string.settings_section_account),
                 items = listOf(
+                    SettingItem(
+                        icon = Icons.Default.AccountCircle,
+                        name = stringResource(R.string.settings_profile),
+                        description = stringResource(R.string.settings_profile_desc),
+                        onClick = {
+                            onNavigateToProfile()
+                        }
+                    ),
                     SettingItem(
                         icon = Icons.Default.Security,
                         name = stringResource(R.string.settings_password),

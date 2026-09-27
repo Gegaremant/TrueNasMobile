@@ -651,6 +651,9 @@ private fun TrueNasMobileNavGraph(
                 },
                 onNavigateToCreateUser = {
                     navController.navigate(Screen.UserCreateScreen.route)
+                },
+                onNavigateToSetupAdmin = {
+                    navController.navigate(Screen.LocalAdminSetupScreen.route)
                 }
             )
         }

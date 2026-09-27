@@ -67,6 +67,7 @@ import com.gegaremant.truenasmobile.ui.homepage.instancesettings.alertservice.Al
 import com.gegaremant.truenasmobile.ui.homepage.instancesettings.alertservice.AlertServiceDetailScreen
 import com.gegaremant.truenasmobile.ui.homepage.instancesettings.alertservice.AlertServicesListScreen
 import com.gegaremant.truenasmobile.ui.login.LoginScreen
+import com.gegaremant.truenasmobile.ui.profile.ProfileScreen
 import com.gegaremant.truenasmobile.ui.settings.SettingsEvent
 import com.gegaremant.truenasmobile.ui.settings.SettingsScreen
 import com.gegaremant.truenasmobile.ui.settings.SettingsScreenViewModel
@@ -431,6 +432,9 @@ private fun AppNavigation(
                 onNavigateToChangePassword = {
                     navController.navigate(Screen.ChangePassword.route)
                 },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile.route)
+                },
                 onNavigateToPushSettings = {
                     navController.navigate(Screen.PushSettings.route)
                 },
@@ -438,6 +442,15 @@ private fun AppNavigation(
                     navController.popBackStack()
                 }
             )
+        }
+        composable(Screen.Profile.route) {
+            manager?.let {
+                ProfileScreen(
+                    manager = it,
+                    onSettingsClick = { navController.navigate(Screen.Settings.route) },
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
         }
         composable(Screen.PushSettings.route) {
             PushSettingsScreen(

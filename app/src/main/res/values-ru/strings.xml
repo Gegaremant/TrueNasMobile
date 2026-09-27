@@ -256,6 +256,8 @@
     <string name="settings_title">Настройки</string>
     <string name="settings_subtitle">Аккаунт и предпочтения</string>
     <string name="settings_section_account">Аккаунт</string>
+    <string name="settings_profile">Профиль</string>
+    <string name="settings_profile_desc">Текущая учётная запись и сводка по системе</string>
     <string name="settings_password">Пароль</string>
     <string name="settings_change_password">Сменить пароль</string>
     <string name="settings_section_app">Приложение</string>

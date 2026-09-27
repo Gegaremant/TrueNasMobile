@@ -87,7 +87,7 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        minSdk = 33
+        minSdk = 29
         targetSdk = 37
         versionCode = 10002
         versionName = "1.0.2"
@@ -117,8 +117,9 @@ android {
                 storePassword = releaseKeystorePassword
                 keyAlias = releaseKeyAlias
                 keyPassword = releaseKeystorePassword
-                // minSdk is 33, so AGP signs with v3 only and drops the
-                // legacy v1/v2 schemes on its own - nothing to pin here.
+                // AGP drops v1/v2 on its own once minSdk >= 24 (API 24 reads
+                // v3 signatures), so a v3-only APK is still installable on the
+                // Android 10 floor. Nothing to pin here.
                 // v4 is off because it needs a separate .idsig sidecar file.
                 enableV3Signing = true
                 enableV4Signing = false

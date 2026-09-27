@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Computer
@@ -32,7 +33,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -57,13 +57,15 @@ import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Auth.AuthResponse
 import com.gegaremant.truenasmobile.data.models.System
+import com.gegaremant.truenasmobile.ui.components.ExpressiveIconButton
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     manager: TrueNASApiManager,
-    onSettingsClick: () -> Unit = {}
+    onSettingsClick: () -> Unit = {},
+    onNavigateBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val viewModel: ProfileViewModel = viewModel(
@@ -91,7 +93,8 @@ fun ProfileScreen(
                 user = s.user,
                 systemInfo = s.system,
                 onRefreshProfile = { viewModel.refresh() },
-                onSettingsClick = onSettingsClick
+                onSettingsClick = onSettingsClick,
+                onNavigateBack = onNavigateBack
             )
         }
     }
@@ -149,7 +152,8 @@ private fun ProfileContent(
     user: AuthResponse,
     systemInfo: System.SystemInfo,
     onRefreshProfile: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -169,12 +173,20 @@ private fun ProfileContent(
                 text = stringResource(R.string.profile_title),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f, fill = false)
             )
 
-            IconButton(onClick = onSettingsClick) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                ExpressiveIconButton(
+                    onClick = onNavigateBack,
+                    icon = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.cd_back_cd),
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                )
+                ExpressiveIconButton(
+                    onClick = onSettingsClick,
+                    icon = Icons.Default.Settings,
                     contentDescription = stringResource(R.string.profile_settings_cd),
                     tint = MaterialTheme.colorScheme.primary
                 )
