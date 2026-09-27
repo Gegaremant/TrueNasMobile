@@ -33,6 +33,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -43,6 +44,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,15 +64,21 @@ import androidx.compose.ui.unit.dp
 import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
+import com.gegaremant.truenasmobile.data.helpers.JobState
+import com.gegaremant.truenasmobile.data.helpers.JobTracker
 import com.gegaremant.truenasmobile.data.models.Apps
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
+import com.gegaremant.truenasmobile.ui.components.ToastManager
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 /**
  * Docker image list backed by `app.image.query` (paged, searchable) with
  * pull/delete/detail via the `app.image.*` APIs. Mirrors the other instance-config pages.
  */
+private const val PULL_TRACKING_KEY = "docker_image_pull"
+
 @Composable
 fun DockerImageListScreen(
     manager: TrueNASApiManager,
@@ -87,6 +95,13 @@ fun DockerImageListScreen(
     var error by remember { mutableStateOf<String?>(null) }
     var showPullDialog by remember { mutableStateOf(false) }
     var selectedImageId by remember { mutableStateOf<String?>(null) }
+    var pullingRef by remember { mutableStateOf<String?>(null) }
+
+    // The pull itself runs server side as a job: `app.image.pull` only returns
+    // the job id, and the image shows up in the list once the job finishes.
+    val trackedJobs = remember { MutableStateFlow<Map<String, JobState>>(emptyMap()) }
+    val pullJob by trackedJobs.collectAsState()
+    val pullProgress = pullJob[PULL_TRACKING_KEY]
 
     val appScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -177,12 +192,21 @@ fun DockerImageListScreen(
                         item {
                             OutlinedButton(
                                 onClick = { showPullDialog = true },
+                                enabled = pullProgress == null,
                                 modifier = Modifier.fillMaxWidth().height(48.dp),
                                 shape = RoundedCornerShape(14.dp)
                             ) {
                                 Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(stringResource(R.string.docker_pull_image))
+                            }
+                        }
+                        if (pullProgress != null) {
+                            item {
+                                PullProgressRow(
+                                    imageRef = pullingRef.orEmpty(),
+                                    progress = pullProgress
+                                )
                             }
                         }
                         item {
@@ -232,13 +256,41 @@ fun DockerImageListScreen(
         PullImageDialog(
             onSubmit = { ref ->
                 showPullDialog = false
-                if (ref.isNotBlank()) {
+                val imageRef = ref.trim()
+                if (imageRef.isNotBlank()) {
                     appScope.launch {
-                        when (val result = manager.apps.pullImageWithResult(ref.trim())) {
-                            is ApiResult.Error -> error = result.message ?: context.getString(R.string.docker_pull_failed)
-                            else -> {}
+                        when (val result = manager.apps.pullImageWithResult(imageRef)) {
+                            is ApiResult.Error ->
+                                error = result.message ?: context.getString(R.string.docker_pull_failed)
+                            is ApiResult.Loading -> {}
+                            is ApiResult.Success -> {
+                                pullingRef = imageRef
+                                JobTracker.pollJobStatus(
+                                    jobId = result.data,
+                                    manager = manager,
+                                    jobsStateFlow = trackedJobs,
+                                    trackingKey = PULL_TRACKING_KEY,
+                                    onComplete = { finalState ->
+                                        appScope.launch {
+                                            pullingRef = null
+                                            val failure = if (finalState == "SUCCESS") {
+                                                null
+                                            } else {
+                                                pullFailureMessage(manager, result.data, finalState)
+                                            }
+                                            refresh()
+                                            // refresh() clears `error` on entry, so the
+                                            // failure has to be reported after it.
+                                            if (finalState == "SUCCESS") {
+                                                ToastManager.showSuccessRes(R.string.docker_pull_done)
+                                            } else {
+                                                error = failure
+                                            }
+                                        }
+                                    }
+                                )
+                            }
                         }
-                        refresh()
                     }
                 }
             },
@@ -253,6 +305,48 @@ fun DockerImageListScreen(
             onDismiss = { selectedImageId = null },
             onDeleted = { selectedImageId = null; appScope.launch { refresh() } }
         )
+    }
+}
+
+@Composable
+private fun PullProgressRow(imageRef: String, progress: JobState) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
+    ) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                text = stringResource(R.string.docker_pull_progress_fmt, imageRef, progress.progress),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+            progress.description?.takeIf { it.isNotBlank() }?.let { description ->
+                Text(description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            LinearProgressIndicator(
+                progress = { (progress.progress / 100f).coerceIn(0f, 1f) },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+/**
+ * The tracker reports a terminal state but not the reason, so ask the server
+ * once more before telling the user a bare "pull failed" - a mistyped image
+ * reference and a registry auth failure need very different fixes.
+ */
+private suspend fun pullFailureMessage(
+    manager: TrueNASApiManager,
+    jobId: Int,
+    finalState: String
+): String {
+    val job = (manager.system.getJobInfoJobWithResult(jobId) as? ApiResult.Success)?.data
+    val reason = job?.exception?.takeIf { it.isNotBlank() }
+        ?: job?.error?.toString()?.takeIf { it.isNotBlank() && it != "null" }
+    return reason ?: when (finalState) {
+        "TIMED_OUT" -> ToastManager.resolveString(R.string.docker_pull_still_running)
+        else -> ToastManager.resolveString(R.string.docker_pull_failed)
     }
 }
 

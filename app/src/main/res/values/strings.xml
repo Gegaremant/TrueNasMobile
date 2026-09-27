@@ -993,6 +993,9 @@
     <string name="docker_empty_search">No images match your search.</string>
     <string name="docker_scroll_more">Scroll for more image(s)…</string>
     <string name="docker_pull_failed">Pull failed</string>
+    <string name="docker_pull_done">Image pulled</string>
+    <string name="docker_pull_progress_fmt">Pulling %1$s — %2$d%%</string>
+    <string name="docker_pull_still_running">Still pulling on the server — the image will appear here when it finishes</string>
     <string name="docker_rate_limit_title">Docker Hub Rate Limit</string>
     <string name="docker_rate_total">Total Pull Limit</string>
     <string name="docker_rate_remaining">Remaining Pull Limit</string>

@@ -999,6 +999,9 @@
     <string name="docker_empty_search">Нет образов по вашему запросу.</string>
     <string name="docker_scroll_more">Прокрутите, чтобы показать ещё…</string>
     <string name="docker_pull_failed">Не удалось скачать образ</string>
+    <string name="docker_pull_done">Образ скачан</string>
+    <string name="docker_pull_progress_fmt">Скачивается %1$s — %2$d%%</string>
+    <string name="docker_pull_still_running">Образ всё ещё скачивается на сервере — он появится здесь, когда процесс завершится</string>
     <string name="docker_rate_limit_title">Лимит запросов Docker Hub</string>
     <string name="docker_rate_total">Общий лимит скачиваний</string>
     <string name="docker_rate_remaining">Осталось скачиваний</string>

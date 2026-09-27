@@ -37,6 +37,17 @@ Localisation, security and dead-UI cleanup.
   that one exists — the check that was also dead, since nothing called it.
 
 ### Fixed
+- **Pulling a Docker image looked like it did nothing.** `app.image.pull` only
+  returns a job id — the image appears in the list once the server finishes —
+  but the screen reloaded the list immediately, so it kept showing the old
+  contents. The job is now tracked through `JobTracker.pollJobStatus`: a
+  progress row with the percentage and the server's own description appears
+  above the search field, the pull button is disabled while it runs, and the
+  list reloads when the job actually ends. If the job fails, the reason comes
+  from the job record itself (`exception`/`error`) rather than a bare "pull
+  failed" — a mistyped reference and a registry auth failure need different
+  fixes. Timing out after five minutes says the pull is still running on the
+  server instead of claiming failure.
 - **Search threw on two of its own results, and the system back button broke
   the screen behind it.** The search overlay is drawn on top of the NavHost
   rather than routed through it, so nothing consumed the back gesture: pressing
