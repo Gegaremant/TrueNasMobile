@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">@android:color/system_accent1_100</color>
+    <!-- Was @android:color/system_accent1_100, which only exists from API 31 and
+         crashed resource resolution on Android 10 and 11. The adaptive icon's
+         background is only ever seen as a mask, so a plain brand colour is
+         fine here and needs no version guard. -->
+    <color name="ic_launcher_background">#0B1A33</color>
 </resources>

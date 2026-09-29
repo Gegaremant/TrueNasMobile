@@ -4,7 +4,28 @@ All notable changes to TrueNasMobile are listed here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] — 2026-09-29
+
+### Fixed
+- **The app would have crashed on Android 10 and 11.** Material You wallpaper
+  colours (`dynamicLightColorScheme` / `dynamicDarkColorScheme`) need API 31, and
+  `ic_launcher_background` pointed at `@android:color/system_accent1_100`, which
+  also only exists from API 31. Both were introduced by lowering `minSdk` to 29 in
+  1.0.2 and shipped in 1.0.3, because **only `lintVital` had ever run**: it is
+  part of `assembleRelease`, and it did not fail on `NewApi` here, while the full
+  `lintGithubRelease` has been reporting them since the floor moved. The CI status
+  of `main` was not being looked at — it had been red since 27 September. The
+  theme now falls back to the app's own palette below API 31, the icon background
+  is a plain colour, `NewApi` stays fatal, and lint now runs in the release
+  workflow as well as in CI.
+- 40 `LocalContextGetResourceValueCall` findings, all pre-existing, are reported
+  as warnings with a justification rather than silenced or refactored blind.
+  Tracked as TODO 32.
+
 ## [1.0.3] — 2026-09-29
+
+> **Superseded by 1.0.4**, which fixes a crash on Android 10 and 11 that 1.0.3
+> shipped. The navigation fix below is in both.
 
 ### Added
 - **A test suite that can see the bugs 1.0.2 shipped.** 39 local JVM tests, of

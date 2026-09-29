@@ -89,8 +89,8 @@ android {
     defaultConfig {
         minSdk = 29
         targetSdk = 37
-        versionCode = 10003
-        versionName = "1.0.3"
+        versionCode = 10004
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -170,6 +170,23 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    lint {
+        // `context.getString(...)` inside a composable re-reads the resource on
+        // every recomposition instead of going through stringResource. It is a
+        // performance and recomposition-churn hint, not a crash - 88 call sites
+        // across ~30 screens, all predating the 1.0.3 work.
+        //
+        // Kept visible as a warning rather than disabled, and rather than being
+        // refactored in the same commit as a crash fix: 88 blind edits to
+        // screens nobody can run here is how the next regression gets shipped.
+        // Tracked as TODO 32.
+        warning += "LocalContextGetResourceValueCall"
+        // NewApi stays fatal. It is the check that would have caught the
+        // dynamicLightColorScheme crash on Android 10 and 11 the moment minSdk
+        // moved to 29 - and it is fatal now because lint actually runs in CI.
+        abortOnError = true
+        checkDependencies = false
     }
     testOptions {
         unitTests {

@@ -1,5 +1,6 @@
 package com.gegaremant.truenasmobile.ui.theme
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
@@ -19,8 +20,17 @@ fun TrueNasMobileAppTheme(
     var colorScheme = when (theme) {
         AppTheme.DYNAMIC -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context)
-            else dynamicLightColorScheme(context)
+            // Material You wallpaper colours arrived in Android 12 (API 31).
+            // The minSdk is 29, so on 10 and 11 there is nothing to read and the
+            // call would throw NoSuchMethodError - lint caught it as NewApi the
+            // moment the floor moved, and it shipped in 1.0.3 because only
+            // lintVital had ever run.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (darkTheme) dynamicDarkColorScheme(context)
+                else dynamicLightColorScheme(context)
+            } else {
+                if (darkTheme) TrueNasMobileDarkColors else TrueNasMobileLightColors
+            }
         }
         AppTheme.TRUENASMOBILE -> if (darkTheme) TrueNasMobileDarkColors else TrueNasMobileLightColors
         AppTheme.OCEAN -> if (darkTheme) OceanDarkColors else OceanLightColors
