@@ -50,6 +50,16 @@ jobs:
             echo "keystore_alias=TrueNasMobile" >> $GITHUB_OUTPUT
           fi
 
+      - name: Run unit tests
+        run: ./gradlew --build-cache testGithubDebugUnitTest --no-daemon
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8 -XX:+HeapDumpOnOutOfMemoryError"
+
+      - name: Run lint
+        run: ./gradlew --build-cache lintGithubRelease --no-daemon
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8 -XX:+HeapDumpOnOutOfMemoryError"
+
       - name: Build release APKs (per-ABI)
         run: ./gradlew --build-cache assembleGithubRelease --no-daemon
         env:
@@ -63,6 +73,17 @@ jobs:
           else
             echo "version=dev-$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
           fi
+
+      # Only meaningful once the APKs exist, which is why it runs after the
+      # build. 1.0.2 shipped a crash that a compile, a lint pass and every other
+      # unit test had passed, so the release is not published without a test
+      # that actually opens the artifact. --rerun because the test task has
+      # already run above and would otherwise be up to date.
+      - name: Verify the built artifacts
+        run: |
+          ./gradlew :app:testGithubDebugUnitTest \
+            --tests "com.gegaremant.truenasmobile.ReleaseArtifactTest" \
+            --rerun --no-daemon
 
       - name: Sign and rename APKs by ABI
         id: apks

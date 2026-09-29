@@ -171,6 +171,30 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    testOptions {
+        unitTests {
+            // Robolectric needs the merged resources and manifest to inflate
+            // anything, and it needs the resources of the variant under test
+            // rather than a stripped jar.
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+    }
+}
+
+// The artifact checks in ReleaseArtifactTest only mean anything against a built
+// APK. Ordering them after the build - when both tasks happen to be in the same
+// invocation - makes `./gradlew assembleGithubRelease test` a real release
+// verification, without making every local test run pay for a release build.
+tasks.matching { it.name == "testGithubDebugUnitTest" }.configureEach {
+    mustRunAfter("assembleGithubRelease")
+}
+
+tasks.register("verifyRelease") {
+    group = "verification"
+    description = "Builds the release APKs and runs the full unit test suite against them."
+    // assembleGithubRelease already pulls in lintVitalGithubRelease.
+    dependsOn("assembleGithubRelease", "testGithubDebugUnitTest")
 }
 
 dependencies {
@@ -202,7 +226,18 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.lifecycle.service)
+    // Local JVM tests. The source-scanning invariants need nothing, but the
+    // navigation tests build real NavControllers and the Compose ones walk a
+    // real composition tree - which is the only way to catch an error that
+    // exists solely once composition happens.
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.lifecycle.runtime.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)

@@ -74,6 +74,18 @@ cp .env.example .env && chmod 600 .env   # fill in KEYSTORE_*
 The APKs land in `app/build/outputs/apk/github/release/` — one per ABI. Full
 release process: [`docs/RELEASE.md`](docs/RELEASE.md).
 
+## Checks
+
+```bash
+./gradlew :app:testGithubDebugUnitTest   # 39 unit tests, ~40 s, no device needed
+./gradlew :app:verifyRelease             # release build + tests + lintVital
+scripts/smoke-device.sh                 # install on a device, assert it stays alive
+```
+
+What is covered — and, more usefully, what is not — is written down in
+[`docs/TESTING.md`](docs/TESTING.md), including why 1.0.2 passed every check and
+still closed right after a successful login.
+
 ## Localization
 
 The app follows the system language: English and Russian. All user-facing text

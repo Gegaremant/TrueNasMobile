@@ -101,7 +101,18 @@ There is deliberately no universal APK: `isUniversalApk = false` in
 
 ## 5. Check the artifacts
 
-Never ship an artifact you have not verified:
+Run the gate first — it builds the release APKs, runs the full unit test suite
+against them (including the dex and ZIP checks) and lintVital, in that order:
+
+```bash
+./gradlew :app:verifyRelease
+```
+
+The release workflow does the same before it signs anything. 1.0.2 was published
+without a single one of these steps, which is how a build that closed on every
+device after login reached users. `docs/TESTING.md` has the details.
+
+Then, by hand:
 
 ```bash
 BT=~/Projects/android-sdk/build-tools/37.0.0

@@ -74,6 +74,18 @@ cp .env.example .env && chmod 600 .env   # заполнить KEYSTORE_*
 Готовые APK появятся в `app/build/outputs/apk/github/release/` — по одному на
 каждую архитектуру. Полный процесс релиза: [`docs/RELEASE.md`](docs/RELEASE.md).
 
+## Проверки
+
+```bash
+./gradlew :app:testGithubDebugUnitTest   # 39 юнит-тестов, ~40 с, без устройства
+./gradlew :app:verifyRelease             # сборка релиза + тесты + lintVital
+scripts/smoke-device.sh                 # установка на устройство и проверка, что оно живо
+```
+
+Что покрыто и — важнее — что не покрыто, описано в
+[`docs/TESTING.md`](docs/TESTING.md). Там же объясняется, почему 1.0.2 прошёл
+все проверки и при этом закрывался после входа в учётную запись.
+
 ## Локализация
 
 Приложение следует системному языку: английский и русский. Весь пользовательский

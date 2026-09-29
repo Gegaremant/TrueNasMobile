@@ -6,6 +6,39 @@ versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
 
 ## [1.0.3] — 2026-09-29
 
+### Added
+- **A test suite that can see the bugs 1.0.2 shipped.** 39 local JVM tests, of
+  which the interesting ones are new:
+  - `NavHostOwnershipRuntimeTest` renders real `NavHost`s under Robolectric and
+    calls the real `dashboardViewModelOwner`, so the graph-ownership rule is
+    exercised rather than merely asserted about. It also fails if the inner
+    graph ever *stops* rejecting the `main` entry, so the negative case keeps
+    proving the check is sensitive.
+  - `RouteRegistrationTest` fails when the app navigates to a route no NavHost
+    registers — the whole-app version of the search bug, which crashed on tap.
+  - `ReleaseArtifactTest` checks every ZIP entry's CRC, recomputes the dex
+    Adler-32 and SHA-1 the way ART does, compares the dex size in the header with
+    the archive, and prints a SHA-256. It is how a truncated download becomes
+    distinguishable from a broken build without reading a stack trace.
+  - `AppCacheLifecycleTest` and `AccountSwitchingTest` from the previous work,
+    plus the existing localisation and navigation-bar guards.
+- `./gradlew :app:verifyRelease` — one command that builds the release APKs, runs
+  the whole test suite against them and runs lintVital, in that order.
+- `scripts/smoke-device.sh` — installs an APK on a connected device, launches it,
+  and fails on a fatal. It also recognises the silent-death signature: the
+  process gone with no `FATAL EXCEPTION` logged, which is what 1.0.2 did.
+- `docs/TESTING.md` — what is covered, what is not, the three Robolectric traps
+  hit while writing the first Robolectric test here (the app's own Application
+  refuses to start under test because it schedules WorkManager, and
+  `navigation-testing` collides with Compose's navigator), and the rule that a
+  new test must be made to fail before it is believed.
+
+### Changed
+- **The release workflow no longer publishes without checking anything.** It now
+  runs the unit tests, then lint, then builds, then verifies the built artifacts,
+  and only then signs and publishes. Before 27 September it went straight from
+  tag push to published APK.
+
 ### Fixed
 - **The app died silently right after a successful login.** Entering the main
   screen asked the *inner* NavHost for a back stack entry, but the `main`
@@ -13,11 +46,13 @@ versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
   neither graph sees the other's destinations. `getBackStackEntry` threw during
   composition, before the first frame, which is why there was no error to read:
   the app just closed. Fixed by asking the root controller, which is where
-  `MainScreen` is hosted. `NavHostOwnershipTest` fails the build if any back
-  stack entry is requested from a graph that does not register the destination.
-  The regression came from the shared dashboard ViewModel introduced in 1.0.2;
-  a compile, a full lint pass, 27 unit tests and an APK integrity check all
+  `MainScreen` is hosted, and the lookup now lives in a named function
+  (`dashboardViewModelOwner`) that both tests attack from both sides.
+  A compile, a full lint pass, 27 unit tests and an APK integrity check all
   passed, because none of them run Compose navigation.
+- A signed release that is merely *downloaded* badly is now diagnosable: the
+  workflow publishes a `.sha256` per asset and repeats the sums in the release
+  notes.
 
 ## [1.0.2] — 2026-09-27
 
