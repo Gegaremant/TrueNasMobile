@@ -4,7 +4,25 @@ All notable changes to TrueNasMobile are listed here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.2] — 2026-09-25
+## [1.0.3] — 2026-09-29
+
+### Fixed
+- **The app died silently right after a successful login.** Entering the main
+  screen asked the *inner* NavHost for a back stack entry, but the `main`
+  destination only exists in the *root* one — the two NavHosts are siblings, so
+  neither graph sees the other's destinations. `getBackStackEntry` threw during
+  composition, before the first frame, which is why there was no error to read:
+  the app just closed. Fixed by asking the root controller, which is where
+  `MainScreen` is hosted. `NavHostOwnershipTest` fails the build if any back
+  stack entry is requested from a graph that does not register the destination.
+  The regression came from the shared dashboard ViewModel introduced in 1.0.2;
+  a compile, a full lint pass, 27 unit tests and an APK integrity check all
+  passed, because none of them run Compose navigation.
+
+## [1.0.2] — 2026-09-27
+
+> **Withdrawn.** This release crashed on every device immediately after login
+> (see 1.0.3). It was never usable and has been replaced.
 
 Localisation, security and dead-UI cleanup.
 

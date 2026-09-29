@@ -87,8 +87,23 @@ jobs:
               --ks-pass "pass:$STORE_PASS" --key-pass "pass:$KEY_PASS" \
               --out "$out" "$apk"
             $ANDROID_HOME/build-tools/34.0.0/apksigner verify "$out"
+            # Publish a checksum next to every APK. Without it a truncated or
+            # mangled download can only be diagnosed from a dex checksum error
+            # in logcat, which looks exactly like a broken build.
+            (cd dist && sha256sum "$(basename "$out")" > "$(basename "$out").sha256")
             echo "$out" >> /tmp/assets.txt
+            echo "dist/$(basename "$out").sha256" >> /tmp/assets.txt
           done
+
+          # Same block for the release notes, so the sums are visible without
+          # downloading anything.
+          {
+            echo ""
+            echo "### 🔐 Checksums (SHA-256)"
+            echo '```'
+            cat dist/*.sha256
+            echo '```'
+          } >> /tmp/checksums.md
 
       - name: Create Release with APKs
         env:
@@ -106,9 +121,12 @@ jobs:
           ### ⚠️ Installing a New Version
           - APKs are signed with a release certificate.
           - If your previously installed build used a different certificate, uninstall it first.
+          - Verify the download with the SHA-256 below: a truncated file installs
+            and then fails with a dex checksum error that looks like a broken app.
           ### 🔧 Build Info
           - Commit: ${{ github.sha }}
           EOF
+          cat /tmp/checksums.md >> release_body.md
           gh release create "$VERSION" $ASSETS \
             --title "Release $VERSION" \
             --notes-file release_body.md \

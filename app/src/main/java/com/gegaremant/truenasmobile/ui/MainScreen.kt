@@ -374,7 +374,14 @@ private fun TrueNasMobileNavGraph(
     // batches on first open, plus three 30 s connectivity polls, all for the
     // same data. One instance, owned by the Screen.Main back stack entry so it
     // is still torn down when the user signs out and Main leaves the graph.
-    val mainEntry = remember(navController) { navController.getBackStackEntry(Screen.Main.route) }
+    //
+    // The entry has to be asked of the ROOT controller: `navController` is the
+    // inner NavHost, whose graph starts at `home` and knows nothing about the
+    // account-level destinations, `main` among them. Asking the inner one throws
+    // during composition, which takes the app down right after login.
+    val mainEntry = remember(rootNavController) {
+        rootNavController.getBackStackEntry(Screen.Main.route)
+    }
     val dashboardViewModel: HomeViewModel = viewModel(
         viewModelStoreOwner = mainEntry,
         factory = HomeViewModel.HomeViewModelFactory(manager, LocalContext.current.applicationContext)

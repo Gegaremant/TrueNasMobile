@@ -110,6 +110,27 @@ APK=app/build/outputs/apk/github/release/app-github-arm64-v8a-release.apk
 $BT/apksigner verify --verbose --print-certs "$APK"   # must say "Verifies"
 $BT/aapt2 dump badging "$APK" | head -3              # versionCode/versionName
 $BT/aapt2 dump configurations "$APK" | grep -c ru     # the ru locale is present
+unzip -t "$APK" >/dev/null && echo "zip intact"      # CRC of every entry
+```
+
+### What a broken download looks like
+
+A truncated or mangled APK **installs successfully** and then dies on launch
+with a `ClassNotFoundException` for the Application class — which is a red
+herring. The real line is suppressed under it:
+
+```
+Failed to open dex files from base.apk: Bad checksum (745ca288, expected 41c63683)
+```
+
+The class loader could not open `classes.dex`, so of course it found no class.
+Verify the dex the way ART does (Adler-32 from offset `0x0C`, SHA-1 from
+`0x20`) before suspecting the build. That is also why the release publishes a
+`.sha256` per asset and repeats the sums in the release notes: a user whose
+download got cut can confirm it in one command instead of reading logcat.
+
+```bash
+sha256sum truenasmobile-v1.0.3-arm64.apk   # must equal the published .sha256
 ```
 
 Expected signer: `CN=TrueNasMobile, OU=Gegaremant Labs, O=Gegaremant Labs`.
