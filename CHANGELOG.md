@@ -4,6 +4,38 @@ All notable changes to TrueNasMobile are listed here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] — 2026-10-02
+
+### Added
+- **Tab header template.** Every tab now shares one header: a brand line with
+  the app name on the left and the author on the right, then the tab title
+  with instance settings (box + gear), search, profile chip (list + plus,
+  opens the account switcher), notifications bell, power (shutdown/restart
+  dialog lives in the header on every tab) and app settings (robot + gear,
+  opens the mobile app settings so theme/profile/about stay reachable).
+- **"New" action on the tab screens.** A real add action, not a filter:
+  Applications → Marketplace; Containers and VMs → an honest "coming soon"
+  toast (no create UI exists yet).
+- **Storage pool details keep the bottom menu.** The pool screen shows the
+  bottom bar with Home highlighted, per the storage-pool spec (top and
+  bottom menu).
+- **Container API migrated to TrueNAS 26.0.** The old `container.*` namespace
+  no longer exists on 26.0; the screen speaks the new `container.*` API
+  surface with all 18 methods.
+- **"Сведения" (Details) rework.** The Statistics tab was renamed to
+  Сведения and lost its placeholder Graphs sub-tab; CPU/Memory/Temperature
+  are now expandable sections with real charts.
+- **Storage tab = shared resources.** SMB/NFS/webshare via
+  `sharing.webshare.query`; the old dead storage screen is gone.
+
+### Changed
+- **First run no longer begs for notification permission.**
+  `POST_NOTIFICATIONS` is not auto-requested at first launch anymore; the
+  setup bottom sheet still opens automatically on first run.
+- **Biometric prompt fixed.** When the lock is off, the app no longer asks
+  for the fingerprint at startup; Back from a tab returns to the tab you
+  came from instead of dropping you on Home.
+
 ## [1.0.4] — 2026-09-29
 
 ### Fixed
