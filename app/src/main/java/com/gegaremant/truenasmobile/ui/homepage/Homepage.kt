@@ -285,6 +285,13 @@ private fun HomeContent(
                 onSmbShareClick = { share -> onNavigateToShareInfo(ShareType.Smb(share)) },
                 onNfsShareClick = { share -> onNavigateToShareInfo(ShareType.Nfs(share)) }
             )
+
+            DetailsMetricsSection(
+                cpuData = state.cpuData,
+                memoryData = state.memoryData,
+                temperatureData = state.temperatureData,
+                modifier = Modifier.padding(top = 16.dp)
+            )
         } else {
             //     modifier = Modifier.padding(bottom = 16.dp),
             // )
@@ -302,6 +309,15 @@ private fun HomeContent(
                 nfsShares = state.nfsShares,
                 onSmbShareClick = { share -> onNavigateToShareInfo(ShareType.Smb(share)) },
                 onNfsShareClick = { share -> onNavigateToShareInfo(ShareType.Nfs(share)) }
+            )
+
+            // Live metrics sit below the pool card as expandable rows - the
+            // Graphs screen is no longer a tab.
+            DetailsMetricsSection(
+                cpuData = state.cpuData,
+                memoryData = state.memoryData,
+                temperatureData = state.temperatureData,
+                modifier = Modifier.padding(top = 16.dp)
             )
         }
     }
@@ -483,33 +499,11 @@ private fun SystemOverviewCard(
                         }
                     }
 
-                    // Performance Overview
-                    item {
-                        PillChip(
-                            onClick = onPerformanceClick,
-                            icon = Icons.Filled.Memory,
-                            label = stringResource(R.string.homepage_performance),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-
-                    // Instance Settings
-                    item {
-                        PillChip(
-                            onClick = onInstanceConfigClick,
-                            icon = Icons.Filled.Tune,
-                            label = stringResource(R.string.homepage_instance_settings)
-                        )
-                    }
-
-                    // System Information
-                    item {
-                        PillChip(
-                            onClick = onSystemInfoClick,
-                            icon = Icons.Filled.Info,
-                            label = stringResource(R.string.homepage_system_information)
-                        )
-                    }
+                    // Performance, Instance Settings and System Information used
+                    // to live here as pills. They are reachable from the app bar
+                    // now (settings icon, robot icon), and the performance charts
+                    // sit below the pool card as expandable rows, so the pills
+                    // were three ways to the same three places.
                 }
             }
         }

@@ -223,9 +223,9 @@
     <string name="toast_restart_success">System restart initiated successfully</string>
 
     <!-- Storage screen -->
-    <string name="storage_title">Storage</string>
+    <string name="storage_title">Shared resources</string>
     <string name="storage_no_pools">No pools</string>
-    <string name="storage_subtitle">%1$s · %2$s</string>
+    <string name="storage_subtitle">Resources exposed by this TrueNAS</string>
     <string name="storage_loading_data">Loading data…</string>
     <string name="storage_connection_error">Connection error</string>
     <string name="storage_loading">Loading storage</string>
@@ -1834,11 +1834,11 @@
     <string name="localadmin_about_title">About Local Administrator Setup</string>
     <string name="localadmin_about_desc">Use this to set up or reset the local administrator account. This is typically done on first login when no admin password is set. Choose \'root\' or \'truenas_admin\' as the username.</string>
     <string name="localadmin_account_section">Administrator Account</string>
-    <string name="home_title">Statistics</string>
+    <string name="home_title">Details</string>
     <string name="home_greeting">Welcome back!</string>
     <string name="home_loading">Loading statistics</string>
     <string name="home_connect_failed">Failed to connect</string>
-    <string name="nav_statistics">Statistics</string>
+    <string name="nav_statistics">Details</string>
     <string name="nav_storage">Storage</string>
     <string name="nav_tasks">Tasks</string>
     <string name="nav_graphs">Graphs</string>
@@ -1951,4 +1951,21 @@
     <string name="theme_black_mode">True OLED black</string>
     <string name="theme_black_mode_desc">Pure black surfaces, so an OLED display can switch its pixels off in dark mode</string>
     <string name="theme_navbar_home_locked">Always first</string>
+    <string name="brand_app_name">TrueNasMobile</string>
+    <string name="brand_author">Gegaremant Labs @RetuzovoGrad 2026</string>
+    <string name="details_metric_cpu">CPU usage</string>
+    <string name="details_metric_memory">Memory</string>
+    <string name="details_metric_temperature">Temperature</string>
+    <string name="details_metrics_title">Live metrics</string>
+    <string name="details_metrics_expand_cd">Show chart</string>
+    <string name="details_metrics_collapse_cd">Hide chart</string>
+    <string name="new_instance_add">New</string>
+    <string name="new_app_title">New application</string>
+    <string name="new_container_title">New container</string>
+    <string name="new_vm_title">New virtual machine</string>
+    <string name="shared_nfs_title">NFS shares</string>
+    <string name="shared_smb_title">SMB shares</string>
+    <string name="shared_webshare_title">Web shares</string>
+    <string name="shared_webdav_title">WebDAV</string>
+    <string name="shared_none">Nothing is exposed by this server yet</string>
 </resources>

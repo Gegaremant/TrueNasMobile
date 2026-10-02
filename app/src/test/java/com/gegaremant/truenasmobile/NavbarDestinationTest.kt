@@ -28,14 +28,19 @@ class NavbarDestinationTest {
     }
 
     @Test
-    fun `defaults keep the classic bar and expose apps`() {
+    fun `defaults are the three tabs the owner asked for`() {
         val defaults = NavbarDestination.defaults
-        // Home/Storage/Tasks/Performance were the hardcoded bar; losing them
-        // would be a regression for existing users.
-        listOf(home, storage, NavbarDestination.TASKS, NavbarDestination.PERFORMANCE)
-            .forEach { assertTrue("$it missing from defaults", it in defaults) }
-        assertTrue("apps should be reachable by default", apps in defaults)
+        // Details, Storage, Tasks - in that order. Apps/Containers/VMs became
+        // sub-tabs of Tasks, and Performance is no longer a tab at all.
+        assertEquals(
+            listOf(NavbarDestination.HOME, NavbarDestination.STORAGE, NavbarDestination.TASKS),
+            defaults
+        )
         assertEquals(home, defaults.first())
+        assertTrue(
+            "Performance must not be a bar entry any more",
+            NavbarDestination.entries.none { it.route == "performance" }
+        )
     }
 
     @Test
@@ -106,7 +111,7 @@ class NavbarDestinationTest {
 
         // A real move swaps neighbours.
         val moved = PersonalizationManager.moveDestination(bar, storage, 1)
-        assertEquals(apps, moved[1])
+        assertEquals(NavbarDestination.TASKS, moved[1])
         assertEquals(storage, moved[2])
     }
 

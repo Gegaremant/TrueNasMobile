@@ -225,9 +225,9 @@
     <string name="toast_restart_success">Перезагрузка системы успешно запущена</string>
 
     <!-- Storage screen -->
-    <string name="storage_title">Хранилище</string>
+    <string name="storage_title">Общие ресурсы</string>
     <string name="storage_no_pools">Нет пулов</string>
-    <string name="storage_subtitle">%1$s · %2$s</string>
+    <string name="storage_subtitle">Ресурсы, открытые этим TrueNAS</string>
     <string name="storage_loading_data">Загрузка данных…</string>
     <string name="storage_connection_error">Ошибка подключения</string>
     <string name="storage_loading">Загрузка хранилища</string>
@@ -1846,12 +1846,12 @@
     <string name="localadmin_about_title">О настройке локального администратора</string>
     <string name="localadmin_about_desc">Используйте это, чтобы создать или сбросить локальную учётную запись администратора. Обычно это делается при первом входе, когда пароль администратора не задан. Укажите \'root\' или \'truenas_admin\' в качестве имени пользователя.</string>
     <string name="localadmin_account_section">Учётная запись администратора</string>
-    <string name="home_title">Статистика</string>
+    <string name="home_title">Сведения</string>
     <string name="home_greeting">С возвращением!</string>
     <string name="home_loading">Загрузка статистики</string>
     <string name="home_connect_failed">Не удалось подключиться</string>
-    <string name="nav_statistics">Статистика</string>
-    <string name="nav_storage">Хранилище</string>
+    <string name="nav_statistics">Сведения</string>
+    <string name="nav_storage">Хранение</string>
     <string name="nav_tasks">Задачи</string>
     <string name="nav_graphs">Графики</string>
     <string name="upgrade_cancelling">Отмена обновления…</string>
@@ -1963,4 +1963,21 @@
     <string name="theme_black_mode">Чёрный OLED</string>
     <string name="theme_black_mode_desc">Полностью чёрные поверхности, чтобы OLED-экран мог гасить пиксели в тёмной теме</string>
     <string name="theme_navbar_home_locked">Всегда первая</string>
+    <string name="brand_app_name">TrueNasMobile</string>
+    <string name="brand_author">Gegaremant Labs @RetuzovoGrad 2026</string>
+    <string name="details_metric_cpu">Использование CPU</string>
+    <string name="details_metric_memory">Память</string>
+    <string name="details_metric_temperature">Температура</string>
+    <string name="details_metrics_title">Показатели в реальном времени</string>
+    <string name="details_metrics_expand_cd">Показать график</string>
+    <string name="details_metrics_collapse_cd">Скрыть график</string>
+    <string name="new_instance_add">Новое</string>
+    <string name="new_app_title">Новое приложение</string>
+    <string name="new_container_title">Новый контейнер</string>
+    <string name="new_vm_title">Новая виртуальная машина</string>
+    <string name="shared_nfs_title">Общие NFS</string>
+    <string name="shared_smb_title">Общие SMB</string>
+    <string name="shared_webshare_title">Веб-ресурсы</string>
+    <string name="shared_webdav_title">WebDAV</string>
+    <string name="shared_none">Этот сервер пока ничего не открывает</string>
 </resources>

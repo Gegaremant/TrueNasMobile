@@ -383,6 +383,9 @@ object ApiMethods {
     object Shares{
         const val GET_NFS_SHARES = "sharing.nfs.query"
         const val GET_SMB_SHARES = "sharing.smb.query"
+        // TrueNAS's built-in web file shares. There is no WebDAV namespace in
+        // the 26.0 API; verified against core.get_methods on a 26.0 stand.
+        const val GET_WEBSHARE = "sharing.webshare.query"
     }
     object Storage {
         /**

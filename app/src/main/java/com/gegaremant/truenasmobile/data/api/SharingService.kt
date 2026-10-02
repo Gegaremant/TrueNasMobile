@@ -21,4 +21,14 @@ class SharingService(var manager : TrueNASApiManager) {
             resultType = type,
         )
     }
+
+    /** Web file shares (`sharing.webshare.query`). */
+    suspend fun getWebSharesWithResult(): ApiResult<List<Shares.WebShare>> {
+        val type = Types.newParameterizedType(List::class.java, Shares.WebShare::class.java)
+        return manager.callWithResult(
+            method = ApiMethods.Shares.GET_WEBSHARE,
+            params = emptyList(),
+            resultType = type,
+        )
+    }
 }

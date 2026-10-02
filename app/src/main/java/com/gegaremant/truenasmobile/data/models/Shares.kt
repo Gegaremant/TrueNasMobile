@@ -64,6 +64,26 @@ object Shares {
         val locked: Boolean = false,
         val expose_snapshots: Boolean = false
     )
+
+    /**
+     * `sharing.webshare.query` - TrueNAS's built-in web file shares.
+     *
+     * Note: there is no `webdav` namespace in the 26.0 API at all
+     * (`core.get_methods` on a 26.0.0-BETA.3 stand lists 815 methods and none
+     * of them match "dav"), so web exposure is served by this namespace. Every
+     * field carries a default because the stand has no web shares configured
+     * and the record shape could not be observed live.
+     */
+    @Suppress("PropertyName")
+    @JsonClass(generateAdapter = true)
+    data class WebShare(
+        val id: Int = 0,
+        val path: String = "",
+        val comment: String = "",
+        val enabled: Boolean = false,
+        val index_doc: Boolean? = null,
+        val files: List<String>? = null
+    )
 //    @JsonClass(generateAdapter = true)
 //    enum class NfsSecurity{
 //        SYS,

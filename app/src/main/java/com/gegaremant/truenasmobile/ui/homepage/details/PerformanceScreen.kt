@@ -818,7 +818,7 @@ private fun PerformanceInfoSection(
 }
 
 @Composable
-private fun LineChartView(
+internal fun LineChartView(
     modifier: Modifier = Modifier,
     data: System.ReportingGraphResponse,
     color: Color,

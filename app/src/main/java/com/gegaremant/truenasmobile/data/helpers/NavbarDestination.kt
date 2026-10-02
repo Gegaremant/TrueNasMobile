@@ -28,9 +28,8 @@ enum class NavbarDestination(
 ) {
     HOME(R.string.nav_statistics, Screen.Home.route, isRequired = true),
     STORAGE(R.string.nav_storage, Screen.Storage.route),
-    APPS(R.string.nav_apps, Screen.Apps.route),
     TASKS(R.string.nav_tasks, Screen.Tasks.route),
-    PERFORMANCE(R.string.nav_graphs, Screen.Performance.route),
+    APPS(R.string.nav_apps, Screen.Apps.route),
     CONTAINERS(R.string.nav_containers, Screen.Containers.route),
     VMS(R.string.nav_vms, Screen.Vms.route),
     MARKETPLACE(R.string.nav_marketplace, Screen.Marketplace.route),
@@ -45,14 +44,14 @@ enum class NavbarDestination(
         val optional get() = entries.filter { !it.isRequired }
 
         /**
-         * What a user sees before they touch anything.
+         * The bar the owner asked for: Details, Storage, Tasks - in that order.
          *
-         * Home/Storage/Tasks/Performance is what the app has always shown in
-         * the bar; Apps is added because it is a headline feature and was
-         * otherwise reachable only through the search overlay. Everything else
-         * is opt-in.
+         * Apps, Containers and VMs are sub-tabs of Tasks now, so they are not
+         * separate bar entries; Performance is gone as a tab because its charts
+         * live on the Details screen. The remaining entries stay available in
+         * the bar editor for anyone who wants them.
          */
         val defaults: List<NavbarDestination>
-            get() = listOf(HOME, STORAGE, APPS, TASKS, PERFORMANCE)
+            get() = listOf(HOME, STORAGE, TASKS)
     }
 }

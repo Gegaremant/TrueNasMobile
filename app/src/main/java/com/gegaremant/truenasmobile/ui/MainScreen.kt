@@ -93,12 +93,13 @@ import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import com.gegaremant.truenasmobile.ui.homepage.HomeScreen
 import com.gegaremant.truenasmobile.ui.homepage.HomeUiState
 import com.gegaremant.truenasmobile.ui.homepage.HomeViewModel
-import com.gegaremant.truenasmobile.ui.homepage.StorageScreen
+import com.gegaremant.truenasmobile.ui.homepage.SharedResourcesScreen
 import com.gegaremant.truenasmobile.ui.homepage.TasksScreen
 import com.gegaremant.truenasmobile.ui.homepage.dataset.DatasetExplorerScreen
 import com.gegaremant.truenasmobile.ui.homepage.details.DiskInfoScreen
 import com.gegaremant.truenasmobile.ui.homepage.details.PerformanceScreen
 import com.gegaremant.truenasmobile.ui.homepage.details.ShareInfoScreen
+import com.gegaremant.truenasmobile.ui.homepage.details.ShareType
 import com.gegaremant.truenasmobile.ui.homepage.instancesettings.InstanceConfigScreen
 import com.gegaremant.truenasmobile.ui.homepage.instancesettings.advanced.AdvancedSystemSettingsEditScreen
 import com.gegaremant.truenasmobile.ui.homepage.instancesettings.advanced.AdvancedSystemSettingsScreen
@@ -183,8 +184,6 @@ private fun destinationToNavItem(destination: NavbarDestination): NavItem? {
             NavItem(destination, R.string.nav_apps, Icons.Filled.Apps, Icons.Outlined.Apps)
         NavbarDestination.TASKS ->
             NavItem(destination, R.string.nav_tasks, Icons.Filled.Checklist, Icons.Outlined.Checklist)
-        NavbarDestination.PERFORMANCE ->
-            NavItem(destination, R.string.nav_graphs, Icons.Filled.ShowChart, Icons.Outlined.ShowChart)
         NavbarDestination.CONTAINERS ->
             NavItem(destination, R.string.nav_containers, Icons.Filled.Apps, Icons.Outlined.Apps)
         NavbarDestination.VMS ->
@@ -456,22 +455,19 @@ private fun TrueNasMobileNavGraph(
             )
         }
         composable(Screen.Storage.route) {
-            StorageScreen(
+            // Shared resources: SMB, NFS and TrueNAS web shares. Pools live on
+            // the Details screen now - this tab used to be a duplicate of it.
+            SharedResourcesScreen(
                 manager = manager,
-                viewModel = dashboardViewModel,
-                onNavigateToSettings = { rootNavController.navigate(Screen.Settings.route) },
-                onPoolClick = { pool: System.Pool ->
-                    PoolDataHolder.currentPool = pool
-                    navController.navigate(Screen.PoolDetails.route)
-                },
-                onNavigateToShareInfo = { shareType ->
-                    AppDataHolder.selectedShareType = shareType
+                onNavigateBack = { navController.popBackStack() },
+                onSmbShareClick = { share ->
+                    AppDataHolder.selectedShareType = ShareType.Smb(share)
                     navController.navigate(Screen.ShareInfo.route)
                 },
-                onDisksClick = {
-                    navController.navigate(Screen.DiskInfo.route)
-                },
-                onSearchClick = onSearchClick
+                onNfsShareClick = { share ->
+                    AppDataHolder.selectedShareType = ShareType.Nfs(share)
+                    navController.navigate(Screen.ShareInfo.route)
+                }
             )
         }
         composable(Screen.Tasks.route) {
