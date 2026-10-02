@@ -10,7 +10,7 @@ import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Apps
 import com.gegaremant.truenasmobile.data.models.Shares
 import com.gegaremant.truenasmobile.data.models.System
-import com.gegaremant.truenasmobile.data.models.Virt
+import com.gegaremant.truenasmobile.data.models.Container
 import com.gegaremant.truenasmobile.data.models.Vm
 import com.gegaremant.truenasmobile.ui.Screen
 import com.gegaremant.truenasmobile.ui.components.ToastManager
@@ -152,7 +152,7 @@ sealed class SearchResult {
         override val title: String,
         override val subtitle: String,
         override val relevanceScore: Float,
-        val container: Virt.ContainerResponse
+        val container: Container.ContainerResponse
     ) : SearchResult() {
         override val category = SearchCategory.CONTAINERS
         override val route = Screen.ContainerInfo.route
@@ -514,15 +514,15 @@ class SearchViewModel(
                     val relevance = calculateRelevance(
                         lowerQuery,
                         container.name,
-                        container.status.name,
-                        container.image.os ?: "",
-                        container.image.release ?: ""
+                        container.resolvedStatus.name,
+                        container.image?.os ?: "",
+                        container.image?.release ?: ""
                     )
                     if (relevance > 0) {
-                        val statusEmoji = when (container.status) {
-                            Virt.Status.RUNNING -> " " + ToastManager.resolveString(R.string.search_state_running)
-                            Virt.Status.STOPPED -> " " + ToastManager.resolveString(R.string.search_state_stopped)
-                            else -> " • ${container.status.name}"
+                        val statusEmoji = when (container.resolvedStatus) {
+                            Container.Status.RUNNING -> " " + ToastManager.resolveString(R.string.search_state_running)
+                            Container.Status.STOPPED -> " " + ToastManager.resolveString(R.string.search_state_stopped)
+                            else -> " • ${container.resolvedStatus.name}"
                         }
                         results.add(
                             SearchResult.ContainerResult(

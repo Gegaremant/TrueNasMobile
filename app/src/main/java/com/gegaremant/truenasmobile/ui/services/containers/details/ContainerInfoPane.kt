@@ -41,7 +41,7 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.gegaremant.truenasmobile.R
-import com.gegaremant.truenasmobile.data.models.Virt.ContainerResponse
+import com.gegaremant.truenasmobile.data.models.Container.ContainerResponse
 
 @Composable
 fun ContainerInfoPane(
@@ -79,7 +79,7 @@ fun ContainerInfoPane(
             }
 
             ExpressiveSection(title = stringResource(R.string.appinfo_status), icon = Icons.Default.Info) {
-                val statusStr = container.status.toString().uppercase()
+                val statusStr = container.resolvedStatus.toString().uppercase()
                 val isRunning = statusStr == "RUNNING" || statusStr == "ACTIVE"
                 val statusColor = if (isRunning) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer
                 val onStatusColor = if (isRunning) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onErrorContainer
@@ -118,16 +118,16 @@ fun ContainerInfoPane(
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                     InfoRow(label = stringResource(R.string.attr_type), value = container.type.toString())
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                    InfoRow(label = stringResource(R.string.container_detail_autostart), value = if (container.autostart) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled))
+                    InfoRow(label = stringResource(R.string.container_detail_autostart), value = if (container.autostart == true) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled))
 
                     container.secure_boot?.let { secureBoot ->
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                         InfoRow(label = stringResource(R.string.container_secure_boot), value = if (secureBoot) stringResource(R.string.common_enabled) else stringResource(R.string.common_disabled))
                     }
 
-                    if (container.aliases.isNotEmpty()) {
+                    if (container.aliasesOrEmpty.isNotEmpty()) {
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                        InfoRow(label = stringResource(R.string.container_aliases), value = container.aliases.joinToString { it.toString() })
+                        InfoRow(label = stringResource(R.string.container_aliases), value = container.aliasesOrEmpty.joinToString { it.toString() })
                     }
                 }
             }
@@ -178,7 +178,7 @@ fun ContainerInfoPane(
                 }
             }
 
-            if (container.vnc_enabled) {
+            if (container.vnc_enabled == true) {
                 ExpressiveSection(title = stringResource(R.string.container_section_vnc), icon = Icons.Default.DesktopWindows) {
                     ExpressiveInfoCard {
                         InfoRow(label = stringResource(R.string.container_vnc_status), value = stringResource(R.string.common_enabled))
@@ -194,10 +194,10 @@ fun ContainerInfoPane(
                 }
             }
 
-            if (container.environment.isNotEmpty()) {
+            if (container.environment.orEmpty().isNotEmpty()) {
                 ExpressiveSection(title = stringResource(R.string.container_section_env), icon = Icons.Default.DeveloperBoard) {
                     ExpressiveInfoCard {
-                        val entries = container.environment.entries.toList()
+                        val entries = container.environment.orEmpty().entries.toList()
                         entries.forEachIndexed { index, entry ->
                             InfoRow(label = entry.key, value = entry.value)
                             if (index < entries.size - 1) {

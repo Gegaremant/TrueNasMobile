@@ -21,12 +21,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
-import com.gegaremant.truenasmobile.data.models.Virt
+import com.gegaremant.truenasmobile.data.models.Container
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 
 @Composable
 fun ContainerInfoScreen(
-    container: Virt.ContainerResponse,
+    container: Container.ContainerResponse,
     manager: TrueNASApiManager,
     onNavigateBack: () -> Unit
 ) {

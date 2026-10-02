@@ -1,9 +1,9 @@
 package com.gegaremant.truenasmobile.ui.services.containers.details
 
-import com.gegaremant.truenasmobile.data.models.Virt
+import com.gegaremant.truenasmobile.data.models.Container
 
 object ContainerDataHolder {
-    var selectedContainer: Virt.ContainerResponse? = null
+    var selectedContainer: Container.ContainerResponse? = null
 
     /**
      * Drops the selection.

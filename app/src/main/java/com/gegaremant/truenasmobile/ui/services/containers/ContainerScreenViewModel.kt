@@ -9,7 +9,7 @@ import com.gegaremant.truenasmobile.data.ApiResult
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.ui.utils.AppCache
 import com.gegaremant.truenasmobile.data.models.System
-import com.gegaremant.truenasmobile.data.models.Virt
+import com.gegaremant.truenasmobile.data.models.Container
 import com.gegaremant.truenasmobile.ui.components.ToastManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ContainerScreenUiState(
-    val containers: List<Virt.ContainerResponse> = emptyList(),
+    val containers: List<Container.ContainerResponse> = emptyList(),
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val error: String? = null,
@@ -82,7 +82,7 @@ class ContainerScreenViewModel(
             } else {
                 _uiState.update { it.copy(isRefreshing = true) }
             }
-            when (val result = manager.virtService.getAllInstancesWithResult()) {
+            when (val result = manager.containerService.getContainersWithResult()) {
                 is ApiResult.Success -> {
                     AppCache.updateContainers(result.data)
                     if (notifyUser) {
@@ -121,7 +121,7 @@ class ContainerScreenViewModel(
 
     fun startContainer(id: String) {
         viewModelScope.launch {
-            when (val result = manager.virtService.startVirtInstanceWithResult(id)) {
+            when (val result = manager.containerService.startContainerWithResult(id)) {
                 is ApiResult.Success -> {
                     val jobId = result.data // Assuming this returns job ID
                     trackContainerOperation(id, jobId.toInt(), "STARTING")
@@ -140,7 +140,7 @@ class ContainerScreenViewModel(
 
     fun stopContainer(id: String) {
         viewModelScope.launch {
-            when (val result = manager.virtService.stopVirtInstanceWithResult(id, 2)) {
+            when (val result = manager.containerService.stopContainerWithResult(id, 2)) {
                 is ApiResult.Success -> {
                     val jobId = result.data // Assuming this returns job ID
                     trackContainerOperation(id, jobId.toInt(), "STOPPING")
@@ -159,7 +159,7 @@ class ContainerScreenViewModel(
     }
     fun restartContainer(id: String) {
         viewModelScope.launch {
-            when (val result = manager.virtService.restartVirtInstanceWithResult(id,2)) {
+            when (val result = manager.containerService.restartContainerWithResult(id,2)) {
                 is ApiResult.Success -> {
                     val jobId = result.data // Assuming this returns job ID
                     trackContainerOperation(id, jobId.toInt(), "RESTARTING")
@@ -230,10 +230,10 @@ class ContainerScreenViewModel(
 
     fun deleteContainer(id: String) {
         viewModelScope.launch {
-            when (val result = manager.virtService.deleteVirtInstanceWithResult(id)) {
+            when (val result = manager.containerService.deleteContainerWithResult(id)) {
                 is ApiResult.Success -> {
                     val jobId = result.data
-                    trackContainerOperation(id,jobId,"DELETING")
+                    trackContainerOperation(id, jobId.toInt(), "DELETING")
                     refresh()
                 }
                 is ApiResult.Error -> {

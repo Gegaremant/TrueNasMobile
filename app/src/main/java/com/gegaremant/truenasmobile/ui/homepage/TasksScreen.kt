@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Apps
-import com.gegaremant.truenasmobile.data.models.Virt
+import com.gegaremant.truenasmobile.data.models.Container
 import com.gegaremant.truenasmobile.data.models.Vm
 import com.gegaremant.truenasmobile.ui.services.apps.AppsScreen
 import com.gegaremant.truenasmobile.ui.services.containers.ContainersScreen
@@ -44,7 +44,7 @@ fun TasksScreen(
     onNavigateToUpgrade: (String) -> Unit = {},
     onNavigateToRollback: (String) -> Unit = {},
     onNavigateToMarketplace: () -> Unit = {},
-    onNavigateToContainerInfo: (Virt.ContainerResponse) -> Unit = {},
+    onNavigateToContainerInfo: (Container.ContainerResponse) -> Unit = {},
     onNavigateToVmInfo: (Vm.VmQueryResponse) -> Unit = {}
 ) {
     var selectedSubTab by rememberSaveable { mutableIntStateOf(0) }

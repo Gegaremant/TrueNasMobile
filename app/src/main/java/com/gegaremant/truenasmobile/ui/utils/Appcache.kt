@@ -3,7 +3,7 @@ package com.gegaremant.truenasmobile.ui.utils
 import com.gegaremant.truenasmobile.data.models.Apps
 import com.gegaremant.truenasmobile.data.models.Shares
 import com.gegaremant.truenasmobile.data.models.System
-import com.gegaremant.truenasmobile.data.models.Virt
+import com.gegaremant.truenasmobile.data.models.Container
 import com.gegaremant.truenasmobile.data.models.Vm
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,8 +51,8 @@ object AppCache {
     private val _cachedNfsShares = MutableStateFlow<List<Shares.NfsShare>>(emptyList())
     val cachedNfsShares: StateFlow<List<Shares.NfsShare>> = _cachedNfsShares.asStateFlow()
 
-    private val _cachedContainers = MutableStateFlow<List<Virt.ContainerResponse>>(emptyList())
-    val cachedContainers: StateFlow<List<Virt.ContainerResponse>> = _cachedContainers.asStateFlow()
+    private val _cachedContainers = MutableStateFlow<List<Container.ContainerResponse>>(emptyList())
+    val cachedContainers: StateFlow<List<Container.ContainerResponse>> = _cachedContainers.asStateFlow()
     private val _cachedVms = MutableStateFlow<List<Vm.VmQueryResponse>>(emptyList())
     val cachedVms: StateFlow<List<Vm.VmQueryResponse>> = _cachedVms.asStateFlow()
 
@@ -92,7 +92,7 @@ object AppCache {
         _cachedNfsShares.value = shares
     }
 
-    fun updateContainers(containers: List<Virt.ContainerResponse>) {
+    fun updateContainers(containers: List<Container.ContainerResponse>) {
         _cachedContainers.value = containers
         markUpdated(Entry.CONTAINERS)
     }

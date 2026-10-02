@@ -3,7 +3,21 @@ package com.gegaremant.truenasmobile.data.models
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-object Virt {
+/**
+ * Containers.
+ *
+ * TrueNAS 26.0 removed the whole `virt.*` namespace: `core.get_methods` on a
+ * 26.0.0-BETA.3 stand reports zero `virt.*` methods and answers -32601
+ * "Method does not exist" for `virt.instance.query`. Containers now live in a
+ * dedicated `container.*` namespace, and VMs moved to `vm.*` - so this object
+ * describes containers only and no longer carries the VM branch.
+ *
+ * Every field of [ContainerResponse] is optional with a default. The 26.x record
+ * shape could not be observed on the test stand (no containers on it), and a
+ * single missing non-null field is enough for Moshi to throw and take the whole
+ * screen down - which is exactly how the previous model failed.
+ */
+object Container {
     enum class Type {
         @field:Json(name = "CONTAINER")
         CONTAINER,
@@ -75,31 +89,51 @@ object Virt {
         val uid: Uid,
         val gid: Gid
     )
-    // virt.instance.query
+    // container.query
     @Suppress("PropertyName")
     @JsonClass(generateAdapter = true)
     data class ContainerResponse(
         val id: String,
-        val name: String,
-        val type: Type,
-        val status : Status,
+        val name: String = "",
+        // 26.x reports the runtime state under `state`; older payloads used
+        // `status`. Both are optional and [resolvedStatus] prefers `state`.
+        val state: String? = null,
+        val status: String? = null,
+        val type: Type = Type.CONTAINER,
         val cpu: String? = null,
         val memory: Int? = null,
-        val autostart : Boolean,
-        val environment: Map<String,String>,
-        val aliases : List<Aliases>,
-        val image : Image,
+        val autostart: Boolean? = null,
+        val environment: Map<String, String>? = null,
+        val aliases: List<Aliases>? = null,
+        val image: Image? = null,
         val userns_idmap: UsernsIdmap? = null,
-        val raw : Map<Any,Any>? = null,
-        val vnc_enabled : Boolean,
-        val vnc_port : Int? = null,
-        val vnc_password : String? = null,
-        val secure_boot : Boolean? = null,
-        val root_disk_size : Int? = null,
+        val raw: Map<Any, Any>? = null,
+        val vnc_enabled: Boolean? = null,
+        val vnc_port: Int? = null,
+        val vnc_password: String? = null,
+        val secure_boot: Boolean? = null,
+        val root_disk_size: Int? = null,
         val root_disk_io_bus: RootDiskIOBus? = null,
-        val storage_pool : String? = null,
-    )
-    // virt.instance.update
+        val storage_pool: String? = null,
+    ) {
+        /**
+         * Runtime state as the UI understands it.
+         *
+         * Reads `state` first and falls back to `status`, matching by enum
+         * name and case so an unrecognised value degrades to [Status.UNKNOWN]
+         * instead of throwing.
+         */
+        val resolvedStatus: Status
+            get() {
+                val raw = state ?: status
+                return Status.entries.firstOrNull { it.name.equals(raw, ignoreCase = true) }
+                    ?: Status.UNKNOWN
+            }
+
+        val aliasesOrEmpty: List<Aliases> get() = aliases.orEmpty()
+    }
+
+    // container.update
     @Suppress("PropertyName")
     data class ContainerUpdate(
         val environment: Map<String,String>? = null,

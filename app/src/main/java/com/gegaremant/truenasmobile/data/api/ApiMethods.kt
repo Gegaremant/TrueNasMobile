@@ -325,16 +325,31 @@ object ApiMethods {
         const val LATEST_APPS_TRAIN = "latest"
         const val STABLE_APPS_TRAIN = "stable"
     }
-    object Virt{
-        const val GET_ALL_INSTANCES = "virt.instance.query"
-        const val START_INSTANCE = "virt.instance.start"
-        const val STOP_INSTANCE = "virt.instance.stop"
-        const val RESTART_INSTANCE = "virt.instance.restart"
-        const val DELETE_INSTANCE = "virt.instance.delete"
-        const val UPDATE_INSTANCE = "virt.instance.update"
-        const val DELETE_INSTANCE_DEVICE = "virt.instance.device_delete"
+    /**
+     * Containers, as of TrueNAS 26.0.
+     *
+     * The `virt.*` namespace was removed: on a 26.0.0-BETA.3 stand
+     * `core.get_methods` lists no `virt.*` methods and `virt.instance.query`
+     * answers -32601 "Method does not exist". Containers moved to `container.*`
+     * and VMs to `vm.*`.
+     *
+     * Note there is no `container.restart` - the middleware only offers start
+     * and stop, so a restart is stop-then-start (see ContainerService).
+     */
+    object Container {
+        const val QUERY = "container.query"
+        const val GET_INSTANCE = "container.get_instance"
+        const val START = "container.start"
+        const val STOP = "container.stop"
+        const val DELETE = "container.delete"
+        const val UPDATE = "container.update"
+        const val MIGRATE = "container.migrate"
+        const val POOL_CHOICES = "container.pool_choices"
 
-        const val GET_IMAGE_CHOICES = "virt.instance.image_choice"
+        const val QUERY_DEVICES = "container.device.query"
+        const val DELETE_DEVICE = "container.device.delete"
+
+        const val QUERY_REGISTRY = "container.image.query_registry"
     }
     object Vm{
         const val GET_ALL_VM_INSTANCES = "vm.query"

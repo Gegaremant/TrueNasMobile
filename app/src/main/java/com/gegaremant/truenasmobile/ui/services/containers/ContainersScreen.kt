@@ -89,7 +89,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.System
-import com.gegaremant.truenasmobile.data.models.Virt
+import com.gegaremant.truenasmobile.data.models.Container
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import com.gegaremant.truenasmobile.ui.components.PullToRefreshContent
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
@@ -108,7 +108,7 @@ enum class ContainerFilterCategory(@StringRes val labelRes: Int) {
 @Composable
 fun ContainersScreen(
     manager: TrueNASApiManager,
-    onNavigateToContainerInfo: (Virt.ContainerResponse) -> Unit = {},
+    onNavigateToContainerInfo: (Container.ContainerResponse) -> Unit = {},
     onSearchClick: (() -> Unit)? = null,
     viewModel: ContainerScreenViewModel = viewModel(
         factory = ContainerScreenViewModel.ContainerViewModelFactory(manager)
@@ -121,16 +121,16 @@ fun ContainersScreen(
     val isCompact = AdaptiveLayoutHelper.isCompact()
 
     var selectedCategory by remember { mutableStateOf(ContainerFilterCategory.ALL) }
-    var selectedContainerForPane by remember { mutableStateOf<Virt.ContainerResponse?>(null) }
+    var selectedContainerForPane by remember { mutableStateOf<Container.ContainerResponse?>(null) }
 
     val filteredContainers by remember(uiState.containers, selectedCategory) {
         derivedStateOf {
             when (selectedCategory) {
                 ContainerFilterCategory.ALL -> uiState.containers
-                ContainerFilterCategory.RUNNING -> uiState.containers.filter { it.status == Virt.Status.RUNNING }
-                ContainerFilterCategory.STOPPED -> uiState.containers.filter { it.status == Virt.Status.STOPPED }
+                ContainerFilterCategory.RUNNING -> uiState.containers.filter { it.resolvedStatus == Container.Status.RUNNING }
+                ContainerFilterCategory.STOPPED -> uiState.containers.filter { it.resolvedStatus == Container.Status.STOPPED }
                 ContainerFilterCategory.OTHER -> uiState.containers.filter {
-                    it.status != Virt.Status.RUNNING && it.status != Virt.Status.STOPPED
+                    it.resolvedStatus != Container.Status.RUNNING && it.resolvedStatus != Container.Status.STOPPED
                 }
             }
         }
@@ -269,16 +269,16 @@ fun ContainerFilterBar(
 
 @Composable
 private fun ContainersSplitPaneContent(
-    containers: List<Virt.ContainerResponse>,
-    selectedContainer: Virt.ContainerResponse?,
+    containers: List<Container.ContainerResponse>,
+    selectedContainer: Container.ContainerResponse?,
     isRefreshing: Boolean,
     onStartContainer: (String) -> Unit,
     onStopContainer: (String) -> Unit,
     onRestartContainer: (String) -> Unit,
     onDeleteContainer: (String) -> Unit,
     operationJobs: Map<String, System.Job>,
-    onContainerInfoClick: (Virt.ContainerResponse) -> Unit,
-    onContainerPaneSelected: (Virt.ContainerResponse) -> Unit,
+    onContainerInfoClick: (Container.ContainerResponse) -> Unit,
+    onContainerPaneSelected: (Container.ContainerResponse) -> Unit,
     onClosePane: () -> Unit
 ) {
     Row(modifier = Modifier.fillMaxSize()) {
@@ -356,16 +356,16 @@ private fun EmptyContainerContent() {
 
 @Composable
 private fun ContainersContent(
-    containers: List<Virt.ContainerResponse>,
+    containers: List<Container.ContainerResponse>,
     isRefreshing: Boolean,
     onStartContainer: (String) -> Unit,
     onStopContainer: (String) -> Unit,
     onRestartContainer: (String) -> Unit,
-    onContainerInfoClick: (Virt.ContainerResponse) -> Unit,
+    onContainerInfoClick: (Container.ContainerResponse) -> Unit,
     onDeleteContainer: (String) -> Unit,
     operationJobs: Map<String, System.Job>,
-    selectedContainer: Virt.ContainerResponse? = null,
-    onContainerPaneSelected: ((Virt.ContainerResponse) -> Unit)? = null
+    selectedContainer: Container.ContainerResponse? = null,
+    onContainerPaneSelected: ((Container.ContainerResponse) -> Unit)? = null
 ) {
     val isCompact = AdaptiveLayoutHelper.isCompact()
     val columnCount = AdaptiveLayoutHelper.getColumnCount(compact = 1, medium = 2, expanded = 3)
@@ -430,11 +430,11 @@ private fun ContainersContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ContainerCard(
-    container: Virt.ContainerResponse,
+    container: Container.ContainerResponse,
     onStartContainer: () -> Unit,
     onStopContainer: () -> Unit,
     onRestartContainer: () -> Unit,
-    onContainerInfoClicked: (Virt.ContainerResponse) -> Unit,
+    onContainerInfoClicked: (Container.ContainerResponse) -> Unit,
     onDeleteContainer: () -> Unit,
     operationJob: System.Job? = null,
     isSelected: Boolean = false
@@ -480,22 +480,22 @@ private fun ContainerCard(
                             .clip(RoundedCornerShape(16.dp))
                             .background(
                                 when (container.type) {
-                                    Virt.Type.CONTAINER -> MaterialTheme.colorScheme.primaryContainer
-                                    Virt.Type.VM -> MaterialTheme.colorScheme.secondaryContainer
+                                    Container.Type.CONTAINER -> MaterialTheme.colorScheme.primaryContainer
+                                    Container.Type.VM -> MaterialTheme.colorScheme.secondaryContainer
                                 }
                             ),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = when (container.type) {
-                                Virt.Type.CONTAINER -> "C"
-                                Virt.Type.VM -> "VM"
+                                Container.Type.CONTAINER -> "C"
+                                Container.Type.VM -> "VM"
                             },
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = when (container.type) {
-                                Virt.Type.CONTAINER -> MaterialTheme.colorScheme.onPrimaryContainer
-                                Virt.Type.VM -> MaterialTheme.colorScheme.onSecondaryContainer
+                                Container.Type.CONTAINER -> MaterialTheme.colorScheme.onPrimaryContainer
+                                Container.Type.VM -> MaterialTheme.colorScheme.onSecondaryContainer
                             }
                         )
                     }
@@ -518,7 +518,7 @@ private fun ContainerCard(
                             overflow = TextOverflow.Ellipsis
                         )
                     }
-                    StatusChip(status = container.status, icon = getStatusIcon(container.status))
+                    StatusChip(status = container.resolvedStatus, icon = getStatusIcon(container.resolvedStatus))
                 }
             } else {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -533,22 +533,22 @@ private fun ContainerCard(
                                 .clip(RoundedCornerShape(18.dp))
                                 .background(
                                     when (container.type) {
-                                        Virt.Type.CONTAINER -> MaterialTheme.colorScheme.primaryContainer
-                                        Virt.Type.VM -> MaterialTheme.colorScheme.secondaryContainer
+                                        Container.Type.CONTAINER -> MaterialTheme.colorScheme.primaryContainer
+                                        Container.Type.VM -> MaterialTheme.colorScheme.secondaryContainer
                                     }
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = when (container.type) {
-                                    Virt.Type.CONTAINER -> "C"
-                                    Virt.Type.VM -> "VM"
+                                    Container.Type.CONTAINER -> "C"
+                                    Container.Type.VM -> "VM"
                                 },
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = when (container.type) {
-                                    Virt.Type.CONTAINER -> MaterialTheme.colorScheme.onPrimaryContainer
-                                    Virt.Type.VM -> MaterialTheme.colorScheme.onSecondaryContainer
+                                    Container.Type.CONTAINER -> MaterialTheme.colorScheme.onPrimaryContainer
+                                    Container.Type.VM -> MaterialTheme.colorScheme.onSecondaryContainer
                                 }
                             )
                         }
@@ -556,7 +556,7 @@ private fun ContainerCard(
                             modifier = Modifier
                                 .size(12.dp)
                                 .clip(RoundedCornerShape(6.dp))
-                                .background(getStatusColor(container.status))
+                                .background(getStatusColor(container.resolvedStatus))
                         )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
@@ -588,7 +588,7 @@ private fun ContainerCard(
             ) {
                 DetailItem(label = stringResource(R.string.container_label_cpu), value = container.cpu ?: stringResource(R.string.common_na))
                 DetailItem(label = stringResource(R.string.container_label_memory), value = container.memory?.let { "$it MB" } ?: stringResource(R.string.common_na))
-                DetailItem(label = stringResource(R.string.container_detail_autostart), value = if (container.autostart) stringResource(R.string.common_yes) else stringResource(R.string.common_no))
+                DetailItem(label = stringResource(R.string.container_detail_autostart), value = if (container.autostart == true) stringResource(R.string.common_yes) else stringResource(R.string.common_no))
             }
 
             operationJob?.let { job ->
@@ -635,8 +635,8 @@ private fun ContainerCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    when (container.status) {
-                        Virt.Status.STOPPED -> ActionButton(
+                    when (container.resolvedStatus) {
+                        Container.Status.STOPPED -> ActionButton(
                             text = stringResource(R.string.common_start),
                             icon = Icons.Default.PlayArrow,
                             enabled = true,
@@ -644,7 +644,7 @@ private fun ContainerCard(
                             onClick = onStartContainer,
                             modifier = Modifier.weight(1f)
                         )
-                        Virt.Status.RUNNING -> ActionButton(
+                        Container.Status.RUNNING -> ActionButton(
                             text = stringResource(R.string.common_stop),
                             icon = Icons.Default.Stop,
                             enabled = true,
@@ -653,7 +653,7 @@ private fun ContainerCard(
                             modifier = Modifier.weight(1f)
                         )
                         else -> ActionButton(
-                            text = container.status.name,
+                            text = container.resolvedStatus.name,
                             icon = Icons.Default.Refresh,
                             enabled = false,
                             isPrimary = false,
@@ -675,15 +675,15 @@ private fun ContainerCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    when (container.status) {
-                        Virt.Status.STOPPED -> CompactActionButton(
+                    when (container.resolvedStatus) {
+                        Container.Status.STOPPED -> CompactActionButton(
                             icon = Icons.Default.PlayArrow,
                             contentDescription = stringResource(R.string.common_start),
                             isPrimary = true,
                             onClick = onStartContainer,
                             modifier = Modifier.weight(1f)
                         )
-                        Virt.Status.RUNNING -> CompactActionButton(
+                        Container.Status.RUNNING -> CompactActionButton(
                             icon = Icons.Default.Stop,
                             contentDescription = stringResource(R.string.common_stop),
                             isPrimary = true,
@@ -692,7 +692,7 @@ private fun ContainerCard(
                         )
                         else -> CompactActionButton(
                             icon = Icons.Default.Refresh,
-                            contentDescription = container.status.name,
+                            contentDescription = container.resolvedStatus.name,
                             isPrimary = false,
                             enabled = false,
                             onClick = {},
@@ -764,7 +764,7 @@ private fun ContainerCard(
                     modifier = Modifier.padding(top = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    if (container.status == Virt.Status.RUNNING) {
+                    if (container.resolvedStatus == Container.Status.RUNNING) {
                         ActionButton(
                             text = stringResource(R.string.common_restart),
                             icon = Icons.Default.RestartAlt,
@@ -777,7 +777,7 @@ private fun ContainerCard(
                     ActionButton(
                         text = stringResource(R.string.common_delete),
                         icon = Icons.Default.Delete,
-                        enabled = container.status == Virt.Status.STOPPED,
+                        enabled = container.resolvedStatus == Container.Status.STOPPED,
                         isPrimary = false,
                         onClick = { showDeleteDialog = true },
                         modifier = Modifier.fillMaxWidth(),
@@ -866,7 +866,7 @@ private fun DetailItem(label: String, value: String) {
 }
 
 @Composable
-private fun StatusChip(status: Virt.Status, icon: ImageVector) {
+private fun StatusChip(status: Container.Status, icon: ImageVector) {
     Surface(
         color = getStatusColor(status).copy(alpha = 0.12f),
         shape = RoundedCornerShape(100.dp)
@@ -950,25 +950,25 @@ private fun ActionButton(
 }
 
 @Composable
-private fun getStatusColor(status: Virt.Status): Color {
+private fun getStatusColor(status: Container.Status): Color {
     return when (status) {
-        Virt.Status.RUNNING -> Color(0xFF2E7D32)
-        Virt.Status.STOPPED -> Color(0xFF757575)
-        Virt.Status.ERROR -> MaterialTheme.colorScheme.error
-        Virt.Status.FROZEN -> Color(0xFF1976D2)
-        Virt.Status.STARTING, Virt.Status.STOPPING,
-        Virt.Status.FREEZING, Virt.Status.THAWED,
-        Virt.Status.ABORTING -> Color(0xFFF57C00)
-        Virt.Status.UNKNOWN -> MaterialTheme.colorScheme.outline
+        Container.Status.RUNNING -> Color(0xFF2E7D32)
+        Container.Status.STOPPED -> Color(0xFF757575)
+        Container.Status.ERROR -> MaterialTheme.colorScheme.error
+        Container.Status.FROZEN -> Color(0xFF1976D2)
+        Container.Status.STARTING, Container.Status.STOPPING,
+        Container.Status.FREEZING, Container.Status.THAWED,
+        Container.Status.ABORTING -> Color(0xFFF57C00)
+        Container.Status.UNKNOWN -> MaterialTheme.colorScheme.outline
     }
 }
 
-private fun getStatusIcon(status: Virt.Status): ImageVector {
+private fun getStatusIcon(status: Container.Status): ImageVector {
     return when (status) {
-        Virt.Status.RUNNING -> Icons.Default.PlayArrow
-        Virt.Status.STOPPED -> Icons.Default.Stop
-        Virt.Status.ERROR -> Icons.Default.Error
-        Virt.Status.FROZEN -> Icons.Default.Pause
+        Container.Status.RUNNING -> Icons.Default.PlayArrow
+        Container.Status.STOPPED -> Icons.Default.Stop
+        Container.Status.ERROR -> Icons.Default.Error
+        Container.Status.FROZEN -> Icons.Default.Pause
         else -> Icons.Default.Refresh
     }
 }
