@@ -1968,4 +1968,9 @@
     <string name="shared_webshare_title">Web shares</string>
     <string name="shared_webdav_title">WebDAV</string>
     <string name="shared_none">Nothing is exposed by this server yet</string>
+    <string name="cd_instance_settings_cd">Instance settings</string>
+    <string name="cd_application_settings_cd">Application settings</string>
+    <string name="cd_profile_cd">Connection profile</string>
+    <string name="new_container_soon">Creating containers arrives in a future update</string>
+    <string name="new_vm_soon">Creating virtual machines arrives in a future update</string>
 </resources>

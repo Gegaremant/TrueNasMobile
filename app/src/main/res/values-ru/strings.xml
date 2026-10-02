@@ -1980,4 +1980,9 @@
     <string name="shared_webshare_title">Веб-ресурсы</string>
     <string name="shared_webdav_title">WebDAV</string>
     <string name="shared_none">Этот сервер пока ничего не открывает</string>
+    <string name="cd_instance_settings_cd">Настройки инстанса</string>
+    <string name="cd_application_settings_cd">Настройки приложения</string>
+    <string name="cd_profile_cd">Профиль подключения</string>
+    <string name="new_container_soon">Создание контейнеров появится в следующем обновлении</string>
+    <string name="new_vm_soon">Создание виртуальных машин появится в следующем обновлении</string>
 </resources>

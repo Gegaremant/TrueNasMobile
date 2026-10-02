@@ -43,6 +43,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material.icons.filled.ClearAll
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CloudUpload
@@ -144,7 +147,10 @@ fun AppsScreen(
     onNavigateToUpgrade: (String) -> Unit,
     onNavigateToRollback: (String) -> Unit = {},
     onNavigateToMarketplace: () -> Unit = {},
-    onSearchClick: (() -> Unit)? = null
+    onSearchClick: (() -> Unit)? = null,
+    onNavigateToInstanceSettings: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToApplicationSettings: () -> Unit = {}
 ) {
     val appsScreenViewModel: AppsScreenViewModel = viewModel(
         factory = AppsScreenViewModel.AppsScreenViewModelFactory(manager)
@@ -361,26 +367,19 @@ fun AppsScreen(
             onDismissError = { appsScreenViewModel.clearError() },
             manager = manager,
             onSearchClick = onSearchClick,
-            trailingActions = {
-                // Only Marketplace button in header
-                IconButton(
-                    onClick = { onNavigateToMarketplace() },
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Storefront,
-                        contentDescription = stringResource(R.string.apps_open_marketplace_cd)
-                    )
-                }
-            }
+            // Шапка-шаблон главных вкладок. Раньше здесь висел отдельный
+            // маркетплейс-баттон — теперь «+ Новое» живёт в ряду фильтров.
+            showBrandLine = true,
+            onInstanceSettingsClick = onNavigateToInstanceSettings,
+            onProfileClick = onNavigateToProfile,
+            onApplicationSettingsClick = onNavigateToApplicationSettings,
+            showPowerControl = true
         )
 
         AppFilterBar(
             currentCategory = uiState.selectedCategory,
             onCategorySelected = { appsScreenViewModel.updateCategory(it) },
+            onAddNew = { onNavigateToMarketplace() },
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -620,6 +619,7 @@ fun AppsScreen(
 fun AppFilterBar(
     currentCategory: AppCategory,
     onCategorySelected: (AppCategory) -> Unit,
+    onAddNew: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     LazyRow(
@@ -658,6 +658,29 @@ fun AppFilterBar(
                 ),
                 shape = RoundedCornerShape(12.dp)
             )
+        }
+
+        if (onAddNew != null) {
+            // «Новое» — действие, а не фильтр: отличается и стилем, и поведением.
+            item {
+                AssistChip(
+                    onClick = onAddNew,
+                    label = { Text(stringResource(R.string.new_instance_add)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                        )
+                    },
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        labelColor = MaterialTheme.colorScheme.onPrimary,
+                        leadingIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                )
+            }
         }
     }
 }

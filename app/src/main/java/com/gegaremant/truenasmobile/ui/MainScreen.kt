@@ -212,11 +212,22 @@ fun MainScreen(
         personalization.navbarDestinations.mapNotNull { destinationToNavItem(it) }
     }
     val navRoutes = remember(navItems) { navItems.map { it.destination.route }.toSet() }
-    // Compact mode drops the text labels; there is room for more destinations.
-    val compactNav = personalization.compactNav
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    // The pool detail screen keeps the bottom bar visible (spec: storage pool
+    // comes with a top and a bottom menu); it was opened from Home, so Home
+    // stays highlighted while its details are on screen.
+    val routesWithBottomBar = remember(navRoutes) {
+        navRoutes + Screen.PoolDetails.route
+    }
+    val selectedNavRoute = if (currentRoute == Screen.PoolDetails.route) {
+        Screen.Home.route
+    } else {
+        currentRoute
+    }
+    // Compact mode drops the text labels; there is room for more destinations.
+    val compactNav = personalization.compactNav
 
     // ── Tab history ─────────────────────────────────────────────────────────
     // Every bottom-bar tap is a popUpTo(saveState) + restoreState, so the
@@ -273,7 +284,7 @@ fun MainScreen(
                     header = {}
                 ) {
                     navItems.forEach { item ->
-                        val selected = currentRoute == item.destination.route
+                        val selected = selectedNavRoute == item.destination.route
                         NavigationRailItem(
                             selected = selected,
                             onClick = { switchTab(item.destination.route) },
@@ -308,14 +319,14 @@ fun MainScreen(
             }
         } else {
             Scaffold(
-                bottomBar = {if (currentRoute in navRoutes){
+                bottomBar = {if (currentRoute in routesWithBottomBar){
                     run {
                         NavigationBar(
                             containerColor = MaterialTheme.colorScheme.surface,
                             tonalElevation = 8.dp
                         ) {
                             navItems.forEach { item ->
-                                val selected = currentRoute == item.destination.route
+                                val selected = selectedNavRoute == item.destination.route
                                 NavigationBarItem(
                                     selected = selected,
                                     onClick = { switchTab(item.destination.route) },
@@ -427,6 +438,7 @@ private fun TrueNasMobileNavGraph(
                 manager,
                 dashboardViewModel,
                 onNavigateToSettings = { rootNavController.navigate(Screen.Settings.route) },
+                onNavigateToProfile = { rootNavController.navigate(Screen.AccountSwitcher.route) },
                 onPoolClick = { pool: System.Pool ->
                     PoolDataHolder.currentPool = pool
                     navController.navigate(Screen.PoolDetails.route)
@@ -467,6 +479,16 @@ private fun TrueNasMobileNavGraph(
                 onNfsShareClick = { share ->
                     AppDataHolder.selectedShareType = ShareType.Nfs(share)
                     navController.navigate(Screen.ShareInfo.route)
+                },
+                onSearchClick = onSearchClick,
+                onNavigateToInstanceSettings = {
+                    navController.navigate(Screen.InstanceConfigScreen.route)
+                },
+                onNavigateToProfile = {
+                    rootNavController.navigate(Screen.AccountSwitcher.route)
+                },
+                onNavigateToApplicationSettings = {
+                    rootNavController.navigate(Screen.Settings.route)
                 }
             )
         }
@@ -493,6 +515,15 @@ private fun TrueNasMobileNavGraph(
                 onNavigateToVmInfo = { vmInfo ->
                     VmDataHolder.selectedVm = vmInfo
                     navController.navigate(Screen.VmDetails.route)
+                },
+                onNavigateToInstanceSettings = {
+                    navController.navigate(Screen.InstanceConfigScreen.route)
+                },
+                onNavigateToProfile = {
+                    rootNavController.navigate(Screen.AccountSwitcher.route)
+                },
+                onNavigateToApplicationSettings = {
+                    rootNavController.navigate(Screen.Settings.route)
                 }
             )
         }
@@ -919,7 +950,16 @@ private fun TrueNasMobileNavGraph(
                     navController.navigate(Screen.AppUpgrade.createRoute(appName)) },
                 onNavigateToRollback = { navController.navigate(Screen.RollbackVersion.createRoute(it)) },
                 onNavigateToMarketplace = { navController.navigate(Screen.Marketplace.route) },
-                onSearchClick = onSearchClick
+                onSearchClick = onSearchClick,
+                onNavigateToInstanceSettings = {
+                    navController.navigate(Screen.InstanceConfigScreen.route)
+                },
+                onNavigateToProfile = {
+                    rootNavController.navigate(Screen.AccountSwitcher.route)
+                },
+                onNavigateToApplicationSettings = {
+                    rootNavController.navigate(Screen.Settings.route)
+                }
             )
         }
 
@@ -1074,7 +1114,16 @@ private fun TrueNasMobileNavGraph(
             ContainersScreen(
                 manager = manager,
                 onNavigateToContainerInfo = { container -> ContainerDataHolder.selectedContainer = container; navController.navigate("container_info") },
-                onSearchClick = onSearchClick
+                onSearchClick = onSearchClick,
+                onNavigateToInstanceSettings = {
+                    navController.navigate(Screen.InstanceConfigScreen.route)
+                },
+                onNavigateToProfile = {
+                    rootNavController.navigate(Screen.AccountSwitcher.route)
+                },
+                onNavigateToApplicationSettings = {
+                    rootNavController.navigate(Screen.Settings.route)
+                }
             )
         }
 
@@ -1091,7 +1140,16 @@ private fun TrueNasMobileNavGraph(
             VmsScreen(
                 manager = manager,
                 onNavigateToVmInfo = { vmInfo -> VmDataHolder.selectedVm = vmInfo; navController.navigate("vm_details") },
-                onSearchClick = onSearchClick
+                onSearchClick = onSearchClick,
+                onNavigateToInstanceSettings = {
+                    navController.navigate(Screen.InstanceConfigScreen.route)
+                },
+                onNavigateToProfile = {
+                    rootNavController.navigate(Screen.AccountSwitcher.route)
+                },
+                onNavigateToApplicationSettings = {
+                    rootNavController.navigate(Screen.Settings.route)
+                }
             )
         }
 

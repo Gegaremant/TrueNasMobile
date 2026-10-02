@@ -34,6 +34,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import com.gegaremant.truenasmobile.ui.components.ToastManager
 import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Error
@@ -109,6 +113,9 @@ fun VmsScreen(
     manager: TrueNASApiManager,
     onNavigateToVmInfo: (Vm.VmQueryResponse) -> Unit = {},
     onSearchClick: (() -> Unit)? = null,
+    onNavigateToInstanceSettings: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToApplicationSettings: () -> Unit = {},
     viewModel: VmsScreenViewModel = viewModel(
         factory = VmsScreenViewModel.VmViewModelFactory(manager)
     )
@@ -143,12 +150,21 @@ fun VmsScreen(
             onRefresh = { viewModel.refresh() },
             onDismissError = { viewModel.clearError() },
             manager = manager,
-            onSearchClick = onSearchClick
+            onSearchClick = onSearchClick,
+            // Шапка-шаблон главных вкладок.
+            showBrandLine = true,
+            onInstanceSettingsClick = onNavigateToInstanceSettings,
+            onProfileClick = onNavigateToProfile,
+            onApplicationSettingsClick = onNavigateToApplicationSettings,
+            showPowerControl = true
         )
 
         VmFilterBar(
             currentCategory = selectedCategory,
             onCategorySelected = { selectedCategory = it },
+            onAddNew = {
+                ToastManager.showInfoRes(R.string.new_vm_soon)
+            },
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -229,6 +245,7 @@ fun VmsScreen(
 fun VmFilterBar(
     currentCategory: VmFilterCategory,
     onCategorySelected: (VmFilterCategory) -> Unit,
+    onAddNew: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     LazyRow(
@@ -266,6 +283,29 @@ fun VmFilterBar(
                 ),
                 shape = RoundedCornerShape(12.dp)
             )
+        }
+
+        if (onAddNew != null) {
+            // «Новое» — действие, а не фильтр.
+            item {
+                AssistChip(
+                    onClick = onAddNew,
+                    label = { Text(stringResource(R.string.new_instance_add)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                        )
+                    },
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        labelColor = MaterialTheme.colorScheme.onPrimary,
+                        leadingIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                )
+            }
         }
     }
 }

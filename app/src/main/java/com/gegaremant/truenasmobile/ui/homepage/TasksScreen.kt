@@ -45,7 +45,10 @@ fun TasksScreen(
     onNavigateToRollback: (String) -> Unit = {},
     onNavigateToMarketplace: () -> Unit = {},
     onNavigateToContainerInfo: (Container.ContainerResponse) -> Unit = {},
-    onNavigateToVmInfo: (Vm.VmQueryResponse) -> Unit = {}
+    onNavigateToVmInfo: (Vm.VmQueryResponse) -> Unit = {},
+    onNavigateToInstanceSettings: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToApplicationSettings: () -> Unit = {}
 ) {
     var selectedSubTab by rememberSaveable { mutableIntStateOf(0) }
 
@@ -77,17 +80,26 @@ fun TasksScreen(
                     onNavigateToUpgrade = onNavigateToUpgrade,
                     onNavigateToRollback = onNavigateToRollback,
                     onNavigateToMarketplace = onNavigateToMarketplace,
-                    onSearchClick = onSearchClick
+                    onSearchClick = onSearchClick,
+                    onNavigateToInstanceSettings = onNavigateToInstanceSettings,
+                    onNavigateToProfile = onNavigateToProfile,
+                    onNavigateToApplicationSettings = onNavigateToApplicationSettings
                 )
                 1 -> ContainersScreen(
                     manager = manager,
                     onNavigateToContainerInfo = onNavigateToContainerInfo,
-                    onSearchClick = onSearchClick
+                    onSearchClick = onSearchClick,
+                    onNavigateToInstanceSettings = onNavigateToInstanceSettings,
+                    onNavigateToProfile = onNavigateToProfile,
+                    onNavigateToApplicationSettings = onNavigateToApplicationSettings
                 )
                 else -> VmsScreen(
                     manager = manager,
                     onNavigateToVmInfo = onNavigateToVmInfo,
-                    onSearchClick = onSearchClick
+                    onSearchClick = onSearchClick,
+                    onNavigateToInstanceSettings = onNavigateToInstanceSettings,
+                    onNavigateToProfile = onNavigateToProfile,
+                    onNavigateToApplicationSettings = onNavigateToApplicationSettings
                 )
             }
         }

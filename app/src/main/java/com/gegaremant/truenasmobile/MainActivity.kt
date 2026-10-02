@@ -234,9 +234,6 @@ fun MainActivityContent(
     val appState by viewModel.appState.collectAsState()
     val manager by viewModel.manager.collectAsState()
     val navController = rememberNavController()
-    val notifPermission = rememberPermissionState(
-        Manifest.permission.POST_NOTIFICATIONS
-    )
     val localNetworkPermission = if (
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN
     ) {
@@ -264,11 +261,6 @@ fun MainActivityContent(
             // Log the other saved profiles in behind the user's back, so
             // switching to one of them later costs nothing.
             viewModel.warmOtherProfiles(context)
-        }
-    }
-    LaunchedEffect(Unit) {
-        if (!notifPermission.status.isGranted) {
-            notifPermission.launchPermissionRequest()
         }
     }
 

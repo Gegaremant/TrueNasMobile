@@ -35,6 +35,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import com.gegaremant.truenasmobile.ui.components.ToastManager
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.FilterList
@@ -110,6 +114,9 @@ fun ContainersScreen(
     manager: TrueNASApiManager,
     onNavigateToContainerInfo: (Container.ContainerResponse) -> Unit = {},
     onSearchClick: (() -> Unit)? = null,
+    onNavigateToInstanceSettings: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToApplicationSettings: () -> Unit = {},
     viewModel: ContainerScreenViewModel = viewModel(
         factory = ContainerScreenViewModel.ContainerViewModelFactory(manager)
     )
@@ -146,12 +153,21 @@ fun ContainersScreen(
             onRefresh = { viewModel.loadContainers() },
             onDismissError = { viewModel.clearError() },
             manager = manager,
-            onSearchClick = onSearchClick
+            onSearchClick = onSearchClick,
+            // Шапка-шаблон главных вкладок.
+            showBrandLine = true,
+            onInstanceSettingsClick = onNavigateToInstanceSettings,
+            onProfileClick = onNavigateToProfile,
+            onApplicationSettingsClick = onNavigateToApplicationSettings,
+            showPowerControl = true
         )
 
         ContainerFilterBar(
             currentCategory = selectedCategory,
             onCategorySelected = { selectedCategory = it },
+            onAddNew = {
+                ToastManager.showInfoRes(R.string.new_container_soon)
+            },
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -226,6 +242,7 @@ fun ContainersScreen(
 fun ContainerFilterBar(
     currentCategory: ContainerFilterCategory,
     onCategorySelected: (ContainerFilterCategory) -> Unit,
+    onAddNew: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     LazyRow(
@@ -263,6 +280,29 @@ fun ContainerFilterBar(
                 ),
                 shape = RoundedCornerShape(12.dp)
             )
+        }
+
+        if (onAddNew != null) {
+            // «Новое» — действие, а не фильтр.
+            item {
+                AssistChip(
+                    onClick = onAddNew,
+                    label = { Text(stringResource(R.string.new_instance_add)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                        )
+                    },
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        labelColor = MaterialTheme.colorScheme.onPrimary,
+                        leadingIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                )
+            }
         }
     }
 }

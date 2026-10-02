@@ -104,7 +104,11 @@ fun SharedResourcesScreen(
     manager: TrueNASApiManager?,
     onNavigateBack: () -> Unit = {},
     onSmbShareClick: (Shares.SmbShare) -> Unit = {},
-    onNfsShareClick: (Shares.NfsShare) -> Unit = {}
+    onNfsShareClick: (Shares.NfsShare) -> Unit = {},
+    onSearchClick: (() -> Unit)? = null,
+    onNavigateToInstanceSettings: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToApplicationSettings: () -> Unit = {}
 ) {
     if (manager == null) return
     val viewModel: SharedResourcesViewModel = viewModel(
@@ -128,7 +132,14 @@ fun SharedResourcesScreen(
             onRefresh = { viewModel.load() },
             onDismissError = {},
             manager = manager,
-            onBackPressed = onNavigateBack
+            onBackPressed = onNavigateBack,
+            // Шапка-шаблон главных вкладок.
+            showBrandLine = true,
+            onInstanceSettingsClick = onNavigateToInstanceSettings,
+            onProfileClick = onNavigateToProfile,
+            onApplicationSettingsClick = onNavigateToApplicationSettings,
+            showPowerControl = true,
+            onSearchClick = onSearchClick
         )
 
         when (val current = state) {

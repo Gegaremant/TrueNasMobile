@@ -93,6 +93,7 @@ fun HomeScreen(
     manager: TrueNASApiManager,
     viewModel: HomeViewModel,
     onNavigateToSettings: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
     onPoolClick: (System.Pool) -> Unit,
     onDisksClick: () -> Unit,
     onUpdateClick: () -> Unit,
@@ -104,7 +105,6 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isConnected by viewModel.isConnected.collectAsState()
-    var showShutdownDialog by remember { mutableStateOf(false) }
     val isRefreshing = (uiState as? HomeUiState.Success)?.isRefreshing ?: false
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -116,8 +116,12 @@ fun HomeScreen(
             error = null,
             onDismissError = { viewModel.refresh() },
             manager = manager,
-            onNavigateToSettings = onNavigateToSettings,
-            onShutdownInvoke = { showShutdownDialog = true },
+            // Шапка-шаблон главных вкладок.
+            showBrandLine = true,
+            onInstanceSettingsClick = onInstanceConfigClick,
+            onProfileClick = onNavigateToProfile,
+            onApplicationSettingsClick = onNavigateToSettings,
+            showPowerControl = true,
             onSearchClick = onSearchClick,
             autoHideSubtitle = true
         )
@@ -154,19 +158,6 @@ fun HomeScreen(
                 )
             }
         }
-    }
-    if (showShutdownDialog) {
-        ShutdownDialog(
-            onShutdown = { reason ->
-                viewModel.shutdownSystem(reason)
-                showShutdownDialog = false
-            },
-            onRestart = { reason ->
-                viewModel.rebootSystem(reason)
-                showShutdownDialog = false
-            },
-            onDismiss = { showShutdownDialog = false }
-        )
     }
 }
 

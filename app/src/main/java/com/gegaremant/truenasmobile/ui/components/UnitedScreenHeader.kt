@@ -31,12 +31,15 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -52,9 +55,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
@@ -66,8 +71,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
+import com.gegaremant.truenasmobile.data.helpers.MultiAccountPrefs
 import com.gegaremant.truenasmobile.ui.alerts.AlertsBellButton
+import com.gegaremant.truenasmobile.ui.homepage.ShutdownDialog
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -85,9 +93,42 @@ fun UnifiedScreenHeader(
     onShutdownInvoke: (() -> Unit)? = null,
     trailingActions: @Composable RowScope.() -> Unit = {},
     onSearchClick: (() -> Unit)? = null,
-    autoHideSubtitle: Boolean = false
+    autoHideSubtitle: Boolean = false,
+    /**
+     * Шапка-шаблон главных вкладок: верхняя линия — название приложения
+     * слева и автор справа; вторая линия — название вкладки и иконки:
+     * настройки инстанса (ящик с шестерёнкой), поиск, профиль подключения,
+     * уведомления, питание и настройки приложения (робот с шестерёнкой).
+     */
+    showBrandLine: Boolean = false,
+    onInstanceSettingsClick: (() -> Unit)? = null,
+    onProfileClick: (() -> Unit)? = null,
+    onApplicationSettingsClick: (() -> Unit)? = null,
+    showPowerControl: Boolean = false
 ) {
     var isSubtitleVisible by remember { mutableStateOf(true) }
+    // Когда питанием управляет сама шапка (showPowerControl), диалог
+    // выключения живёт здесь, а не в экране.
+    var showPowerDialog by remember { mutableStateOf(false) }
+
+    // Имя текущего профиля для чипа. Читается из DataStore один раз на
+    // менеджер; актуально только когда чип включён (onProfileClick != null).
+    val context = LocalContext.current
+    var profileLabel by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(manager) {
+        if (manager == null || onProfileClick == null) return@LaunchedEffect
+        profileLabel = runCatching {
+            val (serverId, accountId) = MultiAccountPrefs.getLastUsedProfile(context)
+                ?: return@runCatching null
+            val account = MultiAccountPrefs.getAccount(context, accountId)
+            val server = MultiAccountPrefs.getServer(context, serverId)
+            val host = server?.serverUrl
+                ?.replace("https://", "")
+                ?.replace("wss://", "")
+                ?.replace("/api/current", "")
+            "${account?.username ?: "?"} @ ${server?.nickname ?: host ?: "?"}"
+        }.getOrNull()
+    }
 
     LaunchedEffect(subtitle, autoHideSubtitle) {
         isSubtitleVisible = true
@@ -106,6 +147,31 @@ fun UnifiedScreenHeader(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
+            if (showBrandLine) {
+                // Верхняя линия шаблона: приложение слева, автор справа.
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.brand_app_name),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = stringResource(R.string.brand_author),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.widthIn(max = 220.dp)
+                    )
+                }
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -168,6 +234,18 @@ fun UnifiedScreenHeader(
                 ) {
                     trailingActions()
 
+                    // Порядок иконок второй линии по ТЗ: настройки инстанса,
+                    // поиск, профиль подключения, уведомления, питание,
+                    // настройки приложения. Остальные (refresh/настройки)
+                    // остаются как legacy-параметры для детальных экранов.
+                    onInstanceSettingsClick?.let { instanceSettings ->
+                        GearedIconButton(
+                            onClick = instanceSettings,
+                            mainIcon = Icons.Default.Dns,
+                            contentDescription = stringResource(R.string.cd_instance_settings_cd)
+                        )
+                    }
+
                     if (onSearchClick != null) {
                         ExpressiveIconButton(
                             onClick = onSearchClick,
@@ -176,8 +254,36 @@ fun UnifiedScreenHeader(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
+
+                    if (onProfileClick != null) {
+                        ProfileChip(
+                            label = profileLabel,
+                            onClick = onProfileClick
+                        )
+                    }
+
                     manager?.let{
                         AlertsBellButton(manager = manager)
+                    }
+
+                    if (onShutdownInvoke != null || showPowerControl) {
+                        ExpressiveIconButton(
+                            onClick = {
+                                onShutdownInvoke?.invoke()
+                                    ?: run { showPowerDialog = true }
+                            },
+                            icon = Icons.Default.PowerSettingsNew,
+                            contentDescription = stringResource(R.string.cd_power_cd),
+                            tint = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    }
+
+                    onApplicationSettingsClick?.let { appSettings ->
+                        GearedIconButton(
+                            onClick = appSettings,
+                            mainIcon = Icons.Default.SmartToy,
+                            contentDescription = stringResource(R.string.cd_application_settings_cd)
+                        )
                     }
 
                     onRefresh?.let{ onRefresh ->
@@ -190,21 +296,12 @@ fun UnifiedScreenHeader(
                         )
                     }
 
-                    onNavigateToSettings?.let { settingsCallback ->
+                    if (onNavigateToSettings != null && onApplicationSettingsClick == null) {
                         ExpressiveIconButton(
-                            onClick = settingsCallback,
+                            onClick = onNavigateToSettings,
                             icon = Icons.Default.Settings,
                             contentDescription = stringResource(R.string.cd_settings_cd),
                             tint = MaterialTheme.colorScheme.secondary
-                        )
-                    }
-
-                    onShutdownInvoke?.let { shutdownCallback ->
-                        ExpressiveIconButton(
-                            onClick = shutdownCallback,
-                            icon = Icons.Default.PowerSettingsNew,
-                            contentDescription = stringResource(R.string.cd_power_cd),
-                            tint = MaterialTheme.colorScheme.onErrorContainer
                         )
                     }
                 }
@@ -274,6 +371,41 @@ fun UnifiedScreenHeader(
                 }
             }
         }
+    }
+
+    if (showPowerDialog && manager != null) {
+        // Питанием управляет сама шапка-шаблон: одинаковый диалог на всех
+        // вкладках, без дублирования логики в каждом экране.
+        val scope = rememberCoroutineScope()
+        ShutdownDialog(
+            onShutdown = { reason ->
+                showPowerDialog = false
+                scope.launch {
+                    ToastManager.showInfoRes(R.string.toast_shutdown_init)
+                    when (val result = manager.system.shutdownSystemWithResult(reason)) {
+                        is com.gegaremant.truenasmobile.data.ApiResult.Success ->
+                            ToastManager.showSuccessRes(R.string.toast_shutdown_success)
+                        is com.gegaremant.truenasmobile.data.ApiResult.Error ->
+                            ToastManager.showError(result.message)
+                        is com.gegaremant.truenasmobile.data.ApiResult.Loading -> {}
+                    }
+                }
+            },
+            onRestart = { reason ->
+                showPowerDialog = false
+                scope.launch {
+                    ToastManager.showInfoRes(R.string.toast_restart_init)
+                    when (val result = manager.system.rebootSystem(reason)) {
+                        is com.gegaremant.truenasmobile.data.ApiResult.Success ->
+                            ToastManager.showSuccessRes(R.string.toast_restart_success)
+                        is com.gegaremant.truenasmobile.data.ApiResult.Error ->
+                            ToastManager.showError(result.message)
+                        is com.gegaremant.truenasmobile.data.ApiResult.Loading -> {}
+                    }
+                }
+            },
+            onDismiss = { showPowerDialog = false }
+        )
     }
 }
 
@@ -424,5 +556,83 @@ fun ExpressiveIconButton(
             contentDescription = contentDescription,
             modifier = Modifier.size(24.dp)
         )
+    }
+}
+
+/**
+ * Иконка с маленькой шестерёнкой в углу: «ящик с шестерёнкой» (настройки
+ * инстанса) и «робот с шестерёнкой» (настройки приложения) из шаблона шапки.
+ */
+@Composable
+private fun GearedIconButton(
+    onClick: () -> Unit,
+    mainIcon: ImageVector,
+    contentDescription: String,
+    tint: Color = MaterialTheme.colorScheme.onSurfaceVariant
+) {
+    Box(modifier = Modifier.size(44.dp)) {
+        ExpressiveIconButton(
+            onClick = onClick,
+            icon = mainIcon,
+            contentDescription = contentDescription,
+            tint = tint,
+            modifier = Modifier.fillMaxSize()
+        )
+        Icon(
+            imageVector = Icons.Default.Settings,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .size(13.dp)
+        )
+    }
+}
+
+/**
+ * Чип текущего профиля подключения: имя и шестерёнка-аватар. Тап открывает
+ * список профилей с «+» (AccountSwitcher).
+ */
+@Composable
+private fun ProfileChip(
+    label: String?,
+    onClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.92f else 1f,
+        animationSpec = tween(durationMillis = 100),
+        label = "ProfileChipScale"
+    )
+
+    Surface(
+        onClick = onClick,
+        interactionSource = interactionSource,
+        shape = RoundedCornerShape(20.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        modifier = Modifier.scale(scale)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = label ?: stringResource(R.string.profile_title),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.widthIn(max = 110.dp)
+            )
+        }
     }
 }
