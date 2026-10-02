@@ -88,6 +88,17 @@ class MainActivity : FragmentActivity() {
     // Local app-lock state (biometric / device credential).
     private val appUnlocked = mutableStateOf(false)
     private val lockResolved = mutableStateOf(false)
+
+    /**
+     * Cached "is app lock enabled" flag.
+     *
+     * It used to be read once in [onCreate] and then forgotten, so [onResume]
+     * re-armed the lock without ever consulting it: returning from the
+     * background after [AUTO_LOCK_DELAY_MS] showed the lock screen and asked
+     * for biometrics even when the user had the lock switched off - with no
+     * way out of it, because the lock screen has no back affordance.
+     */
+    private val lockEnabled = mutableStateOf(false)
     private var lastBackgroundedAt: Long? = null
     private var lockErrorMessage: String? = null
 
@@ -96,8 +107,9 @@ class MainActivity : FragmentActivity() {
         enableEdgeToEdge()
         handleWidgetIntent(intent)
         lifecycleScope.launch {
-            val lockEnabled = BiometricLockPrefs.isEnabled(this@MainActivity.dataStore)
-            if (!lockEnabled) {
+            val enabled = BiometricLockPrefs.isEnabled(this@MainActivity.dataStore)
+            lockEnabled.value = enabled
+            if (!enabled) {
                 appUnlocked.value = true
             }
             lockResolved.value = true
@@ -137,7 +149,9 @@ class MainActivity : FragmentActivity() {
     override fun onResume() {
         super.onResume()
         val backgroundedAt = lastBackgroundedAt
-        if (shouldReLock(backgroundedAt, System.currentTimeMillis(), AUTO_LOCK_DELAY_MS)) {
+        if (lockEnabled.value &&
+            shouldReLock(backgroundedAt, System.currentTimeMillis(), AUTO_LOCK_DELAY_MS)
+        ) {
             lockErrorMessage = null
             appUnlocked.value = false
         }
@@ -145,6 +159,13 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun requestBiometricUnlock() {
+        // Defence in depth: no future call site can reach the system prompt
+        // while the lock is switched off.
+        if (!lockEnabled.value) {
+            lockErrorMessage = null
+            appUnlocked.value = true
+            return
+        }
         try {
             val promptInfo = BiometricPrompt.PromptInfo.Builder()
                 .setTitle(getString(R.string.biometric_prompt_title))

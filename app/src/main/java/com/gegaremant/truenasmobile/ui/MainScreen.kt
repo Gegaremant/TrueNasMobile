@@ -65,6 +65,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -217,6 +218,32 @@ fun MainScreen(
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    // ── Tab history ─────────────────────────────────────────────────────────
+    // Every bottom-bar tap is a popUpTo(saveState) + restoreState, so the
+    // back stack only ever holds the graph start plus one tab. That makes Back
+    // either exit the app or walk a history unrelated to the tabs. Remembering
+    // which tab was on screen before the current one gives Back a meaning the
+    // user expects: leave the tab, land on the tab you came from.
+    val activeTabRoute = currentRoute?.substringBefore('/')?.substringBefore('?')
+    var previousTabRoute by rememberSaveable { mutableStateOf<String?>(null) }
+
+    val switchTab: (String) -> Unit = { route ->
+        if (route != activeTabRoute) previousTabRoute = activeTabRoute
+        onNavClick(navController, route)
+    }
+
+    // Only from a tab that is not Home: Home is the app's home, and Back from
+    // there should keep its usual "leave the app" meaning.
+    val canReturnToPreviousTab = previousTabRoute != null &&
+        activeTabRoute != null &&
+        activeTabRoute != Screen.Home.route &&
+        previousTabRoute != activeTabRoute
+
+    BackHandler(enabled = canReturnToPreviousTab) {
+        previousTabRoute?.let { previous -> switchTab(previous) }
+    }
+
     val pendingNav by viewModel.pendingNavigation.collectAsState()
     LaunchedEffect(pendingNav) {
         val target = pendingNav
@@ -250,7 +277,7 @@ fun MainScreen(
                         val selected = currentRoute == item.destination.route
                         NavigationRailItem(
                             selected = selected,
-                            onClick = { onNavClick(navController, item.destination.route) },
+                            onClick = { switchTab(item.destination.route) },
                             label = {
                                 if (!compactNav) {
                                     Text(stringResource(item.titleRes), fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
@@ -292,7 +319,7 @@ fun MainScreen(
                                 val selected = currentRoute == item.destination.route
                                 NavigationBarItem(
                                     selected = selected,
-                                    onClick = { onNavClick(navController, item.destination.route) },
+                                    onClick = { switchTab(item.destination.route) },
                                     alwaysShowLabel = !compactNav,
                                     label = {
                                         Text(
