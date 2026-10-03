@@ -4,6 +4,54 @@ All notable changes to TrueNasMobile are listed here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] — 2026-10-03
+
+UI rework from the owner's feedback on 1.0.5. Plan and status:
+`docs/UI-PLAN-2026-10-03.md`.
+
+### Fixed
+- **The Details screen printed garbage instead of the load.** CPU showed
+  `1753567890123%` and the temperature a value in the billions, because the row
+  read the *first* column of a `system.report` point - a Unix timestamp in
+  milliseconds - as if it were the value. CPU is now the average across cores
+  clamped to 0..100, memory and temperature read the value column. The read
+  lives in one function now (`LatestMetric.latestValue`), so the timestamp
+  cannot be mistaken for a reading a second time.
+- **The Tasks tab header moved between tabs.** The Apps/Containers/VMs
+  switcher sat above the header, so the header was not where the other tabs
+  put it. It now belongs to `TasksScreen` and is drawn once above the switcher.
+- **The filter row did not fit.** The checkmark on the selected chip ate ~24dp
+  per chip, which pushed "New" off the end on a narrow screen.
+- **Share details lost both the header and the bottom bar.** Storage stays
+  highlighted there now.
+
+### Changed
+- **Header adapts to the device.** With a camera cutout at the top, the brand
+  line steps below it and stays small; without one it grows. On a narrow
+  screen the action row compacts and scrolls rather than pushing icons out.
+- **The profile chip is an avatar now**: a circle with the first letter of the
+  username. Tap opens the account page, long press opens a quick switcher that
+  lists the saved accounts and switches in one tap.
+- **Bottom bar labels are always visible**, and the Apps tab is gone - it
+  duplicated the Tasks sub-tab. Removing it from the destination enum also
+  migrates anyone who had it saved, because unknown names are dropped on load.
+- **An empty share group is one quiet line** instead of a card with an icon;
+  with nothing shared at all, a single sentence replaces three cards.
+- **Tapping a saved account opens the editor** (login, password, server
+  nickname) instead of switching silently; switching moved to its own button.
+  The password field starts empty - it never reads the stored one back, and an
+  empty field keeps the current password.
+
+### Added
+- **A figures-only widget at the top of Details**: disks by type and count, the
+  RAID level from the vdev topology, total/used/free with a usage bar, and live
+  CPU, memory (as a share of `physmem`, since the series reports bytes) and
+  temperature.
+- **A file browser at the bottom of a share** (`filesystem.listdir`, verified
+  on a 26.0 stand): folders first, a parent-folder step, and "open elsewhere",
+  which hands the path to a third-party app as an `smb://` link - the files
+  live on the NAS, so a local file to pass does not exist.
+
 ## [1.0.5] — 2026-10-02
 
 ### Added
