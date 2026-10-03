@@ -195,18 +195,11 @@ private data class MetricRow(
     /**
      * Last point of the series, formatted, or a dash when there is no data yet.
      *
-     * Every point is `[timestamp, value, ...]`, and the timestamp is Unix
-     * milliseconds - reading the *first* column printed ~1.75e12 where a
-     * percentage belongs, which is how the row used to show "1753567890123%"
-     * and a temperature in the billions.
+     * The reading itself lives in [latestValue] because every consumer of a
+     * `system.report` series has to skip the timestamp column.
      */
     fun currentValueLabel(): String {
-        val point = data?.data?.lastOrNull() ?: return "—"
-        val raw = if (averageAcrossCores) {
-            point.drop(1).takeIf { it.isNotEmpty() }?.average() ?: return "—"
-        } else {
-            point.getOrNull(1) ?: return "—"
-        }
+        val raw = data.latestValue(averageAcrossCores) ?: return "—"
         val value = when {
             scaleToGigabytes -> raw / (1024.0 * 1024.0 * 1024.0)
             // Percentages past 100 are not a load, and a core average cannot go

@@ -444,6 +444,21 @@
     <!-- Profile screen -->
     <string name="profile_loading">Loading Your Profile</string>
     <string name="profile_title">Profile</string>
+    <string name="shared_none_short">— none</string>
+    <string name="browser_files_title">Files</string>
+    <string name="browser_up">Up</string>
+    <string name="browser_open_externally">Open elsewhere</string>
+    <string name="browser_empty">This folder is empty</string>
+    <string name="browser_no_server_address">Server address unknown</string>
+    <string name="browser_no_app_for_smb">No app on this device can open smb:// links</string>
+    <string name="summary_no_disks">No disks reported</string>
+    <string name="summary_disks_hdd">%1$d HDD</string>
+    <string name="summary_disks_ssd">%1$d SSD</string>
+    <string name="summary_disks_mixed">%1$d HDD · %2$d SSD</string>
+    <string name="summary_total">Total</string>
+    <string name="summary_used">Used</string>
+    <string name="summary_free">Free</string>
+    <string name="summary_memory_used">Memory</string>
     <string name="profile_quick_title">Accounts</string>
     <string name="profile_quick_empty">No saved accounts yet</string>
     <string name="profile_quick_manage">All accounts and add new</string>

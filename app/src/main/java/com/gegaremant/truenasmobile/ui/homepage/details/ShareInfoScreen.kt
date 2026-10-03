@@ -82,7 +82,12 @@ sealed class ShareType {
 fun ShareInfoScreen(
     shareType: ShareType,
     manager: TrueNASApiManager,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onSearchClick: (() -> Unit)? = null,
+    onNavigateToInstanceSettings: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToProfileLongPress: (() -> Unit)? = null,
+    onNavigateToApplicationSettings: () -> Unit = {}
 ) {
     val title = when (shareType) {
         is ShareType.Smb -> shareType.share.name
@@ -91,6 +96,11 @@ fun ShareInfoScreen(
     val subtitle = when (shareType) {
         is ShareType.Smb -> stringResource(R.string.share_smb_fallback)
         is ShareType.Nfs -> stringResource(R.string.share_nfs_fallback)
+    }
+
+    val sharePath = when (shareType) {
+        is ShareType.Smb -> shareType.share.path
+        is ShareType.Nfs -> shareType.share.path
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -102,7 +112,16 @@ fun ShareInfoScreen(
             error = null,
             onDismissError = {},
             manager = manager,
-            onBackPressed = onNavigateBack
+            onBackPressed = onNavigateBack,
+            // Тот же шаблон, что на вкладках: иначе верхняя навигация пропадала
+            // ровно здесь, а владелец просил её сохранить.
+            showBrandLine = true,
+            onInstanceSettingsClick = onNavigateToInstanceSettings,
+            onProfileClick = onNavigateToProfile,
+            onProfileLongClick = onNavigateToProfileLongPress,
+            onApplicationSettingsClick = onNavigateToApplicationSettings,
+            showPowerControl = true,
+            onSearchClick = onSearchClick
         )
 
         LazyColumn(
@@ -143,6 +162,16 @@ fun ShareInfoScreen(
                     is ShareType.Smb -> SmbShareSections(share = shareType.share)
                     is ShareType.Nfs -> NfsShareSections(share = shareType.share)
                 }
+            }
+
+            item {
+                // Файловый обозреватель внизу: что реально лежит в шаре, с
+                // передачей в стороннее приложение через smb://.
+                ShareFileBrowser(
+                    manager = manager,
+                    initialPath = sharePath,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
 
             item { Spacer(modifier = Modifier.height(24.dp)) }

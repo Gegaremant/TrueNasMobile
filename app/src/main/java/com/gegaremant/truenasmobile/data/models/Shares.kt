@@ -84,6 +84,29 @@ object Shares {
         val index_doc: Boolean? = null,
         val files: List<String>? = null
     )
+
+    /**
+     * One entry of `filesystem.listdir`.
+     *
+     * Verified against a 26.0.0-BETA.3 stand: the method answers with
+     * `{name, path, realpath, type, size, allocation_size, mode, uid, gid,
+     * is_mountpoint, acl, attributes, xattrs, zfs_attrs}`. Only the fields the
+     * file browser shows are modelled; the rest are ignored on purpose.
+     */
+    @Suppress("PropertyName")
+    @JsonClass(generateAdapter = true)
+    data class DirectoryEntry(
+        val name: String = "",
+        val path: String = "",
+        val realpath: String = "",
+        /** `DIRECTORY`, `FILE`, `SYMLINK` - compared case-insensitively. */
+        val type: String = "FILE",
+        val size: Long = 0,
+        val allocation_size: Long = 0,
+        val is_mountpoint: Boolean = false
+    ) {
+        val isDirectory: Boolean get() = type.equals("DIRECTORY", ignoreCase = true)
+    }
 //    @JsonClass(generateAdapter = true)
 //    enum class NfsSecurity{
 //        SYS,

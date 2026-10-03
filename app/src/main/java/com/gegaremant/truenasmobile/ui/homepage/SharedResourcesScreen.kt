@@ -67,7 +67,12 @@ class SharedResourcesViewModel(
         data class Success(
             val smb: List<Shares.SmbShare>,
             val nfs: List<Shares.NfsShare>,
-            val web: List<Shares.WebShare>
+            val web: List<Shares.WebShare>,
+            /** Contents of the browsed path; empty until the user opens one. */
+            val entries: List<Shares.DirectoryEntry> = emptyList(),
+            val browsedPath: String? = null,
+            val isBrowsing: Boolean = false,
+            val browseError: String? = null
         ) : UiState()
         data class Error(val message: String) : UiState()
     }
@@ -96,6 +101,45 @@ class SharedResourcesViewModel(
                 )
             }
         }
+    }
+
+    /** Opens a share (or dataset) path in the file list at the bottom. */
+    fun browse(path: String) {
+        viewModelScope.launch {
+            val current = _state.value as? UiState.Success ?: return@launch
+            _state.value = current.copy(isBrowsing = true, browsedPath = path, browseError = null)
+            when (val listing = manager.sharing.listDirectoryWithResult(path)) {
+                is ApiResult.Success -> _state.value = current.copy(
+                    entries = listing.data.sortedWith(
+                        compareByDescending<Shares.DirectoryEntry> { it.isDirectory }
+                            .thenBy { it.name.lowercase() }
+                    ),
+                    browsedPath = path,
+                    isBrowsing = false,
+                    browseError = null
+                )
+                is ApiResult.Error -> _state.value = current.copy(
+                    entries = emptyList(),
+                    browsedPath = path,
+                    isBrowsing = false,
+                    browseError = listing.message
+                )
+                is ApiResult.Loading -> Unit
+            }
+        }
+    }
+
+    /** Steps one directory up, or clears the list when already at a root. */
+    fun browseUp() {
+        val current = _state.value as? UiState.Success ?: return
+        val path = current.browsedPath ?: return
+        val parent = path.trimEnd('/').substringBeforeLast('/', "/")
+        browse(parent.ifEmpty { "/" })
+    }
+
+    fun closeBrowser() {
+        val current = _state.value as? UiState.Success ?: return
+        _state.value = current.copy(entries = emptyList(), browsedPath = null, browseError = null)
     }
 }
 
@@ -166,6 +210,19 @@ fun SharedResourcesScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                val everythingEmpty = current.smb.isEmpty() &&
+                    current.nfs.isEmpty() &&
+                    current.web.isEmpty()
+
+                if (everythingEmpty) {
+                    // Одна спокойная строка вместо трёх карточек с иконками.
+                    Text(
+                        text = stringResource(R.string.shared_none),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
                 ShareGroup(
                     titleRes = R.string.shared_smb_title,
                     icon = Icons.Filled.Storage,
@@ -212,12 +269,10 @@ fun SharedResourcesScreen(
                     }
                 }
 
-                if (current.smb.isEmpty() && current.nfs.isEmpty() && current.web.isEmpty()) {
-                    Text(
-                        text = stringResource(R.string.shared_none),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                if (everythingEmpty) {
+                    // The line above already says it; the three empty groups
+                    // below stay as quiet one-liners, not empty cards.
+                    Spacer(modifier = Modifier.height(0.dp))
                 }
             }
         }
@@ -231,6 +286,31 @@ private fun ShareGroup(
     empty: Boolean,
     content: @Composable () -> Unit
 ) {
+    // An empty group is one quiet line, not a card with an icon: three empty
+    // cards used to take a whole screen to say "there is nothing shared".
+    if (empty) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(titleRes),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = stringResource(R.string.shared_none_short),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+            )
+        }
+        return
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -254,15 +334,7 @@ private fun ShareGroup(
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
-        if (empty) {
-            Text(
-                text = stringResource(R.string.shared_none),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        } else {
-            content()
-        }
+        content()
     }
 }
 

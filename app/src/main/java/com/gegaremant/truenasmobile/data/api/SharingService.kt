@@ -31,4 +31,20 @@ class SharingService(var manager : TrueNASApiManager) {
             resultType = type,
         )
     }
+
+    /**
+     * Contents of a directory (`filesystem.listdir`).
+     *
+     * Backs the file list at the bottom of the Storage tab: the owner wants to
+     * see what actually lies inside a share, and hand the file over to a
+     * third-party app.
+     */
+    suspend fun listDirectoryWithResult(path: String): ApiResult<List<Shares.DirectoryEntry>> {
+        val type = Types.newParameterizedType(List::class.java, Shares.DirectoryEntry::class.java)
+        return manager.callWithResult(
+            method = ApiMethods.Shares.FILESYSTEM_LISTDIR,
+            params = listOf(path),
+            resultType = type,
+        )
+    }
 }

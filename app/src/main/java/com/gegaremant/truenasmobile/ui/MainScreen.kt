@@ -221,12 +221,14 @@ fun MainScreen(
     // comes with a top and a bottom menu); it was opened from Home, so Home
     // stays highlighted while its details are on screen.
     val routesWithBottomBar = remember(navRoutes) {
-        navRoutes + Screen.PoolDetails.route
+        // Share details belong to the Storage tab, and the owner asked for the
+        // bottom bar to stay there - it used to disappear on that screen.
+        navRoutes + Screen.PoolDetails.route + Screen.ShareInfo.route
     }
-    val selectedNavRoute = if (currentRoute == Screen.PoolDetails.route) {
-        Screen.Home.route
-    } else {
-        currentRoute
+    val selectedNavRoute = when (currentRoute) {
+        Screen.PoolDetails.route -> Screen.Home.route
+        Screen.ShareInfo.route -> Screen.Storage.route
+        else -> currentRoute
     }
 
     // ── Tab history ─────────────────────────────────────────────────────────
@@ -948,7 +950,18 @@ private fun TrueNasMobileNavGraph(
                 ShareInfoScreen(
                     shareType = shareType,
                     manager = manager,
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = { navController.popBackStack() },
+                    onSearchClick = onSearchClick,
+                    onNavigateToInstanceSettings = {
+                        navController.navigate(Screen.InstanceConfigScreen.route)
+                    },
+                    onNavigateToProfile = {
+                        rootNavController.navigate(Screen.AccountSwitcher.route)
+                    },
+                    onNavigateToProfileLongPress = onProfileLongClick,
+                    onNavigateToApplicationSettings = {
+                        rootNavController.navigate(Screen.Settings.route)
+                    }
                 )
             }
         }

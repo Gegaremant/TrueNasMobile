@@ -386,6 +386,14 @@ object ApiMethods {
         // TrueNAS's built-in web file shares. There is no WebDAV namespace in
         // the 26.0 API; verified against core.get_methods on a 26.0 stand.
         const val GET_WEBSHARE = "sharing.webshare.query"
+
+        /**
+         * Lists the contents of a directory on a share or a dataset path.
+         * Present in the 26.0 API (`core.get_methods` on a 26.0.0-BETA.3 stand)
+         * and verified live: it answers with an array of entries.
+         * @see com.gegaremant.truenasmobile.data.models.Shares.DirectoryEntry
+         */
+        const val FILESYSTEM_LISTDIR = "filesystem.listdir"
     }
     object Storage {
         /**

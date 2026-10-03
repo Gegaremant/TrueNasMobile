@@ -251,6 +251,17 @@ private fun HomeContent(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
+        // The numbers first, in figures: disks, RAID, capacity, live load.
+        StorageSummaryWidget(
+            pools = state.poolDetails,
+            disks = state.diskDetails,
+            cpuData = state.cpuData,
+            memoryData = state.memoryData,
+            temperatureData = state.temperatureData,
+            physicalMemoryBytes = state.systemInfo.physmem,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
         SystemOverviewCard(
             isConnectedStatus = isConnectedStatus,
             systemInfo = state.systemInfo,

@@ -450,6 +450,21 @@
     <!-- Profile screen -->
     <string name="profile_loading">Загрузка профиля</string>
     <string name="profile_title">Профиль</string>
+    <string name="shared_none_short">— нет</string>
+    <string name="browser_files_title">Файлы</string>
+    <string name="browser_up">Вверх</string>
+    <string name="browser_open_externally">Открыть в приложении</string>
+    <string name="browser_empty">В этой папке пусто</string>
+    <string name="browser_no_server_address">Адрес сервера неизвестен</string>
+    <string name="browser_no_app_for_smb">На устройстве нет приложения для ссылок smb://</string>
+    <string name="summary_no_disks">Диски не сообщаются</string>
+    <string name="summary_disks_hdd">%1$d HDD</string>
+    <string name="summary_disks_ssd">%1$d SSD</string>
+    <string name="summary_disks_mixed">%1$d HDD · %2$d SSD</string>
+    <string name="summary_total">Всего</string>
+    <string name="summary_used">Занято</string>
+    <string name="summary_free">Свободно</string>
+    <string name="summary_memory_used">Память</string>
     <string name="profile_quick_title">Аккаунты</string>
     <string name="profile_quick_empty">Сохранённых аккаунтов пока нет</string>
     <string name="profile_quick_manage">Все аккаунты и добавление</string>
