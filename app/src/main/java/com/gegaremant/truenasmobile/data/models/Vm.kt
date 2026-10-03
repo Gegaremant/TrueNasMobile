@@ -91,4 +91,20 @@ object Vm {
         val zvols : Boolean? = false,
         val force : Boolean? = false
     )
+
+    /**
+     * Arguments of `vm.create` in the 26.0 API.
+     *
+     * Verified on a 26.0 stand: calling it with an empty object fails with
+     * `name: Field required, memory: Field required`, so those two are the
+     * minimum. `memory` is in MiB and `vcpus` in cores.
+     */
+    @JsonClass(generateAdapter = true)
+    data class createArgs(
+        val name: String,
+        val memory: Int,
+        val vcpus: Int = 1,
+        val description: String = "",
+        val autostart: Boolean = false
+    )
 }

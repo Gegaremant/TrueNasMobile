@@ -488,6 +488,27 @@
     <string name="details_charts_title">Load charts</string>
     <string name="details_charts_all">All</string>
     <string name="details_charts_empty">No chart data yet</string>
+    <string name="create_action">Create</string>
+    <string name="create_name_required">Name cannot be empty</string>
+    <string name="create_container_title">New container</string>
+    <string name="create_container_name">Name</string>
+    <string name="create_container_image">Image</string>
+    <string name="create_container_image_hint">e.g. alpine:latest — pulled on the server</string>
+    <string name="create_container_image_required">Enter an image</string>
+    <string name="create_container_pool_hint">Choose a pool</string>
+    <string name="create_container_pool_note">The container keeps its data in this pool. The API refuses to create one without it.</string>
+    <string name="create_container_pool_required">Choose a pool for the container</string>
+    <string name="create_vm_title">New virtual machine</string>
+    <string name="create_vm_name">Name</string>
+    <string name="create_vm_memory">RAM, GB</string>
+    <string name="create_vm_vcpus">vCPU</string>
+    <string name="create_vm_hint">The machine is created stopped; no disk is attached yet, so it starts only after you add one.</string>
+    <string name="create_vm_memory_invalid">Enter memory in GB</string>
+    <string name="create_vm_vcpus_invalid">Enter the number of cores</string>
+    <string name="containers_creating">Creating the container…</string>
+    <string name="containers_created">Container created</string>
+    <string name="containers_create_failed">Could not create the container</string>
+    <string name="vms_created">Virtual machine created</string>
     <string name="summary_no_disks">No disks reported</string>
     <string name="summary_disks_hdd">%1$d HDD</string>
     <string name="summary_disks_ssd">%1$d SSD</string>
@@ -2026,6 +2047,4 @@
     <string name="cd_instance_settings_cd">Instance settings</string>
     <string name="cd_application_settings_cd">Application settings</string>
     <string name="cd_profile_cd">Connection profile</string>
-    <string name="new_container_soon">Creating containers arrives in a future update</string>
-    <string name="new_vm_soon">Creating virtual machines arrives in a future update</string>
 </resources>

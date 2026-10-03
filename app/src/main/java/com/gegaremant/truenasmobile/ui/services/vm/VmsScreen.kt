@@ -98,6 +98,7 @@ import com.gegaremant.truenasmobile.ui.components.PullToRefreshContent
 import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 import com.gegaremant.truenasmobile.ui.services.vm.details.VmInfoPane
+import com.gegaremant.truenasmobile.ui.services.create.CreateVmDialog
 import com.gegaremant.truenasmobile.ui.utils.AdaptiveLayoutHelper
 
 enum class VmFilterCategory(@StringRes val labelRes: Int) {
@@ -133,6 +134,7 @@ fun VmsScreen(
     val isCompact = AdaptiveLayoutHelper.isCompact()
 
     var selectedCategory by remember { mutableStateOf(VmFilterCategory.ALL) }
+    var showCreateDialog by remember { mutableStateOf(false) }
     var selectedVmForPane by remember { mutableStateOf<Vm.VmQueryResponse?>(null) }
 
     val filteredVms by remember(uiState.vms, selectedCategory) {
@@ -171,9 +173,7 @@ fun VmsScreen(
         VmFilterBar(
             currentCategory = selectedCategory,
             onCategorySelected = { selectedCategory = it },
-            onAddNew = {
-                ToastManager.showInfoRes(R.string.new_vm_soon)
-            },
+            onAddNew = { showCreateDialog = true },
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -246,6 +246,16 @@ fun VmsScreen(
                 }
             }
         }
+    }
+
+    if (showCreateDialog) {
+        CreateVmDialog(
+            onDismiss = { showCreateDialog = false },
+            onCreate = { name, memoryMiB, vcpus ->
+                showCreateDialog = false
+                viewModel.createVm(name, memoryMiB, vcpus)
+            }
+        )
     }
 }
 

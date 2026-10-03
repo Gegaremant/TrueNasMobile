@@ -53,6 +53,32 @@ class ContainerService(val manager: TrueNASApiManager) {
 
     // ── Mutations ───────────────────────────────────────────────────────────
 
+    /**
+     * Creates a container (`container.create`).
+     *
+     * The image arrives as a string from the UI and is split into name and
+     * version here, because the 26.0 API wants the two separately and rejects
+     * `reference`/`docker_registry` outright. The call answers with a **job id**,
+     * not with the container, so the caller tracks the job and refreshes when it
+     * lands.
+     */
+    suspend fun createContainerWithResult(
+        name: String,
+        image: String,
+        pool: String
+    ): ApiResult<Double> =
+        manager.callWithResult(
+            method = ApiMethods.Container.CREATE,
+            params = listOf(
+                Container.createArgs(
+                    name = name,
+                    image = Container.parseImageReference(image),
+                    pool = pool
+                )
+            ),
+            resultType = Double::class.java
+        )
+
     suspend fun startContainerWithResult(id: String): ApiResult<Double> =
         manager.callWithResult(
             method = ApiMethods.Container.START,

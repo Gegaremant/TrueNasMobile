@@ -248,6 +248,52 @@ object Container {
         val address: String,
     ): Device
     sealed interface Device
+
+    /** `alpine:latest` -> `alpine` + `latest`; a bare name means `latest`. */
+    fun parseImageReference(reference: String): CreateImage {
+        val withoutRegistry = reference.trim()
+            .removePrefix("docker.io/")
+            .removePrefix("library/")
+            .substringAfterLast('/')
+        val colon = withoutRegistry.lastIndexOf(':')
+        return if (colon > 0) {
+            CreateImage(
+                name = withoutRegistry.substring(0, colon),
+                version = withoutRegistry.substring(colon + 1)
+            )
+        } else {
+            CreateImage(name = withoutRegistry, version = "latest")
+        }
+    }
+
+    /**
+     * Arguments of `container.create` in the 26.0 API.
+     *
+     * Verified on a 26.0 stand, one field at a time:
+     * - a plain image string is rejected - `image` must be an object;
+     * - the object wants `name` and `version` separately, and passing
+     *   `reference` or `docker_registry` fails with `Extra inputs are not
+     *   permitted`;
+     * - `pool` is required as well (`Either configure a preferred pool in lxc
+     *   settings or provide a pool name`), unless the stand has a preferred pool.
+     *
+     * The call returns a job id, so the container only exists once that job
+     * succeeds - and a real stand then pulls the image, which is why the first
+     * creation can take minutes.
+     */
+    @JsonClass(generateAdapter = true)
+    data class createArgs(
+        val name: String,
+        val image: CreateImage,
+        val pool: String
+    )
+
+    @JsonClass(generateAdapter = true)
+    data class CreateImage(
+        val name: String,
+        val version: String
+    )
+
     @JsonClass(generateAdapter = true)
     data class stopArgs(
         @field:Json("timeout")

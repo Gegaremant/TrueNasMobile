@@ -116,6 +116,26 @@ class VmsScreenViewModel(
     }
 
     // TODO: Find a way also to show user dialog option to overcommit
+    /**
+     * Creates a VM from the "New" action.
+     *
+     * `vm.create` answers with the instance itself (no job), so the list can be
+     * reloaded right away. `memory` is in MiB because that is what the API
+     * takes; the dialog converts from GiB.
+     */
+    fun createVm(name: String, memoryMiB: Int, vcpus: Int) {
+        viewModelScope.launch {
+            when (val result = manager.vmService.createVmInstanceWithResult(name, memoryMiB, vcpus)) {
+                is ApiResult.Success -> {
+                    ToastManager.showSuccessRes(R.string.vms_created)
+                    refresh()
+                }
+                is ApiResult.Error -> ToastManager.showError(result.message)
+                ApiResult.Loading -> Unit
+            }
+        }
+    }
+
     fun startVm(id: Int, overcommit: Boolean = true) {
         viewModelScope.launch {
             val jobId : Int

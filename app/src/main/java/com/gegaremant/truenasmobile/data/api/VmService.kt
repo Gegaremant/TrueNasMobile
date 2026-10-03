@@ -22,6 +22,26 @@ class VmService(var manager: TrueNASApiManager) {
         )
     }
 
+    /**
+     * Creates a VM (`vm.create`).
+     *
+     * Verified on a 26.0 stand: only `name` and `memory` are required, and the
+     * call answers with the new instance (no job), so the list can be refreshed
+     * straight away. `memory` is in MiB, which is what the API takes - not the
+     * GiB the UI likes to show.
+     */
+    suspend fun createVmInstanceWithResult(
+        name: String,
+        memoryMiB: Int,
+        vcpus: Int = 1
+    ): ApiResult<Vm.VmQueryResponse> {
+        return manager.callWithResult(
+            method = ApiMethods.Vm.CREATE_VM_INSTANCE,
+            params = listOf(Vm.createArgs(name.trim(), memoryMiB, vcpus)),
+            resultType = Vm.VmQueryResponse::class.java
+        )
+    }
+
     // Start Vm
     suspend fun startVmInstanceWithResult(id : Int,overcommit: Boolean = false): ApiResult<Int>{
         return manager.callWithResult(

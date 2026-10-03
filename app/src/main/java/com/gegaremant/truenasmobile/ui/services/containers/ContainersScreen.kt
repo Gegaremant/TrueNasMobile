@@ -99,6 +99,7 @@ import com.gegaremant.truenasmobile.ui.components.PullToRefreshContent
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 import com.gegaremant.truenasmobile.R
 import com.gegaremant.truenasmobile.ui.services.containers.details.ContainerInfoPane
+import com.gegaremant.truenasmobile.ui.services.create.CreateContainerDialog
 import com.gegaremant.truenasmobile.ui.utils.AdaptiveLayoutHelper
 
 enum class ContainerFilterCategory(@StringRes val labelRes: Int) {
@@ -135,6 +136,7 @@ fun ContainersScreen(
 
     var selectedCategory by remember { mutableStateOf(ContainerFilterCategory.ALL) }
     var selectedContainerForPane by remember { mutableStateOf<Container.ContainerResponse?>(null) }
+    var showCreateDialog by remember { mutableStateOf(false) }
 
     val filteredContainers by remember(uiState.containers, selectedCategory) {
         derivedStateOf {
@@ -175,7 +177,8 @@ fun ContainersScreen(
             currentCategory = selectedCategory,
             onCategorySelected = { selectedCategory = it },
             onAddNew = {
-                ToastManager.showInfoRes(R.string.new_container_soon)
+                viewModel.loadPools()
+                showCreateDialog = true
             },
             modifier = Modifier.padding(bottom = 8.dp)
         )
@@ -243,6 +246,17 @@ fun ContainersScreen(
                 }
             }
         }
+    }
+
+    if (showCreateDialog) {
+        CreateContainerDialog(
+            pools = uiState.pools,
+            onDismiss = { showCreateDialog = false },
+            onCreate = { name, image, pool ->
+                showCreateDialog = false
+                viewModel.createContainer(name, image, pool)
+            }
+        )
     }
 }
 

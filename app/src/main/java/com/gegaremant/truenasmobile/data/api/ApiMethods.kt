@@ -341,6 +341,7 @@ object ApiMethods {
     object Container {
         const val QUERY = "container.query"
         const val GET_INSTANCE = "container.get_instance"
+        const val CREATE = "container.create"
         const val START = "container.start"
         const val STOP = "container.stop"
         const val DELETE = "container.delete"
@@ -355,6 +356,7 @@ object ApiMethods {
     }
     object Vm{
         const val GET_ALL_VM_INSTANCES = "vm.query"
+        const val CREATE_VM_INSTANCE = "vm.create"
         const val START_VM_INSTANCE = "vm.start"
         const val STOP_INSTANCE = "vm.stop"
         const val RESTART_INSTANCE = "vm.restart"

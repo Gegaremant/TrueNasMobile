@@ -22,7 +22,13 @@ data class ContainerScreenUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val error: String? = null,
-    val operationJobs: Map<String, System.Job> = emptyMap()
+    val operationJobs: Map<String, System.Job> = emptyMap(),
+    /**
+     * Pool names, because `container.create` demands one - it fails with
+     * "Either configure a preferred pool in lxc settings or provide a pool name"
+     * otherwise. Loaded once, lazily, when the create dialog opens.
+     */
+    val pools: List<String> = emptyList()
 )
 
 class ContainerScreenViewModel(
@@ -119,6 +125,51 @@ class ContainerScreenViewModel(
         }
     }
 
+    /**
+     * Creates a container from the "New" action.
+     *
+     * `container.create` answers with a job id and no container, so the flow is
+     * the same as every other container operation here: track the job, and let
+     * the tracker refresh the list when it lands. The image is pulled on the
+     * stand, so the first creation can take a while - the task list shows it.
+     */
+    /** Pool names for the create dialog; only fetched when it opens. */
+    fun loadPools() {
+        if (_uiState.value.pools.isNotEmpty()) return
+        viewModelScope.launch {
+            when (val result = manager.system.getPoolsWithResult()) {
+                is ApiResult.Success ->
+                    _uiState.update { state ->
+                        state.copy(pools = result.data.map { it.name }.filter { it.isNotBlank() })
+                    }
+                else -> Unit
+            }
+        }
+    }
+
+    fun createContainer(name: String, image: String, pool: String, onDone: (Boolean) -> Unit = {}) {
+        viewModelScope.launch {
+            when (val result = manager.containerService.createContainerWithResult(name, image, pool)) {
+                is ApiResult.Success -> {
+                    ToastManager.showInfoRes(R.string.containers_creating)
+                    trackContainerOperation(name, result.data.toInt(), "CREATING") { ok ->
+                        if (ok) {
+                            ToastManager.showSuccessRes(R.string.containers_created)
+                        } else {
+                            ToastManager.showErrorRes(R.string.containers_create_failed)
+                        }
+                        onDone(ok)
+                    }
+                }
+                is ApiResult.Error -> {
+                    ToastManager.showError(result.message)
+                    onDone(false)
+                }
+                ApiResult.Loading -> onDone(false)
+            }
+        }
+    }
+
     fun startContainer(id: String) {
         viewModelScope.launch {
             when (val result = manager.containerService.startContainerWithResult(id)) {
@@ -175,7 +226,12 @@ class ContainerScreenViewModel(
             }
         }
     }
-    private fun trackContainerOperation(containerId: String, jobId: Int, operation: String) {
+    private fun trackContainerOperation(
+        containerId: String,
+        jobId: Int,
+        operation: String,
+        onComplete: (Boolean) -> Unit = {}
+    ) {
         viewModelScope.launch {
             var pollAttempts = 0
             val maxPollAttempts = 150 // 5 minutes max
@@ -203,6 +259,7 @@ class ContainerScreenViewModel(
                                     )
                                 }
                                 refresh()
+                                onComplete(job.state == "SUCCESS")
                                 break
                             }
                         }
