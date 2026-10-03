@@ -66,7 +66,12 @@ fun ServerConfigBottomSheet(
     onConfigured: (String, Boolean) -> Unit,
     initialUrl: String? = null,
     initialInsecure: Boolean = false,
-    showChangeUrlOption: Boolean = false
+    showChangeUrlOption: Boolean = false,
+    /**
+     * First run: the server cannot be skipped, so the sheet cannot be swiped
+     * away and has no close button. Everywhere else it stays dismissible.
+     */
+    mandatory: Boolean = false
 ) {
     val viewModel = remember { SetupScreenViewModel() }
     val uiState by viewModel.uiState.collectAsState()
@@ -92,8 +97,13 @@ fun ServerConfigBottomSheet(
     }
 
     ModalBottomSheet(
-        onDismissRequest = { if (!uiState.isConfiguring) onDismiss() },
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        onDismissRequest = { if (!uiState.isConfiguring && !mandatory) onDismiss() },
+        sheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+            // A swipe away on first run left the user staring at an empty
+            // screen with nothing to press, so the sheet holds.
+            confirmValueChange = { if (mandatory) false else true }
+        ),
         containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = null
     ) {
@@ -141,7 +151,7 @@ fun ServerConfigBottomSheet(
                         }
                     }
 
-                    if (!uiState.isConfiguring) {
+                    if (!uiState.isConfiguring && !mandatory) {
                         IconButton(
                             onClick = onDismiss,
                             modifier = Modifier.size(40.dp)

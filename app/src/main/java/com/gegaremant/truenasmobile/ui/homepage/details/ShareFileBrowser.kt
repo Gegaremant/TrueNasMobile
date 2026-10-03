@@ -19,8 +19,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.UnfoldMore
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -72,6 +74,19 @@ fun ShareFileBrowser(
     var entries by remember { mutableStateOf<List<Shares.DirectoryEntry>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
+    var showInstallDialog by remember { mutableStateOf(false) }
+
+    fun openStoreLink(link: String) {
+        showInstallDialog = false
+        runCatching {
+            context.startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse(link))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        }.onFailure {
+            ToastManager.showErrorRes(R.string.browser_store_link_failed)
+        }
+    }
 
     // The NAS address is needed to build smb://host/share/... links.
     var serverHost by remember { mutableStateOf<String?>(null) }
@@ -123,7 +138,9 @@ fun ShareFileBrowser(
         if (intent.resolveActivity(context.packageManager) != null) {
             context.startActivity(intent)
         } else {
-            ToastManager.showErrorRes(R.string.browser_no_app_for_smb)
+            // The owner hit exactly this: a dead end with a toast. Offer the
+            // app that can open smb:// instead of just reporting its absence.
+            showInstallDialog = true
         }
     }
 
@@ -260,7 +277,45 @@ fun ShareFileBrowser(
             }
         }
     }
+
+    // Нет приложения, умеющего открывать smb://: предлагаем поставить вместо
+    // того, чтобы молча сказать «не поддерживается».
+    if (showInstallDialog) {
+        AlertDialog(
+            onDismissRequest = { showInstallDialog = false },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.FolderOpen,
+                    contentDescription = null
+                )
+            },
+            title = { Text(stringResource(R.string.browser_install_title)) },
+            text = { Text(stringResource(R.string.browser_install_message)) },
+            confirmButton = {
+                TextButton(onClick = { openStoreLink(FDROID_FILES_URL) }) {
+                    Text(stringResource(R.string.browser_install_fdroid))
+                }
+            },
+            dismissButton = {
+                Row {
+                    TextButton(onClick = {
+                        openStoreLink(PLAY_FILES_URL)
+                    }) {
+                        Text(stringResource(R.string.browser_install_play))
+                    }
+                    TextButton(onClick = { showInstallDialog = false }) {
+                        Text(stringResource(R.string.common_cancel))
+                    }
+                }
+            }
+        )
+    }
 }
+
+/** Files (Material Files) speaks smb://, and both stores carry it. */
+private const val FDROID_FILES_URL = "https://f-droid.org/packages/me.zhanghai.android.files/"
+private const val PLAY_FILES_URL =
+    "https://play.google.com/store/apps/details?id=me.zhanghai.android.files"
 
 private fun formatSize(bytes: Long): String {
     if (bytes <= 0) return ""

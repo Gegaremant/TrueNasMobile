@@ -26,6 +26,15 @@
     <string name="common_connecting_to_server">Подключение к серверу…</string>
     <string name="common_retry">Повторить</string>
     <string name="common_cancel">Отмена</string>
+    <string name="welcome_title">Добро пожаловать в TrueNasMobile</string>
+    <string name="welcome_subtitle">Ваш TrueNAS всегда под рукой — укажите сервер, и он станет вашим.</string>
+    <string name="welcome_feature_server">Адрес вашего TrueNAS, затем логин и пароль</string>
+    <string name="welcome_feature_storage">Пулы, диски и общие папки под рукой</string>
+    <string name="welcome_feature_services">Приложения, контейнеры и виртуальные машины</string>
+    <string name="welcome_feature_alerts">Оповещения и текущие задачи — ничего не происходит молча</string>
+    <string name="welcome_feature_private">Учётные данные остаются на устройстве</string>
+    <string name="welcome_footer">Ваше хранилище, ваши серверы, ваши настройки — всё в одном месте.</string>
+    <string name="welcome_start">Начать</string>
     <string name="account_edit_title">Редактировать аккаунт</string>
     <string name="account_edit_username">Имя пользователя</string>
     <string name="account_edit_password">Пароль</string>
@@ -170,6 +179,8 @@
     <string name="account_none_saved">Сохранённых аккаунтов пока нет</string>
     <string name="account_add_new">Добавить аккаунт</string>
     <string name="account_add_another_server">Добавить ещё один сервер</string>
+    <string name="account_add_user">Новый пользователь</string>
+    <string name="account_add_server">Другой NAS</string>
     <string name="account_delete_all_credentials">Удалить все сохранённые учётные данные</string>
     <string name="account_delete_dialog_title">Удалить аккаунт</string>
     <string name="account_delete_dialog_message">Вы уверены, что хотите удалить «%1$s»? Сохранённые учётные данные будут удалены.</string>
@@ -465,6 +476,11 @@
     <string name="browser_empty">В этой папке пусто</string>
     <string name="browser_no_server_address">Адрес сервера неизвестен</string>
     <string name="browser_no_app_for_smb">На устройстве нет приложения для ссылок smb://</string>
+    <string name="browser_install_title">Установить файловый менеджер?</string>
+    <string name="browser_install_message">Ни одно установленное приложение не открывает ссылки smb://. Поставьте файловый менеджер с поддержкой SMB — и папка откроется в нём.</string>
+    <string name="browser_install_fdroid">Скачать в F-Droid</string>
+    <string name="browser_install_play">Google Play</string>
+    <string name="browser_store_link_failed">Не удалось открыть ссылку магазина</string>
     <string name="summary_no_disks">Диски не сообщаются</string>
     <string name="summary_disks_hdd">%1$d HDD</string>
     <string name="summary_disks_ssd">%1$d SSD</string>

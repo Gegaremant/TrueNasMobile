@@ -26,6 +26,15 @@
     <string name="common_connecting_to_server">Connecting to server…</string>
     <string name="common_retry">Retry</string>
     <string name="common_cancel">Cancel</string>
+    <string name="welcome_title">Welcome to TrueNasMobile</string>
+    <string name="welcome_subtitle">Your TrueNAS in your pocket — connect a server and it becomes yours.</string>
+    <string name="welcome_feature_server">Address of your TrueNAS, then login and password</string>
+    <string name="welcome_feature_storage">Pools, disks and shared folders at hand</string>
+    <string name="welcome_feature_services">Apps, containers and virtual machines</string>
+    <string name="welcome_feature_alerts">Alerts and running tasks — nothing silent</string>
+    <string name="welcome_feature_private">Credentials stay on your device</string>
+    <string name="welcome_footer">Your storage, your servers, your settings — all in one place.</string>
+    <string name="welcome_start">Get started</string>
     <string name="account_edit_title">Edit account</string>
     <string name="account_edit_username">Username</string>
     <string name="account_edit_password">Password</string>
@@ -170,6 +179,8 @@
     <string name="account_none_saved">No saved accounts yet</string>
     <string name="account_add_new">Add New Account</string>
     <string name="account_add_another_server">Add another server</string>
+    <string name="account_add_user">New user</string>
+    <string name="account_add_server">New NAS</string>
     <string name="account_delete_all_credentials">Delete all saved credentials</string>
     <string name="account_delete_dialog_title">Delete Account</string>
     <string name="account_delete_dialog_message">Are you sure you want to delete \'%1$s\'? This will remove saved credentials.</string>
@@ -459,6 +470,11 @@
     <string name="browser_empty">This folder is empty</string>
     <string name="browser_no_server_address">Server address unknown</string>
     <string name="browser_no_app_for_smb">No app on this device can open smb:// links</string>
+    <string name="browser_install_title">Install a file manager?</string>
+    <string name="browser_install_message">Nothing installed here can open smb:// links. Install a file manager with SMB support and the folder will open in its own window.</string>
+    <string name="browser_install_fdroid">Get it on F-Droid</string>
+    <string name="browser_install_play">Google Play</string>
+    <string name="browser_store_link_failed">Could not open the store link</string>
     <string name="summary_no_disks">No disks reported</string>
     <string name="summary_disks_hdd">%1$d HDD</string>
     <string name="summary_disks_ssd">%1$d SSD</string>

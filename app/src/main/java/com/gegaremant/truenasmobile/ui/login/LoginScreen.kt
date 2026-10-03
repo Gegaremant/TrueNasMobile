@@ -109,7 +109,10 @@ fun LoginScreen(
     var localManager by remember(existingManager) {
         mutableStateOf(existingManager)
     }
-    var showSetupSheet by remember { mutableStateOf( savedUrl == null) }
+    var showSetupSheet by remember { mutableStateOf(false) }
+    // Первый запуск: сначала приветствие, потом адрес сервера. Раньше шторка
+    // ввода открывалась сразу, и её можно было смахнуть в пустоту.
+    var showWelcome by remember { mutableStateOf(savedUrl == null) }
 
     val viewModel: LoginScreenViewModel = viewModel(
         factory = LoginViewModelFactory(existingManager, application)
@@ -173,6 +176,15 @@ fun LoginScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         when {
+            // Приветствие первым на чистой установке.
+            showWelcome -> {
+                WelcomeScreen(
+                    onStart = {
+                        showWelcome = false
+                        showSetupSheet = true
+                    }
+                )
+            }
             // OTP takes over the entire screen — no login form visible
             localManager != null && uiState.showOtpField -> {
                 OtpFullScreen(
@@ -221,8 +233,13 @@ fun LoginScreen(
         if (showSetupSheet) {
             ServerConfigBottomSheet(
                 onDismiss = {
+                    // Первый запуск: сервер обязателен, поэтому уход назад
+                    // возвращает к приветствию, а не закрывает её наглухо.
                     showSetupSheet = false
+                    if (savedUrl == null) showWelcome = true
                 },
+                // Адрес сервера на первой установке смахиванием не убирается.
+                mandatory = savedUrl == null,
                 onConfigured = { url, insecure ->
                     lifecycleOwner.lifecycleScope.launch {
                         try {

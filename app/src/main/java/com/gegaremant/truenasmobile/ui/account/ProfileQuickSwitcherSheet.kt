@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -165,24 +166,25 @@ private fun QuickProfileRow(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Иконка NAS, а не буква пользователя: в списке подключений это железка.
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(36.dp)
-                .clip(CircleShape)
+                .clip(MaterialTheme.shapes.medium)
                 .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
-            Text(
-                text = profile.account.username.trim().firstOrNull()?.uppercaseChar()?.toString() ?: "?",
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+            Icon(
+                imageVector = Icons.Default.Dns,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.size(20.dp)
             )
         }
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = profile.account.username,
+                text = profile.server.nickname ?: profile.server.serverUrl,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -190,7 +192,7 @@ private fun QuickProfileRow(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = profile.server.nickname ?: profile.server.serverUrl,
+                text = profile.account.username,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,

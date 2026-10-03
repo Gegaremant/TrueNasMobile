@@ -130,57 +130,91 @@ fun AccountSwitcherScreen(
                     }
                 }
 
-                // Split button: primary action + dropdown of additional options
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    SplitButtonRow(
-                        primaryText = stringResource(R.string.account_add_new),
-                        primaryIcon = Icons.Default.Add,
-                        onPrimaryClick = {
-                            // If multiple saved servers exist, ask the user which server to add an account to.
+                // Two equal buttons instead of one split with a dropdown: the
+                // second action was hidden behind a 56dp corner, and the owner
+                // could not tell that "add a person" and "add a machine" are
+                // different things.
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Button(
+                        onClick = {
                             if (savedServers.size > 1) {
                                 showServerPicker = true
                             } else {
                                 onAddNewAccount()
                             }
                         },
-                        onMenuClick = { showAddMenu = true }
-                    )
-
-                    DropdownMenu(
-                        expanded = showAddMenu,
-                        onDismissRequest = { showAddMenu = false },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(64.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                     ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.account_add_new)) },
-                            leadingIcon = { Icon(Icons.Default.PersonAdd, contentDescription = null) },
-                            onClick = {
-                                showAddMenu = false
-                                if (savedServers.size > 1) {
-                                    showServerPicker = true
-                                } else {
-                                    onAddNewAccount()
-                                }
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.account_add_another_server)) },
-                            leadingIcon = { Icon(Icons.Default.Dns, contentDescription = null) },
-                            onClick = {
-                                showAddMenu = false
-                                showSetupSheet = true
-                            }
-                        )
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.account_delete_all_credentials), color = MaterialTheme.colorScheme.error) },
-                            leadingIcon = { Icon(Icons.Default.DeleteSweep, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
-                            onClick = {
-                                showAddMenu = false
-                                showDeleteAllDialog = true
-                            }
-                        )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Icons.Default.PersonAdd,
+                                contentDescription = null,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = stringResource(R.string.account_add_user),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
                     }
+
+                    Button(
+                        onClick = { showSetupSheet = true },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(64.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Icons.Default.Dns,
+                                contentDescription = null,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = stringResource(R.string.account_add_server),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+
+                // «Удалить все» больше не спрятано в выпадающем меню кнопки.
+                TextButton(
+                    onClick = { showDeleteAllDialog = true },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DeleteSweep,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = stringResource(R.string.account_delete_all_credentials),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -466,19 +500,16 @@ private fun AccountProfileCard(
                 .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Avatar
+            // Аккаунт - это подключение к железке, а не человек: NAS, а не аватар.
             Box(
                 modifier = Modifier
                     .size(52.dp)
-                    .clip(CircleShape)
+                    .clip(RoundedCornerShape(14.dp))
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = when (profile.account.loginMethod) {
-                        LoginMethod.PASSWORD, LoginMethod.TOTP -> Icons.Default.Person
-                        LoginMethod.API_KEY -> Icons.Default.Key
-                    },
+                    imageVector = Icons.Default.Dns,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(28.dp)
@@ -487,10 +518,10 @@ private fun AccountProfileCard(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Account Info
+            // Account Info: the NAS name is the title, the login is the caption.
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = profile.account.username,
+                    text = profile.server.nickname ?: profile.server.serverUrl,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -505,13 +536,13 @@ private fun AccountProfileCard(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Web,
+                        imageVector = Icons.Default.Person,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
-                        text = profile.server.nickname ?: profile.server.serverUrl,
+                        text = profile.account.username,
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
