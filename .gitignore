@@ -1114,3 +1114,7 @@ DEV-RULES.md
 
 # Scratch notes, session transcripts, internal reports - not part of the project
 /other/
+
+# Leftover from a root-owned .git that could not be written to; the live
+# repository is the freshly copied one. Needs sudo to delete.
+/.git-broken-root/

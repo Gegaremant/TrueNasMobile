@@ -21,6 +21,7 @@ import com.gegaremant.truenasmobile.data.api.TrueNASApiManager
 import com.gegaremant.truenasmobile.data.models.Apps
 import com.gegaremant.truenasmobile.data.models.Container
 import com.gegaremant.truenasmobile.data.models.Vm
+import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
 import com.gegaremant.truenasmobile.ui.services.apps.AppsScreen
 import com.gegaremant.truenasmobile.ui.services.containers.ContainersScreen
 import com.gegaremant.truenasmobile.ui.services.vm.VmsScreen
@@ -32,7 +33,13 @@ private val TASKS_SUBTABS = listOf(
 )
 
 /**
- * Вкладка «Задачи»: приложения, контейнеры и виртуальные машины внутри одной вкладки.
+ * Вкладка «Задачи»: шапка-шаблон, под ней переключатель
+ * приложения/контейнеры/ВМ, под ним — ряд фильтров и список.
+ *
+ * Шапка живёт здесь, а не в под-экранах: раньше переключатель под-вкладок
+ * стоял выше неё, и шапка «прыгала» между вкладками. Теперь она всегда на
+ * одном месте, а под-экраны рисуют только фильтры и содержимое
+ * ([headerShownByParent]).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +61,23 @@ fun TasksScreen(
     var selectedSubTab by rememberSaveable { mutableIntStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
+        // Шапка одна на всю вкладку: бренд-строка, название «Задачи» и иконки.
+        UnifiedScreenHeader(
+            title = stringResource(R.string.nav_tasks),
+            subtitle = "",
+            isLoading = false,
+            isRefreshing = false,
+            onDismissError = {},
+            manager = manager,
+            onSearchClick = onSearchClick,
+            showBrandLine = true,
+            onInstanceSettingsClick = onNavigateToInstanceSettings,
+            onProfileClick = onNavigateToProfile,
+            onProfileLongClick = onNavigateToProfileLongPress,
+            onApplicationSettingsClick = onNavigateToApplicationSettings,
+            showPowerControl = true
+        )
+
         PrimaryTabRow(
             selectedTabIndex = selectedSubTab,
             containerColor = MaterialTheme.colorScheme.surface
@@ -84,6 +108,7 @@ fun TasksScreen(
                     onSearchClick = onSearchClick,
                     onNavigateToInstanceSettings = onNavigateToInstanceSettings,
                     onNavigateToProfile = onNavigateToProfile,
+                    headerShownByParent = true,
                     onNavigateToProfileLongPress = onNavigateToProfileLongPress,
                     onNavigateToApplicationSettings = onNavigateToApplicationSettings
                 )
@@ -93,6 +118,7 @@ fun TasksScreen(
                     onSearchClick = onSearchClick,
                     onNavigateToInstanceSettings = onNavigateToInstanceSettings,
                     onNavigateToProfile = onNavigateToProfile,
+                    headerShownByParent = true,
                     onNavigateToProfileLongPress = onNavigateToProfileLongPress,
                     onNavigateToApplicationSettings = onNavigateToApplicationSettings
                 )
@@ -102,6 +128,7 @@ fun TasksScreen(
                     onSearchClick = onSearchClick,
                     onNavigateToInstanceSettings = onNavigateToInstanceSettings,
                     onNavigateToProfile = onNavigateToProfile,
+                    headerShownByParent = true,
                     onNavigateToProfileLongPress = onNavigateToProfileLongPress,
                     onNavigateToApplicationSettings = onNavigateToApplicationSettings
                 )

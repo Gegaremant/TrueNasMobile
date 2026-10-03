@@ -150,6 +150,11 @@ fun AppsScreen(
     onSearchClick: (() -> Unit)? = null,
     onNavigateToInstanceSettings: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
+    /**
+     * Шапку нарисовал родитель (вкладка «Задачи»): под-экран рисует
+     * только ряд фильтров и содержимое, чтобы шапка не прыгала.
+     */
+    headerShownByParent: Boolean = false,
     onNavigateToProfileLongPress: (() -> Unit)? = null,
     onNavigateToApplicationSettings: () -> Unit = {}
 ) {
@@ -359,24 +364,26 @@ fun AppsScreen(
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        UnifiedScreenHeader(
-            title = stringResource(R.string.apps_title),
-            subtitle = if (isSelectionMode) stringResource(R.string.apps_subtitle_selected, selectedAppIds.size) else stringResource(R.string.apps_subtitle_count, filteredApps.size),
-            isLoading = uiState.isLoading,
-            isRefreshing = uiState.isRefreshing,
-            error = uiState.error,
-            onDismissError = { appsScreenViewModel.clearError() },
-            manager = manager,
-            onSearchClick = onSearchClick,
-            // Шапка-шаблон главных вкладок. Раньше здесь висел отдельный
-            // маркетплейс-баттон — теперь «+ Новое» живёт в ряду фильтров.
-            showBrandLine = true,
-            onInstanceSettingsClick = onNavigateToInstanceSettings,
-            onProfileClick = onNavigateToProfile,
-            onProfileLongClick = onNavigateToProfileLongPress,
-            onApplicationSettingsClick = onNavigateToApplicationSettings,
-            showPowerControl = true
-        )
+        if (!headerShownByParent) {
+            UnifiedScreenHeader(
+                title = stringResource(R.string.apps_title),
+                subtitle = if (isSelectionMode) stringResource(R.string.apps_subtitle_selected, selectedAppIds.size) else stringResource(R.string.apps_subtitle_count, filteredApps.size),
+                isLoading = uiState.isLoading,
+                isRefreshing = uiState.isRefreshing,
+                error = uiState.error,
+                onDismissError = { appsScreenViewModel.clearError() },
+                manager = manager,
+                onSearchClick = onSearchClick,
+                // Шапка-шаблон главных вкладок. Раньше здесь висел отдельный
+                // маркетплейс-баттон — теперь «+ Новое» живёт в ряду фильтров.
+                showBrandLine = true,
+                onInstanceSettingsClick = onNavigateToInstanceSettings,
+                onProfileClick = onNavigateToProfile,
+                onProfileLongClick = onNavigateToProfileLongPress,
+                onApplicationSettingsClick = onNavigateToApplicationSettings,
+                showPowerControl = true
+            )
+        }
 
         AppFilterBar(
             currentCategory = uiState.selectedCategory,
@@ -626,7 +633,7 @@ fun AppFilterBar(
 ) {
     LazyRow(
         modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 16.dp),
+        contentPadding = PaddingValues(horizontal = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(AppCategory.entries.toTypedArray()) { category ->
@@ -640,15 +647,7 @@ fun AppFilterBar(
                 selected = isSelected,
                 onClick = { onCategorySelected(category) },
                 label = { Text(stringResource(category.labelRes)) },
-                leadingIcon = if (isSelected) {
-                    {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                            modifier = Modifier.size(FilterChipDefaults.IconSize)
-                        )
-                    }
-                } else null,
+                leadingIcon = null,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = animColor,
                     selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
