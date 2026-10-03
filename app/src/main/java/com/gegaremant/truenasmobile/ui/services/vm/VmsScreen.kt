@@ -115,6 +115,7 @@ fun VmsScreen(
     onSearchClick: (() -> Unit)? = null,
     onNavigateToInstanceSettings: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToProfileLongPress: (() -> Unit)? = null,
     onNavigateToApplicationSettings: () -> Unit = {},
     viewModel: VmsScreenViewModel = viewModel(
         factory = VmsScreenViewModel.VmViewModelFactory(manager)
@@ -155,6 +156,7 @@ fun VmsScreen(
             showBrandLine = true,
             onInstanceSettingsClick = onNavigateToInstanceSettings,
             onProfileClick = onNavigateToProfile,
+            onProfileLongClick = onNavigateToProfileLongPress,
             onApplicationSettingsClick = onNavigateToApplicationSettings,
             showPowerControl = true
         )

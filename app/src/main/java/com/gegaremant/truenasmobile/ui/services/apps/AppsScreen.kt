@@ -150,6 +150,7 @@ fun AppsScreen(
     onSearchClick: (() -> Unit)? = null,
     onNavigateToInstanceSettings: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToProfileLongPress: (() -> Unit)? = null,
     onNavigateToApplicationSettings: () -> Unit = {}
 ) {
     val appsScreenViewModel: AppsScreenViewModel = viewModel(
@@ -372,6 +373,7 @@ fun AppsScreen(
             showBrandLine = true,
             onInstanceSettingsClick = onNavigateToInstanceSettings,
             onProfileClick = onNavigateToProfile,
+            onProfileLongClick = onNavigateToProfileLongPress,
             onApplicationSettingsClick = onNavigateToApplicationSettings,
             showPowerControl = true
         )

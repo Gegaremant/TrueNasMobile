@@ -108,6 +108,7 @@ fun SharedResourcesScreen(
     onSearchClick: (() -> Unit)? = null,
     onNavigateToInstanceSettings: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToProfileLongPress: (() -> Unit)? = null,
     onNavigateToApplicationSettings: () -> Unit = {}
 ) {
     if (manager == null) return
@@ -137,6 +138,7 @@ fun SharedResourcesScreen(
             showBrandLine = true,
             onInstanceSettingsClick = onNavigateToInstanceSettings,
             onProfileClick = onNavigateToProfile,
+            onProfileLongClick = onNavigateToProfileLongPress,
             onApplicationSettingsClick = onNavigateToApplicationSettings,
             showPowerControl = true,
             onSearchClick = onSearchClick

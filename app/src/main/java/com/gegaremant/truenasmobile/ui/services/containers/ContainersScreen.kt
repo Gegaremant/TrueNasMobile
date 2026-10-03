@@ -116,6 +116,7 @@ fun ContainersScreen(
     onSearchClick: (() -> Unit)? = null,
     onNavigateToInstanceSettings: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToProfileLongPress: (() -> Unit)? = null,
     onNavigateToApplicationSettings: () -> Unit = {},
     viewModel: ContainerScreenViewModel = viewModel(
         factory = ContainerScreenViewModel.ContainerViewModelFactory(manager)
@@ -158,6 +159,7 @@ fun ContainersScreen(
             showBrandLine = true,
             onInstanceSettingsClick = onNavigateToInstanceSettings,
             onProfileClick = onNavigateToProfile,
+            onProfileLongClick = onNavigateToProfileLongPress,
             onApplicationSettingsClick = onNavigateToApplicationSettings,
             showPowerControl = true
         )

@@ -450,6 +450,9 @@
     <!-- Profile screen -->
     <string name="profile_loading">Загрузка профиля</string>
     <string name="profile_title">Профиль</string>
+    <string name="profile_quick_title">Аккаунты</string>
+    <string name="profile_quick_empty">Сохранённых аккаунтов пока нет</string>
+    <string name="profile_quick_manage">Все аккаунты и добавление</string>
     <string name="profile_settings_cd">Настройки</string>
     <string name="profile_picture_cd">Фото профиля</string>
     <string name="profile_unknown_user">Неизвестный пользователь</string>

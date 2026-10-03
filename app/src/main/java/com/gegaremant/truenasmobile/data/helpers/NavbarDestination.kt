@@ -29,7 +29,10 @@ enum class NavbarDestination(
     HOME(R.string.nav_statistics, Screen.Home.route, isRequired = true),
     STORAGE(R.string.nav_storage, Screen.Storage.route),
     TASKS(R.string.nav_tasks, Screen.Tasks.route),
-    APPS(R.string.nav_apps, Screen.Apps.route),
+    // Apps, Containers and VMs are sub-tabs of Tasks, so APPS is not a bar
+    // entry at all: the owner called the separate Apps tab useless duplication.
+    // Dropping it from the enum also migrates anyone who still had it saved -
+    // PersonalizationManager.loadNavbar maps unknown names to nothing.
     CONTAINERS(R.string.nav_containers, Screen.Containers.route),
     VMS(R.string.nav_vms, Screen.Vms.route),
     MARKETPLACE(R.string.nav_marketplace, Screen.Marketplace.route),

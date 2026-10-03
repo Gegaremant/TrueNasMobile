@@ -48,6 +48,7 @@ fun TasksScreen(
     onNavigateToVmInfo: (Vm.VmQueryResponse) -> Unit = {},
     onNavigateToInstanceSettings: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToProfileLongPress: (() -> Unit)? = null,
     onNavigateToApplicationSettings: () -> Unit = {}
 ) {
     var selectedSubTab by rememberSaveable { mutableIntStateOf(0) }
@@ -83,6 +84,7 @@ fun TasksScreen(
                     onSearchClick = onSearchClick,
                     onNavigateToInstanceSettings = onNavigateToInstanceSettings,
                     onNavigateToProfile = onNavigateToProfile,
+                    onNavigateToProfileLongPress = onNavigateToProfileLongPress,
                     onNavigateToApplicationSettings = onNavigateToApplicationSettings
                 )
                 1 -> ContainersScreen(
@@ -91,6 +93,7 @@ fun TasksScreen(
                     onSearchClick = onSearchClick,
                     onNavigateToInstanceSettings = onNavigateToInstanceSettings,
                     onNavigateToProfile = onNavigateToProfile,
+                    onNavigateToProfileLongPress = onNavigateToProfileLongPress,
                     onNavigateToApplicationSettings = onNavigateToApplicationSettings
                 )
                 else -> VmsScreen(
@@ -99,6 +102,7 @@ fun TasksScreen(
                     onSearchClick = onSearchClick,
                     onNavigateToInstanceSettings = onNavigateToInstanceSettings,
                     onNavigateToProfile = onNavigateToProfile,
+                    onNavigateToProfileLongPress = onNavigateToProfileLongPress,
                     onNavigateToApplicationSettings = onNavigateToApplicationSettings
                 )
             }

@@ -160,6 +160,10 @@ import com.gegaremant.truenasmobile.ui.services.vm.details.VmInfoScreen
 import com.gegaremant.truenasmobile.ui.topbar.ExpressiveSearchAppBar
 import com.gegaremant.truenasmobile.ui.topbar.SearchResultNavigation
 import com.gegaremant.truenasmobile.ui.utils.AppCache
+import com.gegaremant.truenasmobile.ui.account.ProfileQuickSwitcherSheet
+import com.gegaremant.truenasmobile.ui.components.ToastManager
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 
 private data class NavItem(
@@ -180,8 +184,6 @@ private fun destinationToNavItem(destination: NavbarDestination): NavItem? {
             NavItem(destination, R.string.nav_statistics, Icons.Filled.Home, Icons.Outlined.Home)
         NavbarDestination.STORAGE ->
             NavItem(destination, R.string.nav_storage, Icons.Filled.Storage, Icons.Outlined.Storage)
-        NavbarDestination.APPS ->
-            NavItem(destination, R.string.nav_apps, Icons.Filled.Apps, Icons.Outlined.Apps)
         NavbarDestination.TASKS ->
             NavItem(destination, R.string.nav_tasks, Icons.Filled.Checklist, Icons.Outlined.Checklist)
         NavbarDestination.CONTAINERS ->
@@ -226,8 +228,6 @@ fun MainScreen(
     } else {
         currentRoute
     }
-    // Compact mode drops the text labels; there is room for more destinations.
-    val compactNav = personalization.compactNav
 
     // ── Tab history ─────────────────────────────────────────────────────────
     // Every bottom-bar tap is a popUpTo(saveState) + restoreState, so the
@@ -274,6 +274,10 @@ fun MainScreen(
     }
 
     var showSearch by remember { mutableStateOf(false) }
+    // Долгое нажатие на аватарку профиля: список аккаунтов для переключения
+    // без захода на страницу аккаунтов.
+    var showProfileQuickSwitcher by remember { mutableStateOf(false) }
+    val onProfileLongClick: () -> Unit = { showProfileQuickSwitcher = true }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (isLandscape) {
@@ -288,10 +292,12 @@ fun MainScreen(
                         NavigationRailItem(
                             selected = selected,
                             onClick = { switchTab(item.destination.route) },
+                            // Подписи вкладок видны всегда: без них «Сведения»,
+                            // «Хранение» и «Задачи» неразличимы, а владелец
+                            // просил не прятать слова.
+                            alwaysShowLabel = true,
                             label = {
-                                if (!compactNav) {
-                                    Text(stringResource(item.titleRes), fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
-                                }
+                                Text(stringResource(item.titleRes), fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
                             },
                             icon = {
                                 Crossfade(targetState = selected, label = "iconFade") { isSelected ->
@@ -314,6 +320,7 @@ fun MainScreen(
                     manager = manager,
                     rootNavController = rootNavController,
                     onSearchClick = { showSearch = true },
+                    onProfileLongClick = onProfileLongClick,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -330,7 +337,9 @@ fun MainScreen(
                                 NavigationBarItem(
                                     selected = selected,
                                     onClick = { switchTab(item.destination.route) },
-                                    alwaysShowLabel = !compactNav,
+                                    // Подписи видны всегда - слова названий
+                                    // вкладок не прячем (см. NavigationRailItem).
+                                    alwaysShowLabel = true,
                                     label = {
                                         Text(
                                             stringResource(item.titleRes),
@@ -365,6 +374,7 @@ fun MainScreen(
                     manager = manager,
                     rootNavController = rootNavController,
                     onSearchClick = { showSearch = true },
+                    onProfileLongClick = onProfileLongClick,
                     modifier = Modifier.padding(innerPadding)
                 )
             }
@@ -395,6 +405,30 @@ fun MainScreen(
                 }
             )
         }
+
+        // Быстрое переключение профиля по долгому нажатию на аватарку шапки.
+        if (showProfileQuickSwitcher) {
+            val context = LocalContext.current
+            val profileScope = rememberCoroutineScope()
+            ProfileQuickSwitcherSheet(
+                onDismiss = { showProfileQuickSwitcher = false },
+                onManageAccounts = {
+                    showProfileQuickSwitcher = false
+                    rootNavController.navigate(Screen.AccountSwitcher.route)
+                },
+                onProfileSelected = { server, account ->
+                    showProfileQuickSwitcher = false
+                    profileScope.launch {
+                        val switched = viewModel.attemptLoginWithProfile(context, server, account)
+                        if (switched != null) {
+                            viewModel.updateManager(switched)
+                        } else {
+                            ToastManager.showErrorRes(R.string.startup_failed_login_saved_account)
+                        }
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -404,6 +438,7 @@ private fun TrueNasMobileNavGraph(
     manager: TrueNASApiManager,
     rootNavController: NavController,
     onSearchClick: () -> Unit,
+    onProfileLongClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     // One dashboard instance for the three views of it, owned by the root
@@ -439,6 +474,7 @@ private fun TrueNasMobileNavGraph(
                 dashboardViewModel,
                 onNavigateToSettings = { rootNavController.navigate(Screen.Settings.route) },
                 onNavigateToProfile = { rootNavController.navigate(Screen.AccountSwitcher.route) },
+                onNavigateToProfileLongPress = onProfileLongClick,
                 onPoolClick = { pool: System.Pool ->
                     PoolDataHolder.currentPool = pool
                     navController.navigate(Screen.PoolDetails.route)
@@ -487,6 +523,7 @@ private fun TrueNasMobileNavGraph(
                 onNavigateToProfile = {
                     rootNavController.navigate(Screen.AccountSwitcher.route)
                 },
+                onNavigateToProfileLongPress = onProfileLongClick,
                 onNavigateToApplicationSettings = {
                     rootNavController.navigate(Screen.Settings.route)
                 }
@@ -522,6 +559,7 @@ private fun TrueNasMobileNavGraph(
                 onNavigateToProfile = {
                     rootNavController.navigate(Screen.AccountSwitcher.route)
                 },
+                onNavigateToProfileLongPress = onProfileLongClick,
                 onNavigateToApplicationSettings = {
                     rootNavController.navigate(Screen.Settings.route)
                 }
@@ -957,6 +995,7 @@ private fun TrueNasMobileNavGraph(
                 onNavigateToProfile = {
                     rootNavController.navigate(Screen.AccountSwitcher.route)
                 },
+                onNavigateToProfileLongPress = onProfileLongClick,
                 onNavigateToApplicationSettings = {
                     rootNavController.navigate(Screen.Settings.route)
                 }
@@ -1121,6 +1160,7 @@ private fun TrueNasMobileNavGraph(
                 onNavigateToProfile = {
                     rootNavController.navigate(Screen.AccountSwitcher.route)
                 },
+                onNavigateToProfileLongPress = onProfileLongClick,
                 onNavigateToApplicationSettings = {
                     rootNavController.navigate(Screen.Settings.route)
                 }
@@ -1147,6 +1187,7 @@ private fun TrueNasMobileNavGraph(
                 onNavigateToProfile = {
                     rootNavController.navigate(Screen.AccountSwitcher.route)
                 },
+                onNavigateToProfileLongPress = onProfileLongClick,
                 onNavigateToApplicationSettings = {
                     rootNavController.navigate(Screen.Settings.route)
                 }

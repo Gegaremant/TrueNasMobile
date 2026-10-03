@@ -444,6 +444,9 @@
     <!-- Profile screen -->
     <string name="profile_loading">Loading Your Profile</string>
     <string name="profile_title">Profile</string>
+    <string name="profile_quick_title">Accounts</string>
+    <string name="profile_quick_empty">No saved accounts yet</string>
+    <string name="profile_quick_manage">All accounts and add new</string>
     <string name="profile_settings_cd">Settings</string>
     <string name="profile_picture_cd">Profile Picture</string>
     <string name="profile_unknown_user">Unknown User</string>

@@ -16,7 +16,7 @@ import org.junit.Test
 class NavbarDestinationTest {
 
     private val home = NavbarDestination.HOME
-    private val apps = NavbarDestination.APPS
+    private val tasks = NavbarDestination.TASKS
     private val storage = NavbarDestination.STORAGE
     private val containers = NavbarDestination.CONTAINERS
     private val vms = NavbarDestination.VMS
@@ -46,28 +46,28 @@ class NavbarDestinationTest {
     @Test
     fun `effective destinations preserve the user's order`() {
         val result = PersonalizationManager.effectiveDestinations(
-            listOf(home, containers, apps, vms)
+            listOf(home, containers, tasks, vms)
         )
-        assertEquals(listOf(home, containers, apps, vms), result)
+        assertEquals(listOf(home, containers, tasks, vms), result)
     }
 
     @Test
     fun `effective destinations always put home first even if it is absent or last`() {
         assertEquals(
             home,
-            PersonalizationManager.effectiveDestinations(listOf(apps, vms)).first()
+            PersonalizationManager.effectiveDestinations(listOf(tasks, vms)).first()
         )
         assertEquals(
-            listOf(home, apps, vms),
-            PersonalizationManager.effectiveDestinations(listOf(apps, vms, home))
+            listOf(home, tasks, vms),
+            PersonalizationManager.effectiveDestinations(listOf(tasks, vms, home))
         )
     }
 
     @Test
     fun `effective destinations collapse duplicates and survive an empty selection`() {
         assertEquals(
-            listOf(home, apps),
-            PersonalizationManager.effectiveDestinations(listOf(home, apps, apps, home))
+            listOf(home, tasks),
+            PersonalizationManager.effectiveDestinations(listOf(home, tasks, tasks, home))
         )
         assertEquals(
             listOf(home),
