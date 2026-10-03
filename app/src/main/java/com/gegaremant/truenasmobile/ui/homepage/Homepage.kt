@@ -39,6 +39,7 @@ import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Storage
+import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material.icons.filled.SystemUpdateAlt
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Button
@@ -81,6 +82,7 @@ import com.gegaremant.truenasmobile.data.models.System
 import com.gegaremant.truenasmobile.ui.background.WavyGradientBackground
 import com.gegaremant.truenasmobile.ui.components.LoadingScreen
 import com.gegaremant.truenasmobile.ui.components.UnifiedScreenHeader
+import com.gegaremant.truenasmobile.ui.homepage.processes.SystemProcessesSection
 import com.gegaremant.truenasmobile.ui.homepage.details.MetricType
 import com.gegaremant.truenasmobile.ui.homepage.details.ShareType
 import com.gegaremant.truenasmobile.ui.services.apps.details.appdetails.AppDataHolder
@@ -142,6 +144,7 @@ fun HomeScreen(
                     onDismiss = { viewModel.clearError() }
                 )
                 is HomeUiState.Success -> HomeContent(
+                    manager = manager,
                     state = state,
                     onRefresh = { viewModel.refresh() },
                     onShutdown = { reason -> viewModel.shutdownSystem(reason) },
@@ -229,6 +232,7 @@ private fun ErrorScreen(
 
 @Composable
 private fun HomeContent(
+    manager: TrueNASApiManager,
     isConnectedStatus: Boolean,
     state: HomeUiState.Success,
     onRefresh: () -> Unit,
@@ -278,6 +282,28 @@ private fun HomeContent(
             },
             onInstanceConfigClick = onInstanceConfigClick,
             onSystemInfoClick = onSystemInfoClick
+        )
+
+        // «Система занята» - и сразу видно, чем именно.
+        SystemProcessesSection(
+            manager = manager,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        // Графики нагрузки прямо здесь, на главной, плюс вход на экран
+        // «Производительность» - раньше он был только через поиск.
+        LoadChartsCard(
+            cpuData = state.cpuData,
+            memoryData = state.memoryData,
+            temperatureData = state.temperatureData,
+            onOpenPerformance = {
+                AppDataHolder.cpuData = state.cpuData
+                AppDataHolder.memoryData = state.memoryData
+                AppDataHolder.temperatureData = state.temperatureData
+                AppDataHolder.initialMetricType = MetricType.ALL
+                onNavigateToPerformance(MetricType.ALL)
+            },
+            modifier = Modifier.padding(bottom = 16.dp)
         )
 
         if (isAdaptiveLayout) {
@@ -503,11 +529,16 @@ private fun SystemOverviewCard(
                         }
                     }
 
-                    // Performance, Instance Settings and System Information used
-                    // to live here as pills. They are reachable from the app bar
-                    // now (settings icon, robot icon), and the performance charts
-                    // sit below the pool card as expandable rows, so the pills
-                    // were three ways to the same three places.
+                    // Performance is a real screen with charts, and hiding it behind
+                    // search is how it ended up looking cut away from the app.
+                    item {
+                        PillChip(
+                            onClick = onPerformanceClick,
+                            icon = Icons.Filled.ShowChart,
+                            label = stringResource(R.string.details_charts_title),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
         }

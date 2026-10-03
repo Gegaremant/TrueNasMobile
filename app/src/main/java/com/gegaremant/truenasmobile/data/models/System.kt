@@ -120,7 +120,11 @@ object System {
         val state: String,
         val time_started: Map<String, Long>?,
         val time_finished: Any?,
-        val credentials: Credentials?
+        val credentials: Credentials?,
+        /** 26.0 tells whether the job can be stopped; older stands omit it. */
+        val abortable: Boolean = false,
+        val transient: Boolean = false,
+        val description: String? = null
     )
 
     @JsonClass(generateAdapter = true)

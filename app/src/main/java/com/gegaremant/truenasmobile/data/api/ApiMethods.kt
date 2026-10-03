@@ -40,6 +40,8 @@ object ApiMethods {
         const val SYSTEM_REBOOT = "system.reboot"
         const val SYSTEM_REBOOT_INFO = "system.reboot.info"
         const val GET_JOB_STATUS = "core.get_jobs"
+        /** Stops a running job (`core.job_abort` exists in the 26.0 API). */
+        const val ABORT_JOB = "core.job_abort"
         const val SHUTDOWN = "system.shutdown"
         const val GET_DISK_DETAILS = "disk.query"
         const val GET_POOL_DETAILS = "pool.query"

@@ -267,6 +267,35 @@ class SystemService(val manager: TrueNASApiManager){
     }
 
 
+    /**
+     * Every job the stand knows about, newest first.
+     *
+     * The system screen needs the whole picture: what is running *now* and what
+     * failed a minute ago. `core.get_jobs` answers with an array when called
+     * with no filters, which is what the process list on the Details tab reads.
+     */
+    suspend fun getJobsWithResult(): ApiResult<List<System.Job>> {
+        val arrayResult = manager.callWithResult<Array<System.Job>>(
+            method = ApiMethods.System.GET_JOB_STATUS,
+            params = listOf(),
+            resultType = Array<System.Job>::class.java
+        )
+        return when (arrayResult) {
+            is ApiResult.Success -> ApiResult.Success(arrayResult.data.toList())
+            is ApiResult.Error -> ApiResult.Error(arrayResult.message)
+            is ApiResult.Loading -> arrayResult
+        }
+    }
+
+    /** Stops a job (`core.job_abort`). Only jobs with `abortable` accept it. */
+    suspend fun abortJobWithResult(jobId: Int): ApiResult<Any> {
+        return manager.callWithResult(
+            method = ApiMethods.System.ABORT_JOB,
+            params = listOf(jobId),
+            resultType = Any::class.java
+        )
+    }
+
     // Alerts Info
     suspend fun dismissAlertWithResult(uuid: String): ApiResult<Any>{
         return manager.callWithResult(
