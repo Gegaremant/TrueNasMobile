@@ -4,6 +4,46 @@ All notable changes to TrueNasMobile are listed here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] — 2026-10-04
+
+Owner feedback on 1.0.6. Plan and status: `docs/UI-PLAN-2026-10-07.md`.
+
+### Changed
+- **First run greets before it asks.** The server form appeared immediately, as
+  a sheet that could be swiped away with nothing behind it. There is a welcome
+  screen first, and on a fresh install that sheet can no longer be swiped out
+  or closed - the only way past it is through it.
+- **An account is a connection to a machine.** Cards draw a NAS icon and are
+  named after the NAS, with the login underneath, in the account page and in
+  the header's quick switcher.
+- **Adding is two equal buttons.** "New user" and "New NAS" sat behind one
+  split button, so the second action was invisible; "delete all" moved out of
+  the dropdown.
+- **"Open elsewhere" offers an app instead of reporting there is none.** A
+  share's smb:// link used to end in a toast when nothing could read it; there
+  is now a dialog with links to both stores.
+
+### Added
+- **Running tasks are visible.** The system used to say it was busy with no way
+  to see what it was doing: the Details tab now lists `core.get_jobs` - method,
+  percent, description - polled fast while something runs and slowly when idle,
+  with a stop button for the jobs that report `abortable`.
+- **The load graphs are on the main screen again.** The Performance screen was
+  reachable only through search, which is how it looked cut away from the app:
+  its pill is back in the system card, and CPU, memory and temperature charts
+  open directly on the Details tab.
+- **Containers and VMs can actually be created.** The "in a future update"
+  toast was simply wrong. `vm.create` needs a name and memory in MiB and
+  answers with the instance; `container.create` wants the image split into name
+  and version plus a pool, and answers with a job id, so the image pull shows
+  up in the task list.
+
+### Verified against a 26.0 stand
+- `vm.create({})` → `name: Field required, memory: Field required`
+- `container.create` with a plain image string → `Input should be a valid dictionary`
+- with `reference`/`docker_registry` → `Extra inputs are not permitted`
+- without a pool → `Either configure a preferred pool in lxc settings or provide a pool name`
+
 ## [1.0.6] — 2026-10-03
 
 UI rework from the owner's feedback on 1.0.5. Plan and status:
