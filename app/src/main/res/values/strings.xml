@@ -26,6 +26,14 @@
     <string name="common_connecting_to_server">Connecting to server…</string>
     <string name="common_retry">Retry</string>
     <string name="common_cancel">Cancel</string>
+    <string name="account_edit_title">Edit account</string>
+    <string name="account_edit_username">Username</string>
+    <string name="account_edit_password">Password</string>
+    <string name="account_edit_password_hint">Leave empty to keep the current password</string>
+    <string name="account_edit_nickname">Server nickname</string>
+    <string name="account_edit_save">Save</string>
+    <string name="account_edit_saved">Account updated</string>
+    <string name="account_edit_username_required">Username cannot be empty</string>
     <string name="common_delete">Delete</string>
     <string name="common_close">Close</string>
     <string name="common_unknown_error">Unknown error</string>

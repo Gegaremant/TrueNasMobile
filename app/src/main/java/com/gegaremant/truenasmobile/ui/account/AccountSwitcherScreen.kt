@@ -46,6 +46,7 @@ fun AccountSwitcherScreen(
     var isLoading by remember { mutableStateOf(true) }
 
     var showDeleteDialog by remember { mutableStateOf<AccountProfile?>(null) }
+    var editingProfile by remember { mutableStateOf<AccountProfile?>(null) }
     var showDeleteAllDialog by remember { mutableStateOf(false) }
     var showAddMenu by remember { mutableStateOf(false) }
     var showServerPicker by remember { mutableStateOf(false) }
@@ -122,6 +123,7 @@ fun AccountSwitcherScreen(
                             AccountProfileCard(
                                 profile = profile,
                                 onClick = { onAccountSelected(profile.server, profile.account) },
+                                onEdit = { editingProfile = profile },
                                 onDelete = { showDeleteDialog = profile }
                             )
                         }
@@ -249,6 +251,18 @@ fun AccountSwitcherScreen(
                     TextButton(onClick = { showDeleteAllDialog = false }) {
                         Text(stringResource(R.string.common_cancel))
                     }
+                }
+            )
+        }
+
+        // ── Edit a saved account ────────────────────────────────
+        editingProfile?.let { profile ->
+            AccountEditDialog(
+                profile = profile,
+                onDismiss = { editingProfile = null },
+                onSaved = {
+                    editingProfile = null
+                    reload()
                 }
             )
         }
@@ -431,12 +445,15 @@ private fun ServerPickerDialog(
 private fun AccountProfileCard(
     profile: AccountProfile,
     onClick: () -> Unit,
+    onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            // Тап по карточке открывает редактор - логин, пароль, никнейм.
+            // Переключение осталось отдельной кнопкой справа.
+            .clickable(onClick = onEdit),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
@@ -524,8 +541,18 @@ private fun AccountProfileCard(
                 }
             }
 
-            // Action Icons (Delete and Chevron)
+            // Action Icons (switch, delete)
             Row(verticalAlignment = Alignment.CenterVertically) {
+                // Переключиться на этот аккаунт - отдельной кнопкой, потому
+                // что тап по карточке теперь редактирует.
+                IconButton(onClick = onClick) {
+                    Icon(
+                        imageVector = Icons.Default.Login,
+                        contentDescription = stringResource(R.string.account_select_account_cd),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Default.Delete,
@@ -533,15 +560,6 @@ private fun AccountProfileCard(
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Icon(
-                    imageVector = Icons.Default.ChevronRight,
-                    contentDescription = stringResource(R.string.account_select_account_cd),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                    modifier = Modifier.size(20.dp)
-                )
             }
         }
     }

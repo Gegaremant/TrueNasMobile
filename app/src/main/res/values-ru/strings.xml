@@ -26,6 +26,14 @@
     <string name="common_connecting_to_server">Подключение к серверу…</string>
     <string name="common_retry">Повторить</string>
     <string name="common_cancel">Отмена</string>
+    <string name="account_edit_title">Редактировать аккаунт</string>
+    <string name="account_edit_username">Имя пользователя</string>
+    <string name="account_edit_password">Пароль</string>
+    <string name="account_edit_password_hint">Оставьте пустым, чтобы сохранить текущий пароль</string>
+    <string name="account_edit_nickname">Название сервера</string>
+    <string name="account_edit_save">Сохранить</string>
+    <string name="account_edit_saved">Аккаунт обновлён</string>
+    <string name="account_edit_username_required">Имя пользователя не может быть пустым</string>
     <string name="common_delete">Удалить</string>
     <string name="common_close">Закрыть</string>
     <string name="common_unknown_error">Неизвестная ошибка</string>
