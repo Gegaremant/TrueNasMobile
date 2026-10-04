@@ -35,6 +35,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -92,17 +93,23 @@ fun ServerConfigBottomSheet(
         if (uiState.setupComplete) {
             onConfigured(viewModel.formatUrl(uiState.serverUrl), uiState.insecure)
             viewModel.handleEvent(SetupEvent.ResetSetupComplete)
-            onDismiss()
+            // No onDismiss() here on purpose. The caller decides whether the
+            // sheet closes: when the address was accepted but the connection
+            // failed, the caller needs the sheet to stay open with the address
+            // in it. Closing it here dropped the user on "server setup
+            // required" with no way forward.
         }
     }
 
     ModalBottomSheet(
         onDismissRequest = { if (!uiState.isConfiguring && !mandatory) onDismiss() },
-        sheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = true,
-            // A swipe away on first run left the user staring at an empty
-            // screen with nothing to press, so the sheet holds.
-            confirmValueChange = { if (mandatory) false else true }
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        // A swipe away on first run used to leave the user staring at an empty
+        // screen with nothing to press, so the sheet holds. confirmValueChange
+        // alone was not enough: it guards the drag, but the sheet still took
+        // the back press.
+        properties = ModalBottomSheetProperties(
+            shouldDismissOnBackPress = !mandatory
         ),
         containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = null

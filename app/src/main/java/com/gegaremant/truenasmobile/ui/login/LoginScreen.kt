@@ -24,6 +24,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
@@ -113,6 +114,9 @@ fun LoginScreen(
     // Первый запуск: сначала приветствие, потом адрес сервера. Раньше шторка
     // ввода открывалась сразу, и её можно было смахнуть в пустоту.
     var showWelcome by remember { mutableStateOf(savedUrl == null) }
+    // A saved server we could not reach: the screen says so and offers a retry,
+    // instead of silently asking for setup again.
+    var connectionFailed by remember { mutableStateOf(false) }
 
     val viewModel: LoginScreenViewModel = viewModel(
         factory = LoginViewModelFactory(existingManager, application)
@@ -151,13 +155,17 @@ fun LoginScreen(
                         viewModel.updateManager(newManager)
                         ToastManager.showSuccess(context.getString(R.string.login_connected_success))
                         showSetupSheet = false
+                        connectionFailed = false
                     } else {
                         ToastManager.showError(context.getString(R.string.login_initial_connection_failed))
-                        showSetupSheet = true
+                        // The saved address stays where it is. Popping the sheet
+                        // over this screen by itself is what made the
+                        // "Настроить сервер" button unreachable.
+                        connectionFailed = true
                     }
                 } catch (e: Exception) {
                     ToastManager.showError(context.getString(R.string.login_connection_failed_pattern, e.message ?: ""))
-                    showSetupSheet = true
+                    connectionFailed = true
                 }
             }
         }
@@ -209,17 +217,54 @@ fun LoginScreen(
                 )
             }
             savedUrl != null -> {
+                // Saved address present: connect on our own. Only when that
+                // failed do we ask anything of the user, and then we say which
+                // address failed and give a way out.
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    CircularProgressIndicator()
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(stringResource(R.string.common_connecting_to_server))
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { showSetupSheet = true }) {
-                        Text(stringResource(R.string.login_configure_server))
+                    if (!connectionFailed) {
+                        CircularProgressIndicator()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(stringResource(R.string.common_connecting_to_server))
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Error,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = stringResource(R.string.login_saved_server_failed),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = savedUrl,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Button(
+                        onClick = { showSetupSheet = true },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 32.dp)
+                            .height(56.dp),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.login_configure_server),
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
                 }
             }
@@ -260,16 +305,20 @@ fun LoginScreen(
                             if (connected) {
                                 Prefs.save(context, url, insecure)
 
-
                                 localManager = newManager
                                 onManagerInitialized(newManager)
                                 viewModel.updateManager(newManager)
 
                                 showSetupSheet = false
+                                connectionFailed = false
                                 ToastManager.showSuccess(context.getString(R.string.login_connected_successfully))
                             } else {
+                                // The sheet stays open with the address the user
+                                // typed. Closing it here is what used to leave
+                                // them on "server setup required" with no way
+                                // forward.
                                 ToastManager.showError(context.getString(R.string.login_failed_connect_details))
-                                showSetupSheet = true
+                                connectionFailed = true
                             }
 
                         } catch (e: Exception) {

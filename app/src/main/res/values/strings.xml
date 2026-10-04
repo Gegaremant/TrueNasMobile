@@ -95,6 +95,7 @@
     <string name="login_need_help_api_key">API key</string>
     <string name="login_contact_administrator">Contact your administrator for assistance</string>
     <string name="login_configure_server">Configure Server</string>
+    <string name="login_saved_server_failed">Could not reach the saved server</string>
     <string name="login_connected_success">Connected to server!</string>
     <string name="login_connected_successfully">Connected successfully!</string>
     <string name="login_initial_connection_failed">Initial connection failed: Could not reach server.</string>

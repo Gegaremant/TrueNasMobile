@@ -4,6 +4,27 @@ All notable changes to TrueNasMobile are listed here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.8] — 2026-10-04
+
+### Fixed
+- **"Настроить сервер" did nothing, and first run could dead-end.** Two bugs
+  on the same screen: the sheet called `onDismiss()` right after `onConfigured`,
+  so when an address was accepted but the connection failed, the sheet closed
+  itself and dropped the user on "Требуется настройка сервера" - and a failed
+  connection to the *saved* address also opened the sheet by itself, straight
+  over the screen that owns the button. The sheet now closes only when the
+  caller says so, and a failed connection leaves the address on screen with a
+  working button.
+- **The first-run sheet could still be swiped away.** `confirmValueChange` only
+  guards the drag and left the back press working; `shouldDismissOnBackPress`
+  is what actually holds it.
+
+### Changed
+- **Updating with a saved server explains itself.** The app still connects on
+  its own, but when it cannot, the screen names the address it tried instead of
+  asking for setup again - so "nothing happened" and "wrong address" stop
+  looking alike.
+
 ## [1.0.7] — 2026-10-04
 
 Owner feedback on 1.0.6. Plan and status: `docs/UI-PLAN-2026-10-07.md`.
