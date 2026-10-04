@@ -178,12 +178,13 @@
     <string name="setup_unable_establish_connection">Не удалось установить соединение</string>
 
     <!-- Account switcher -->
-    <string name="account_select_title">Выберите аккаунт</string>
+    <string name="account_select_title">Подключения</string>
+    <string name="alert_notification_subtext">Нажмите для деталей</string>
     <string name="account_none_saved">Сохранённых аккаунтов пока нет</string>
     <string name="account_add_new">Добавить аккаунт</string>
     <string name="account_add_another_server">Добавить ещё один сервер</string>
     <string name="account_add_user">Новый пользователь</string>
-    <string name="account_add_server">Другой NAS</string>
+    <string name="account_add_server">Добавить NAS</string>
     <string name="account_delete_all_credentials">Удалить все сохранённые учётные данные</string>
     <string name="account_delete_dialog_title">Удалить аккаунт</string>
     <string name="account_delete_dialog_message">Вы уверены, что хотите удалить «%1$s»? Сохранённые учётные данные будут удалены.</string>
@@ -200,10 +201,10 @@
     <string name="account_more_options_cd">Дополнительные параметры</string>
 
     <plurals name="account_saved_count">
-        <item quantity="one">%1$d сохранённый аккаунт</item>
-        <item quantity="few">%1$d сохранённых аккаунта</item>
-        <item quantity="many">%1$d сохранённых аккаунтов</item>
-        <item quantity="other">%1$d сохранённых аккаунтов</item>
+        <item quantity="one">%1$d сохранённое подключение</item>
+        <item quantity="few">%1$d сохранённых подключения</item>
+        <item quantity="many">%1$d сохранённых подключений</item>
+        <item quantity="other">%1$d сохранённых подключений</item>
     </plurals>
 
     <!-- Homepage -->

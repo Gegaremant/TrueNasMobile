@@ -29,6 +29,7 @@ import com.gegaremant.truenasmobile.data.helpers.dataStore
 import com.gegaremant.truenasmobile.data.models.Config
 import com.gegaremant.truenasmobile.data.models.LoginMethod
 import com.gegaremant.truenasmobile.data.models.System
+import com.gegaremant.truenasmobile.ui.alerts.AlertDetails
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -225,11 +226,26 @@ class AlertsWorker(
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
+            // "Backup failed" is not an answer on its own: the arguments are
+            // where the stand says which dataset, which host, what error. They
+            // go into the body, so expanding the notification actually explains
+            // it.
+            val headline = alert.formatted?.takeIf { it.isNotBlank() }
+                ?: alert.text.takeIf { it.isNotBlank() }
+                ?: AlertDetails.readableClass(alert.klass)
+            val detailLines = AlertDetails.lines(alert)
+            val fullText = if (detailLines.isEmpty()) {
+                headline
+            } else {
+                headline + "\n" + detailLines.joinToString("\n")
+            }
+
             val notification = NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(com.gegaremant.truenasmobile.R.drawable.ic_stat_notification)
-                .setContentTitle("TrueNAS Alert: ${alert.level}")
-                .setContentText(alert.formatted ?: "A new system alert has been triggered.")
-                .setStyle(NotificationCompat.BigTextStyle().bigText(alert.formatted))
+                .setContentTitle("${AlertDetails.readableClass(alert.klass)} · ${alert.level.uppercase()}")
+                .setContentText(headline)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(fullText))
+                .setSubText(context.getString(com.gegaremant.truenasmobile.R.string.alert_notification_subtext))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
                 .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Dismiss", dismissPendingIntent)

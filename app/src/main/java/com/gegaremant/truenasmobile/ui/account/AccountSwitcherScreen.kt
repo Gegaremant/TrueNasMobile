@@ -49,7 +49,6 @@ fun AccountSwitcherScreen(
     var editingProfile by remember { mutableStateOf<AccountProfile?>(null) }
     var showDeleteAllDialog by remember { mutableStateOf(false) }
     var showAddMenu by remember { mutableStateOf(false) }
-    var showServerPicker by remember { mutableStateOf(false) }
     var showSetupSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -130,74 +129,37 @@ fun AccountSwitcherScreen(
                     }
                 }
 
-                // Two equal buttons instead of one split with a dropdown: the
-                // second action was hidden behind a 56dp corner, and the owner
-                // could not tell that "add a person" and "add a machine" are
-                // different things.
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                // One connection, one entity: the NAS with the login that
+                // belongs to it. The owner asked not to split "a user" from
+                // "a machine", so there is one button, not a pair.
+                Button(
+                    onClick = { showSetupSheet = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ) {
-                    Button(
-                        onClick = {
-                            if (savedServers.size > 1) {
-                                showServerPicker = true
-                            } else {
-                                onAddNewAccount()
-                            }
-                        },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(64.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        ),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.PersonAdd,
-                                contentDescription = null,
-                                modifier = Modifier.size(22.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = stringResource(R.string.account_add_user),
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                    }
-
-                    Button(
-                        onClick = { showSetupSheet = true },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(64.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        ),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.Dns,
-                                contentDescription = null,
-                                modifier = Modifier.size(22.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = stringResource(R.string.account_add_server),
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Dns,
+                            contentDescription = null,
+                            modifier = Modifier.size(22.dp)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = stringResource(R.string.account_add_server),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
                 }
+
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // «Удалить все» больше не спрятано в выпадающем меню кнопки.
                 TextButton(
@@ -302,18 +264,19 @@ fun AccountSwitcherScreen(
         }
 
         // ── Server picker for adding an account ────────────────
-        if (showServerPicker) {
-            ServerPickerDialog(
-                servers = savedServers,
-                onDismiss = { showServerPicker = false },
-                onSelect = { server ->
-                    showServerPicker = false
-                    onAddNewAccount()
+        // ── Edit a saved account ────────────────────────────────
+        editingProfile?.let { profile ->
+            AccountEditDialog(
+                profile = profile,
+                onDismiss = { editingProfile = null },
+                onSaved = {
+                    editingProfile = null
+                    reload()
                 }
             )
         }
 
-        // ── Add a new server (setup screen) ────────────────────
+        // ── Add a new NAS (setup screen) ───────────────────────
         if (showSetupSheet) {
             ServerConfigBottomSheet(
                 onDismiss = { showSetupSheet = false },
@@ -331,148 +294,6 @@ fun AccountSwitcherScreen(
             )
         }
     }
-}
-
-@Composable
-private fun SplitButtonRow(
-    primaryText: String,
-    primaryIcon: androidx.compose.ui.graphics.vector.ImageVector,
-    onPrimaryClick: () -> Unit,
-    onMenuClick: () -> Unit
-) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Button(
-            onClick = onPrimaryClick,
-            modifier = Modifier
-                .weight(1f)
-                .height(56.dp),
-            shape = RoundedCornerShape(
-                topStart = 12.dp,
-                bottomStart = 12.dp,
-                topEnd = 0.dp,
-                bottomEnd = 0.dp
-            ),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
-        ) {
-            Icon(
-                imageVector = primaryIcon,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                primaryText,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-        Button(
-            onClick = onMenuClick,
-            modifier = Modifier
-                .width(56.dp)
-                .height(56.dp),
-            shape = RoundedCornerShape(
-                topStart = 0.dp,
-                bottomStart = 0.dp,
-                topEnd = 12.dp,
-                bottomEnd = 12.dp
-            ),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
-        ) {
-            Icon(Icons.Default.ArrowDropDown, contentDescription = stringResource(R.string.account_more_options_cd))
-        }
-    }
-}
-
-@Composable
-private fun ServerPickerDialog(
-    servers: List<SavedServer>,
-    onDismiss: () -> Unit,
-    onSelect: (SavedServer) -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.account_choose_server)) },
-        text = {
-            Column {
-                Text(
-                    stringResource(R.string.account_choose_server_message),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                if (servers.isEmpty()) {
-                    Text(stringResource(R.string.account_no_servers))
-                } else {
-                    servers.forEach { server ->
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
-                        )
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onSelect(server) }
-                                .padding(vertical = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    Icons.Default.Dns,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = server.nickname ?: stringResource(R.string.account_unnamed_server),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                server.serverUrl.let {
-                                    Text(
-                                        text = it,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-                            }
-                            Icon(
-                                Icons.Default.ChevronRight,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = {},
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.common_cancel))
-            }
-        }
-    )
 }
 
 @Composable

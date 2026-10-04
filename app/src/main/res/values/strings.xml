@@ -178,12 +178,13 @@
     <string name="setup_unable_establish_connection">Unable to establish connection</string>
 
     <!-- Account switcher -->
-    <string name="account_select_title">Select Account</string>
+    <string name="account_select_title">Connections</string>
+    <string name="alert_notification_subtext">Tap for details</string>
     <string name="account_none_saved">No saved accounts yet</string>
     <string name="account_add_new">Add New Account</string>
     <string name="account_add_another_server">Add another server</string>
     <string name="account_add_user">New user</string>
-    <string name="account_add_server">New NAS</string>
+    <string name="account_add_server">Add NAS</string>
     <string name="account_delete_all_credentials">Delete all saved credentials</string>
     <string name="account_delete_dialog_title">Delete Account</string>
     <string name="account_delete_dialog_message">Are you sure you want to delete \'%1$s\'? This will remove saved credentials.</string>
@@ -200,8 +201,8 @@
     <string name="account_more_options_cd">More options</string>
 
     <plurals name="account_saved_count">
-        <item quantity="one">%1$d saved account</item>
-        <item quantity="other">%1$d saved accounts</item>
+        <item quantity="one">%1$d saved connection</item>
+        <item quantity="other">%1$d saved connections</item>
     </plurals>
 
     <!-- Homepage -->
