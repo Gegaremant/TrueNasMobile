@@ -129,24 +129,29 @@ fun LoadChartsCard(
                 modifier = Modifier.padding(top = 14.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
+                // Same rule as the rows above: the line says whether the
+                // number is normal, not which theme is active.
                 ChartEntry(
                     labelRes = R.string.details_metric_cpu,
                     data = cpuData?.firstOrNull(),
-                    color = MaterialTheme.colorScheme.primary,
-                    unit = "%"
+                    normalColor = MaterialTheme.colorScheme.primary,
+                    unit = "%",
+                    thresholds = LoadLevels.cpu
                 )
                 ChartEntry(
                     labelRes = R.string.details_metric_memory,
                     data = memoryData?.firstOrNull(),
-                    color = MaterialTheme.colorScheme.tertiary,
+                    normalColor = MaterialTheme.colorScheme.tertiary,
                     unit = "GB",
-                    isMemory = true
+                    isMemory = true,
+                    thresholds = LoadLevels.memory
                 )
                 ChartEntry(
                     labelRes = R.string.details_metric_temperature,
                     data = temperatureData?.firstOrNull(),
-                    color = MaterialTheme.colorScheme.error,
-                    unit = "°C"
+                    normalColor = MaterialTheme.colorScheme.primary,
+                    unit = "°C",
+                    thresholds = LoadLevels.cpuTemperature
                 )
             }
         }
@@ -166,11 +171,15 @@ fun LoadChartsCard(
 private fun ChartEntry(
     labelRes: Int,
     data: System.ReportingGraphResponse?,
-    color: Color,
+    normalColor: Color,
     unit: String,
-    isMemory: Boolean = false
+    isMemory: Boolean = false,
+    thresholds: LoadThresholds? = null
 ) {
     if (data == null) return
+    val color = thresholds?.let {
+        LoadLevels.colorOf(data.latestValue(), unit, it, normalColor)
+    } ?: normalColor
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = stringResource(labelRes),

@@ -95,6 +95,8 @@
     <string name="login_need_help_api_key">API-ключу</string>
     <string name="login_contact_administrator">Обратитесь к администратору за помощью</string>
     <string name="login_configure_server">Настроить сервер</string>
+    <string name="server_unreachable_title">Сервер не отвечает</string>
+    <string name="server_unreachable_retry">Повторить</string>
     <string name="login_saved_server_failed">Не удалось подключиться к сохранённому серверу</string>
     <string name="login_connected_success">Подключено к серверу!</string>
     <string name="login_connected_successfully">Успешно подключено!</string>

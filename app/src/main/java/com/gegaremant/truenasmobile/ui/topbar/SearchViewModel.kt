@@ -620,12 +620,8 @@ class SearchViewModel(
         // Settings & sub-screens
         ScreenEntry("nav_settings", R.string.search_nav_settings_title, R.string.search_nav_settings_subtitle, Screen.Settings.route,
             listOf("settings", "preferences", "config")),
-        ScreenEntry("nav_about", R.string.search_nav_about_title, R.string.search_nav_about_subtitle, Screen.About.route,
-            listOf("about", "version", "credits")),
         ScreenEntry("nav_theme", R.string.search_nav_theme_title, R.string.search_nav_theme_subtitle, Screen.Theme.route,
             listOf("theme", "dark mode", "light mode", "appearance", "colors")),
-        ScreenEntry("nav_licenses", R.string.search_nav_licenses_title, R.string.search_nav_licenses_subtitle, Screen.Licenses.route,
-            listOf("licenses", "open source", "oss")),
 
         // Home sub-screens
         ScreenEntry("nav_pools", R.string.search_nav_pools_title, R.string.search_nav_pools_subtitle, Screen.Home.route,

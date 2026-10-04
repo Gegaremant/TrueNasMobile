@@ -165,6 +165,9 @@ import com.gegaremant.truenasmobile.ui.components.ToastManager
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 
+import com.gegaremant.truenasmobile.data.helpers.MultiAccountPrefs
+import com.gegaremant.truenasmobile.ui.components.ServerUnreachableBanner
+import kotlinx.coroutines.delay
 
 private data class NavItem(
     val destination: NavbarDestination,
@@ -276,10 +279,33 @@ fun MainScreen(
     }
 
     var showSearch by remember { mutableStateOf(false) }
-    // Долгое нажатие на аватарку профиля: список аккаунтов для переключения
-    // без захода на страницу аккаунтов.
+    // The socket can die while a screen is open, and a request that never comes
+    // back used to leave a spinner with nothing to say. Poll the connection so
+    // the banner can say "the server is not answering" instead.
+    var isServerReachable by remember(manager) { mutableStateOf(true) }
+    var currentServerUrl by remember { mutableStateOf<String?>(null) }
+    val localContext = LocalContext.current
+    LaunchedEffect(manager) {
+        currentServerUrl = runCatching {
+            val (serverId, _) = MultiAccountPrefs.getLastUsedProfile(localContext)
+                ?: return@runCatching null
+            MultiAccountPrefs.getServer(localContext, serverId)?.serverUrl
+        }.getOrNull()
+    }
+    LaunchedEffect(manager) {
+        while (true) {
+            isServerReachable = runCatching { manager.isConnected() }.getOrDefault(false)
+            delay(5_000)
+        }
+    }
+    // Переключение профилей: короткое нажатие открывает список NAS и
+    // переключает в одно касание, долгое уводит на добавление учётки.
+    // Раньше было наоборот, и добавление было спрятано за вторым жестом.
     var showProfileQuickSwitcher by remember { mutableStateOf(false) }
-    val onProfileLongClick: () -> Unit = { showProfileQuickSwitcher = true }
+    val openProfileSwitcher: () -> Unit = { showProfileQuickSwitcher = true }
+    val onProfileLongClick: () -> Unit = {
+        rootNavController.navigate(Screen.AccountSwitcher.route)
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (isLandscape) {
@@ -322,6 +348,7 @@ fun MainScreen(
                     manager = manager,
                     rootNavController = rootNavController,
                     onSearchClick = { showSearch = true },
+                    onProfileClick = openProfileSwitcher,
                     onProfileLongClick = onProfileLongClick,
                     modifier = Modifier.weight(1f)
                 )
@@ -376,10 +403,19 @@ fun MainScreen(
                     manager = manager,
                     rootNavController = rootNavController,
                     onSearchClick = { showSearch = true },
+                    onProfileClick = openProfileSwitcher,
                     onProfileLongClick = onProfileLongClick,
                     modifier = Modifier.padding(innerPadding)
                 )
             }
+        }
+
+        if (!isServerReachable) {
+            ServerUnreachableBanner(
+                serverUrl = currentServerUrl,
+                onRetry = { isServerReachable = runCatching { manager.isConnected() }.getOrDefault(false) },
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
 
         // Full-screen search overlay
@@ -440,6 +476,7 @@ private fun TrueNasMobileNavGraph(
     manager: TrueNASApiManager,
     rootNavController: NavController,
     onSearchClick: () -> Unit,
+    onProfileClick: () -> Unit,
     onProfileLongClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -475,7 +512,7 @@ private fun TrueNasMobileNavGraph(
                 manager,
                 dashboardViewModel,
                 onNavigateToSettings = { rootNavController.navigate(Screen.Settings.route) },
-                onNavigateToProfile = { rootNavController.navigate(Screen.AccountSwitcher.route) },
+                onNavigateToProfile = onProfileClick,
                 onNavigateToProfileLongPress = onProfileLongClick,
                 onPoolClick = { pool: System.Pool ->
                     PoolDataHolder.currentPool = pool
@@ -522,9 +559,7 @@ private fun TrueNasMobileNavGraph(
                 onNavigateToInstanceSettings = {
                     navController.navigate(Screen.InstanceConfigScreen.route)
                 },
-                onNavigateToProfile = {
-                    rootNavController.navigate(Screen.AccountSwitcher.route)
-                },
+                onNavigateToProfile = onProfileClick,
                 onNavigateToProfileLongPress = onProfileLongClick,
                 onNavigateToApplicationSettings = {
                     rootNavController.navigate(Screen.Settings.route)
@@ -558,9 +593,7 @@ private fun TrueNasMobileNavGraph(
                 onNavigateToInstanceSettings = {
                     navController.navigate(Screen.InstanceConfigScreen.route)
                 },
-                onNavigateToProfile = {
-                    rootNavController.navigate(Screen.AccountSwitcher.route)
-                },
+                onNavigateToProfile = onProfileClick,
                 onNavigateToProfileLongPress = onProfileLongClick,
                 onNavigateToApplicationSettings = {
                     rootNavController.navigate(Screen.Settings.route)
@@ -955,9 +988,7 @@ private fun TrueNasMobileNavGraph(
                     onNavigateToInstanceSettings = {
                         navController.navigate(Screen.InstanceConfigScreen.route)
                     },
-                    onNavigateToProfile = {
-                        rootNavController.navigate(Screen.AccountSwitcher.route)
-                    },
+                    onNavigateToProfile = onProfileClick,
                     onNavigateToProfileLongPress = onProfileLongClick,
                     onNavigateToApplicationSettings = {
                         rootNavController.navigate(Screen.Settings.route)
@@ -1005,9 +1036,7 @@ private fun TrueNasMobileNavGraph(
                 onNavigateToInstanceSettings = {
                     navController.navigate(Screen.InstanceConfigScreen.route)
                 },
-                onNavigateToProfile = {
-                    rootNavController.navigate(Screen.AccountSwitcher.route)
-                },
+                onNavigateToProfile = onProfileClick,
                 onNavigateToProfileLongPress = onProfileLongClick,
                 onNavigateToApplicationSettings = {
                     rootNavController.navigate(Screen.Settings.route)
@@ -1170,9 +1199,7 @@ private fun TrueNasMobileNavGraph(
                 onNavigateToInstanceSettings = {
                     navController.navigate(Screen.InstanceConfigScreen.route)
                 },
-                onNavigateToProfile = {
-                    rootNavController.navigate(Screen.AccountSwitcher.route)
-                },
+                onNavigateToProfile = onProfileClick,
                 onNavigateToProfileLongPress = onProfileLongClick,
                 onNavigateToApplicationSettings = {
                     rootNavController.navigate(Screen.Settings.route)
@@ -1197,9 +1224,7 @@ private fun TrueNasMobileNavGraph(
                 onNavigateToInstanceSettings = {
                     navController.navigate(Screen.InstanceConfigScreen.route)
                 },
-                onNavigateToProfile = {
-                    rootNavController.navigate(Screen.AccountSwitcher.route)
-                },
+                onNavigateToProfile = onProfileClick,
                 onNavigateToProfileLongPress = onProfileLongClick,
                 onNavigateToApplicationSettings = {
                     rootNavController.navigate(Screen.Settings.route)

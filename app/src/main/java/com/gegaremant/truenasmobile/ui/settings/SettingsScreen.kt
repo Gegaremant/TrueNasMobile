@@ -72,8 +72,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingsScreen(
     manager: TrueNASApiManager?,
-    onNavigateToLicenses: () -> Unit = {},
-    onNavigateToAbout: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
     onNavigateToTheme : () -> Unit = {},
     onNavigateToProfile : () -> Unit = {},
@@ -220,39 +218,18 @@ fun SettingsScreen(
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
-            SettingsSection(
-                title = stringResource(R.string.settings_section_about),
-                items = buildList {
-                    add(
-                        SettingItem(
-                            icon = Icons.Default.Info,
-                            name = stringResource(R.string.settings_about_app),
-                            description = stringResource(R.string.settings_about_desc),
-                            onClick = { onNavigateToAbout() }
-                        )
-                    )
-                    add(
-                        SettingItem(
-                            icon = Icons.Default.Description,
-                            name = stringResource(R.string.settings_licenses),
-                            description = stringResource(R.string.settings_licenses_desc),
-                            onClick = { onNavigateToLicenses() }
-                        )
-                    )
-                    // Hidden entry, revealed by tapping the "Performance Tracking" feature
-                    // card in About 5 times. Not reset on app launch.
-                    if (LoggingPrefs.isVisible(LocalContext.current)) {
-                        add(
-                            SettingItem(
-                                icon = Icons.Default.BugReport,
-                                name = stringResource(R.string.settings_app_logging),
-                                description = stringResource(R.string.settings_app_logging_desc),
-                                onClick = { onNavigateToLogging() }
-                            )
-                        )
-                    }
-                }
+            // "О приложении" and "Лицензии" are gone: there are no third-party
+            // licenses to list and one developer does not need an about page.
+            // App logging used to hide behind five taps on the about card, and
+            // with the card gone it is a normal row - it is how a bug gets
+            // diagnosed.
+            SettingItem(
+                icon = Icons.Default.BugReport,
+                name = stringResource(R.string.settings_app_logging),
+                description = stringResource(R.string.settings_app_logging_desc),
+                onClick = { onNavigateToLogging() }
             )
+            Spacer(modifier = Modifier.height(16.dp))
             if (uiState.showAutoLoginDialog) {
                 AutoLoginConfigDialog(
                     dialogType = uiState.autoLoginDialogType,

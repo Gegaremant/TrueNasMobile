@@ -72,9 +72,7 @@ import com.gegaremant.truenasmobile.ui.settings.SettingsEvent
 import com.gegaremant.truenasmobile.ui.settings.SettingsScreen
 import com.gegaremant.truenasmobile.ui.settings.SettingsScreenViewModel
 import com.gegaremant.truenasmobile.ui.settings.push.PushSettingsScreen
-import com.gegaremant.truenasmobile.ui.settings.screens.AboutScreen
 import com.gegaremant.truenasmobile.ui.settings.logging.AppLoggingScreen
-import com.gegaremant.truenasmobile.ui.settings.screens.LicensesScreen
 import com.gegaremant.truenasmobile.ui.settings.screens.ThemeScreen
 import com.gegaremant.truenasmobile.ui.settings.sheets.ChangePasswordScreen
 import com.gegaremant.truenasmobile.ui.security.BiometricLockScreen
@@ -431,12 +429,6 @@ private fun AppNavigation(
                 onNavigateToTheme = {
                     navController.navigate(Screen.Theme.route)
                 },
-                onNavigateToAbout = {
-                    navController.navigate(Screen.About.route)
-                },
-                onNavigateToLicenses = {
-                    navController.navigate(Screen.Licenses.route)
-                },
                 onNavigateToLogging = {
                     navController.navigate(Screen.AppLogging.route)
                 },
@@ -544,30 +536,6 @@ private fun AppNavigation(
                 )
             }
         }
-        composable(Screen.About.route) {
-            manager?.let { validManager ->
-                AboutScreen(
-                    manager = validManager,
-                    onNavigateBack = { navController.popBackStack() }
-                )
-            } ?: run {
-                LoadingScreen(stringResource(R.string.startup_redirecting))
-                LaunchedEffect(Unit) { navController.popBackStack() }
-            }
-        }
-
-        composable(Screen.Licenses.route) {
-            manager?.let { validManager ->
-                LicensesScreen(
-                    manager = validManager,
-                    onNavigateBack = { navController.popBackStack() }
-                )
-            } ?: run {
-                LoadingScreen(stringResource(R.string.startup_redirecting))
-                LaunchedEffect(Unit) { navController.popBackStack() }
-            }
-        }
-
         composable(Screen.Theme.route) {
             ThemeScreen(
                 manager = manager,

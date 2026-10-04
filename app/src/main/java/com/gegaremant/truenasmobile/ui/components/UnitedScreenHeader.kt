@@ -44,7 +44,7 @@ import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.SmartToy
+import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -333,7 +333,7 @@ fun UnifiedScreenHeader(
                     onApplicationSettingsClick?.let { appSettings ->
                         GearedIconButton(
                             onClick = appSettings,
-                            mainIcon = Icons.Default.SmartToy,
+                            mainIcon = Icons.Default.PhoneAndroid,
                             contentDescription = stringResource(R.string.cd_application_settings_cd),
                             compact = isNarrow
                         )

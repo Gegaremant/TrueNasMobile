@@ -67,28 +67,31 @@ fun DetailsMetricsSection(
             key = "cpu",
             labelRes = R.string.details_metric_cpu,
             icon = Icons.Filled.Speed,
-            color = MaterialTheme.colorScheme.primary,
+            normalColor = MaterialTheme.colorScheme.primary,
             data = cpuData?.firstOrNull(),
             unit = "%",
-            averageAcrossCores = true
+            averageAcrossCores = true,
+            thresholds = LoadLevels.cpu
         ),
         MetricRow(
             key = "memory",
             labelRes = R.string.details_metric_memory,
             icon = Icons.Filled.Memory,
-            color = MaterialTheme.colorScheme.tertiary,
+            normalColor = MaterialTheme.colorScheme.tertiary,
             data = memoryData?.firstOrNull(),
             unit = "GB",
             // Memory is reported in bytes; the charts label it as GB.
-            scaleToGigabytes = true
+            scaleToGigabytes = true,
+            thresholds = LoadLevels.memory
         ),
         MetricRow(
             key = "temperature",
             labelRes = R.string.details_metric_temperature,
             icon = Icons.Filled.DeviceThermostat,
-            color = MaterialTheme.colorScheme.error,
+            normalColor = MaterialTheme.colorScheme.primary,
             data = temperatureData?.firstOrNull(),
-            unit = "°C"
+            unit = "°C",
+            thresholds = LoadLevels.cpuTemperature
         )
     )
 
@@ -106,6 +109,7 @@ fun DetailsMetricsSection(
         metrics.forEach { metric ->
             val isExpanded = expandedKey == metric.key
             val hasData = !metric.data?.data.isNullOrEmpty()
+            val metricColor = metric.severityColor()
 
             Column(
                 modifier = Modifier
@@ -123,7 +127,7 @@ fun DetailsMetricsSection(
                     Icon(
                         imageVector = metric.icon,
                         contentDescription = null,
-                        tint = metric.color,
+                        tint = metricColor,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
@@ -138,7 +142,7 @@ fun DetailsMetricsSection(
                         text = metric.currentValueLabel(),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
-                        color = metric.color
+                        color = metricColor
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     if (hasData) {
@@ -169,7 +173,7 @@ fun DetailsMetricsSection(
                                     .fillMaxWidth()
                                     .height(190.dp),
                                 data = graph,
-                                color = metric.color,
+                                color = metricColor,
                                 unit = metric.unit,
                                 isMemory = metric.scaleToGigabytes
                             )
@@ -185,10 +189,11 @@ private data class MetricRow(
     val key: String,
     @androidx.annotation.StringRes val labelRes: Int,
     val icon: ImageVector,
-    val color: Color,
+    val normalColor: Color,
     val data: System.ReportingGraphResponse?,
     val unit: String,
     val scaleToGigabytes: Boolean = false,
+    val thresholds: LoadThresholds? = null,
     /** CPU arrives as one column per core, so the row shows the whole-SoC load. */
     val averageAcrossCores: Boolean = false
 ) {
@@ -198,6 +203,22 @@ private data class MetricRow(
      * The reading itself lives in [latestValue] because every consumer of a
      * `system.report` series has to skip the timestamp column.
      */
+    /** Newest reading in display units - what the severity is judged on. */
+    fun currentValue(): Double? {
+        val raw = data.latestValue(averageAcrossCores) ?: return null
+        return if (scaleToGigabytes) raw / (1024.0 * 1024.0 * 1024.0) else raw
+    }
+
+    /**
+     * Blue while the reading is normal, amber when it deserves a look, red when
+     * it is bad. A metric without a scale keeps the theme colour.
+     */
+    @Composable
+    fun severityColor(): Color {
+        val scale = thresholds ?: return normalColor
+        return LoadLevels.colorOf(currentValue(), unit, scale, normalColor)
+    }
+
     fun currentValueLabel(): String {
         val raw = data.latestValue(averageAcrossCores) ?: return "—"
         val value = when {
