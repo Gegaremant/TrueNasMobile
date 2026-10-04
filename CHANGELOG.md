@@ -4,6 +4,20 @@ All notable changes to TrueNasMobile are listed here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] — 2026-10-04
+
+### Changed
+- **One entity: a NAS with its login.** The owner settled it — no splitting a
+  "user" from a "machine". Adding a connection is a single button, the
+  "which machine gets this user" picker is gone with it, and the page calls
+  itself "Connections". The switcher stays a flat list of machines.
+- **Alerts explain themselves.** A notification used to say "Backup failed"
+  and nothing else. The stand keeps the dataset, the pool and the actual error
+  in the alert's arguments, and those were never shown: `AlertDetails` renders
+  them as lines under the headline, including nested ones, and the title reads
+  as words ("Backup task failed · ERROR") instead of "TrueNAS Alert: ERROR".
+  Six new tests cover the parsing.
+
 ## [1.0.9] — 2026-10-04
 
 ### Changed
