@@ -4,6 +4,29 @@ All notable changes to TrueNasMobile are listed here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] — 2026-10-04
+
+### Changed
+- **The profile icon works the way it was described.** Short press opens the NAS
+  list and switches in one tap; long press opens account creation. They were the
+  other way round, so adding a connection was two gestures deep.
+- **Graph colours mean something.** A metric is calm blue while it is fine,
+  amber when it deserves a look and red when it is bad, with thresholds per
+  metric (CPU, memory, CPU temperature, drive temperature). Before, the colour
+  came from the theme and said nothing about the number on the graph.
+- **App settings wear a phone with a gear.** The robot with a gear read as
+  neither this app nor the NAS, and the two gears sat next to each other.
+- **A dead socket is announced.** The app now says "the server is not
+  answering", names the address it cannot reach and offers a retry. A request
+  that never returns used to leave a spinner with nothing behind it.
+
+### Removed
+- **"О приложении" and "Лицензии".** There are no third-party licenses to list
+  and one developer does not need an about page. Their screens and their search
+  entries are gone too. App logging stopped hiding behind five taps on the
+  deleted about card and is an ordinary row now - it is how a bug gets
+  diagnosed.
+
 ## [1.0.8] — 2026-10-04
 
 ### Fixed
